@@ -1,0 +1,102 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  
+<title><%= yield(:page_title) || 'Ruby on Rails guides' %></title>
+
+<link rel="stylesheet" type="text/css" href="files/stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/syntax.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/print.css" media="print" />
+
+<script type="text/javascript" src="files/javascripts/guides.js"></script>
+<script type="text/javascript" src="files/javascripts/code_highlighter.js"></script>
+<script type="text/javascript" src="files/javascripts/highlighters.js"></script>
+
+</head>
+<body class="guide">
+  <div id="topNav">
+    <div class="wrapper">
+      <strong>Mais em <a href="http://www.rubyonrails.pro.br/">rubyonrails.pro.br:</a> </strong>
+      <a href="http://www.rubyonrails.org/">Capa</a> |
+      <a href="http://www.rubyonrails.org/download">Download</a> |
+      <a href="http://www.rubyonrails.org/deploy">Deploy</a> |
+      <a href="http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/overview">C&oacute;digo</a> |
+      <a href="http://www.rubyonrails.pro.br/apresentacoes">Apresentações</a> |
+      <a href="http://www.rubyonrails.pro.br/documentacao">Documentação</a> |
+      <a href="http://www.rubyonrails.pro.br/ecosistema">Ecossistema</a> |
+      <a href="http://www.rubyonrails.pro.br/comunidade">Comunidade</a> |
+      <a href="http://podcast.rubyonrails.pro.br">Podcasts</a> |
+      <a href="http://www.rubyonrails.pro.br/planeta">Blogs</a>
+    </div>
+  </div>
+  <div id="header">
+    <div class="wrapper clearfix">
+      <h1><a href="index.html" title="Retorne para a página princípal">Guides.rubyonrails.org</a></h1>
+      <p class="hide"><a href="#mainCol">Pule a navegação</a>.</p>
+      <ul class="nav">
+        <li><a href="index.html">Início</a></li>
+        <li class="index"><a href="#" onclick="guideMenu();" id="guidesMenu">Índice dos Guias</a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+              <dt>Start Here</dt>
+              <dd><a href="comecando_com_rails.html">Começando com Rails</a></dd>
+              <dt>Models</dt>
+              <dd><a href="migrations.html">Rails Database Migrations</a></dd>
+              <dd><a href="activerecord_validations_callbacks.html">Validações e Callbacks do Active Record</a></dd>
+              <dd><a href="association_basics.html">Associações do Active Record</a></dd>
+              <dd><a href="active_record_querying.html">Interface de Queries do Active Record</a></dd>
+              <dt>Views</dt>
+              <dd><a href="layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
+              <dd><a href="form_helpers.html">Form Helpers do Action View</a></dd>
+              <dt>Controllers</dt>
+              <dd><a href="action_controller_overview.html">Visão Geral do Action Controller</a></dd>
+              <dd><a href="routing.html">Roteamento Rails de Fora para Dentro</a></dd>
+            </dl>
+            <dl class="R">
+              <dt>Aprofundando</dt>
+              <dd><a href="i18n.html">API de Internacionalização do Rails</a></dd>
+              <dd><a href="action_mailer_basics.html">Conceitos Básicos do Action Mailer</a></dd>
+              <dd><a href="testando_aplicacoes_rails.html">Testando Aplicações Rails</a></dd>
+              <dd><a href="seguranca.html">Segurança em Aplicações Rails</a></dd>
+              <dd><a href="depurando_aplicacoes_rails.html">Depurando Aplicações Rails</a></dd>
+              <dd><a href="performance_testing.html">Benchmarking e Profiling em Aplicações Rails</a></dd>
+              <dd><a href="plugins.html">O Básico da Criação de Plugins</a></dd>
+              <dd><a href="configuring.html">Configurando Aplicações Rails</a></dd>
+            </dl>
+          </div>
+        </li>
+        <li><a href="http://hackfest.rubyonrails.org">Contribua</a></li>
+        <li><a href="credits.html">Créditos</a></li>
+      </ul>     
+    </div>
+  </div>
+  <hr class="hide" />
+  
+  <div id="feature">
+    <div class="wrapper">
+      <%= yield :header_section %>
+
+      <%= yield :index_section %>
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+  <div id="footer">
+    <div class="wrapper">
+      <p>Autores que contribuíram para guias completos estão listados <a href="credits.html">aqui</a>.<br />
+        Tradutores que contribuíram na tradução dos guias originais para Língua Portuguesa estão listados <a href="translators.html">aqui</a>.<br />
+        Este trabalho está licenciado sob a licença <a href="http://creativecommons.org/licenses/by-sa/3.0">Creative Commons Attribution-Share Alike 3.0</a>.</p>
+      <p>"Rails", "Ruby on Rails", e o logo do Rails são marcas registradas de David Heinemeier Hansson. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</body>
+</html>

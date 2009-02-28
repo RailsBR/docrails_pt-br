@@ -1,0 +1,32 @@
+<% content_for :header_section do %>
+h2. Sobre os tradutores (pt-br)
+
+Gostariamos de agradecer às seguintes pessoas, por terem dedicado seu tempo e esforço para traduzirem os guias originais para a Língua Portuguesa, tornando possível que um número maior de desenvolvedores tenha acesso a essa fonte de informação sobre o Rails
+<% end %>
+
+<% author('Daniel Lopes', 'danielvlopes') do %>
+Daniel Lopes é parceiro da empresa "Area Criações":http://www.areacriacoes.com.br e escreve com frequência no blog "blog.areacriacoes.com.br":http://blog.areacriacoes.com.br, falando sobre Ruby on Rails, Flex, Javascript, Flash e assuntos relacionados a web e design.
+Trabalha como desenvolvedor Rails/Flex/Js/Flash e webdesigner além de ser instrutor dos curso de Adobe Flex e RubyOnRails na E-genial (www.egenial.com.br).
+<% end %>
+
+<% author('Adolfo Sousa', 'adolfosousa') do %>
+Adolfo Sousa desenvolve sistemas web utilizando a plataforma Java. Atualmente trabalha para a Locaweb desenvolvendo produtos da área de Telecomunicações.
+Tem dedicado parte do seu tempo livre ao estudo da linguagem Ruby e das ferramentas existentes neste novo universo.
+Interessa-se por linguagens de programação, desenvolvimento guiado por testes, metodologias de desenvolvimento de software e novas formas de simplificar tudo o que o cerca.
+Também escreve no "seu blog":http://www.adolfosousa.com.br/blog.
+<% end %>
+
+<% author('Fábio Kreusch', 'fabiokr') do %>
+Fabio Kreusch é estudante do curso de Sistemas de Informação na Universidade Federal de Santa Catarina, e trabalha com desenvolvimento web. Desenvolveu sistemas com Java, e atualmente dedica-se ao aprendizado e utilização prática de conceitos e ferramentas de desenvolvimento ágil, incluindo o framework Ruby on Rails. Escreve em "seu blog":http://fabio.kreusch.com.br/.
+<% end %>
+
+<% author('Carlos Antonio da Silva', 'carlosantoniodasilva') do %>
+Carlos Antonio da Silva é formado em Sistemas de Informação e pós-graduado em Gerenciamento de Projetos,
+atualmente trabalha como desenvolvedor web utilizando Ruby on Rails e também dá suporte a aplicativos desenvolvidos na ferramente Delphi.
+Tem disponibilizado parte de seu tempo livre para estudos sobre a linguagem Ruby, testes, metodologias ágeis e GTD.
+"Seu blog":http://carlosantoniodasilva.wordpress.com
+<% end %>
+
+<% author('Cássio Marques', 'cassiomarques') do %>
+Cássio Marques é um desenvolvedor que trabalha com diversas linguagens de programação, entre elas Ruby, Java e C. Atualmente tem realizado a maioria dos seus trabalhos desenvolvendo aplicações web utilizando Ruby on Rails. É formado em Computação Científica pela Universidade de Taubaté. Você pode acompanhá-lo pelo "twitter":http://www.twitter.com/cassiomarques ou lendo seu "blog":http://cassiomarques.wordpress.com. 
+<% end %>

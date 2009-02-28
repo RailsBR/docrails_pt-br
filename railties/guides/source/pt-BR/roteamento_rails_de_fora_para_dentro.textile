@@ -1,0 +1,885 @@
+h2. Roteamento Rails de fora para dentro
+
+Este guia aborda as características do roteamento em Rails. Ao completar este guia, você será capaz de:
+
+* Entender a proposta do roteamento
+* Decifrar o código em +routes.rb+
+* Construir suas próprias rotas, utilizando o estilo clássico hash ou o estilo atualmente preferido RESTful
+* Identificar como uma rota pode mapear do controller para uma action
+
+endprologue.
+
+h3. A dupla finalidade do roteamento
+
+Roteamento Rails é um mecanismo de encaminhamento bidirecional - como se você pudesse transformar isso em um papel, e depois cada papel de volta em árvore. Especificamente, que liga as duas próximas solicitações de HTTP request para o código do controlador da aplicação, e ajuda a você gerar URLs sem ter que codificar as strings.
+
+h4. Conectando URLs com código
+
+quando sua aplicação Rails recebe uma solicitação HTTP request, fala
+
+<pre>
+GET /patients/17
+</pre>
+
+a engine de roteamento dentro do Rails é a parte do código que dispara uma solicitação para o local apropriado na sua aplicação. Neste caso, a aplicação provavelmente executaria a ação +show+ dentro do controlador +patients+, mostrando os detalhes do paciente cujo ID é 17.
+
+h4. Gerando URLs do código
+
+O roteamento também funciona no caminho reverso. Se sua aplicação contem este código:
+
+<ruby>
+@patient = Patient.find(17)
+<%= link_to "Patient Record", patient_path(@patient) %>
+</ruby>
+
+Então a engine de roteamento é a parte que traduz o link para a URL como +http://example.com/patients/17+. Usando o roteamento nesta forma, você pode reduzir a fragilidade da sua aplicação se comparada com uma aplicação com URLs codificada dificilmente, e torna o seu código ser facilmente lido e entendido.
+
+NOTE: Patient necessita ser declarado como um recurso para a tradução de rotas nomeadas possam ser disponível.
+
+h3. Rápido Tour de Routes.rb
+
+Há dois componentes para roteamento no Rails: a própria engine de roteameneto, que é fornecida como parte do Rails, e o arquivo +config/routes.rb+, que contém as rotas atuais que serão usadas pela sua aplicação. Aprender exatamente o que você pode colocar em +routes.rb+ é o tópico principal deste guia, mas antes vamos obter uma visão geral rápida.
+
+h4. Processando o arquivo
+
+No formato, +routes.rb+ não é nada mais do que um grande bloco enviado para +ActionController::Routing::Routes.draw+. Junto com este bloco, você pode ter comentários, mas é provável que a maior parte do seu contéudo será de linhas individuais de código - cada linha iniciando uma rota na sua aplicação. Você encontrará cinco tipos principaos de conteudo neste arquivo:
+
+* RESTful Routes
+* Named Routes
+* Nested Routes
+* Regular Routes
+* Default Routes
+
+Cada um desses tipos de rotas é cobertas em mais detalhes neste guia.
+
+O arquivo +routes.rb+ é processado de cima para baixo quando chega uma requisição.A requisição será executada na primeira combinação de rota. Se não nenhum combinação de rota, então o Rails retorna um status HTTP 404 ao chamador.
+
+h4. Rotas RESTful
+
+Rotas RESTful tiram a vantagem da orientação built-in do REST do Rails para empacotar muitas das informações de roteamento em uma simples declaração. Uma rota RESTful se parece como esta:
+
+<ruby>
+map.resources :books
+</ruby>
+
+h4. Rotas nomeadas
+
+Rotas nomeadas da a você muita links legivéis no seu código, bem como manipulação nas solicitações recebidas. Veja aqui uma típica rota nomeada:
+
+<ruby>
+map.login '/login', :controller => 'sessions', :action => 'new'
+</ruby>
+
+h4. Rotas aninhadas
+
+Rotas aninhadas permite você declarar que um recurso está contido dentro de outro recurso. Você verá mais tarde como pode traduzir para URLs e caminhos no seu código. Por exemplo, se sua aplicação incluir parts, cada uma das quais pertence a um assembly, você pode declarar esta rota aninhada como:
+
+<ruby>
+map.resources :assemblies do |assemblies|
+  assemblies.resources :parts
+end
+</ruby>
+
+h4. Rotas regulares
+
+Em muitas aplicações, você verá roteamentos não RESTful, que conecta explicitamente cada parte da URL a uma ação em particular. Por exemplo,
+
+<ruby>
+map.connect 'parts/:number', :controller => 'inventory', :action => 'show'
+</ruby>
+
+h4. Rotas padrão
+
+As rotas padrão são a forma segura de capturar requisições sem outras formas de rotas. Muitas aplicações Rails contem este par de rotas como padrão:
+
+<ruby>
+map.connect ':controller/:action/:id'
+map.connect ':controller/:action/:id.:format'
+</ruby>
+
+Estas rotas padrão são geradas automaticamentes quando você cria uma nova aplicação Rails. Se você está usando roteamento RESTful para tudo na sua aplicação, você provavelmente precisará remove-la. Mas verifique se você não está usando rotas padrões antes de remove-las.
+
+h3. Roteamento RESTful: o Padrão Rails
+
+Roteamento RESTful é o padrão corrente para roteamento em Rails, e a única que você deve preferir para novas aplicações. Pode demorar um pouco enquando você entende como funciona o roteamento RESTful, mas que vale o esforço; seu código será mais fácil de ser lido e você estará trabalho com Rails, ao invés de lutar contra ele, quando você usa este estilo de roteamento.
+
+h4. O que é REST?
+
+O Fundação do roteamento RESTful é geralmente considerado na tese de doutorado de Roy Fielding, "Architectural Styles and the Design of Network-based Software Architectures":http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm. Felizmente, você não precisa ler este documento para entender como o REST funciona no Rails. REST é um acronimo para Representational State Transfer, que resume-se em dois principios fundamentais para nossos propósitos:
+
+* Usando um identificador de recurso (na qual, para o propósito da discussão, você pode pensar como as URLs) para representar recursos
+* Transferindo represetações de statos entre recursos e componentes do sistema.
+
+Por exemplo, para uma requisição em uma aplicação Rails como esta:
+
++DELETE /photos/17+
+
+seria entendido como uma referencia a um recurso foto com o ID 17, e indicaria a ação desejada - deletar este recurso. REST é um estilo natural para a arquitetura de aplicações web, e Rails faz isso de uma forma mais natural usando convenções para protejer você de algumas complexidades do RESTful.
+
+h4. CRUD, verbos e ações  
+
+No Rails, uma rota RESTful fornece o mapeamento entre verbos HTTP, ações de controladores, e (implicitamente) a operações CRUD no banco de dados. Uma entrada unica no arquivo de roteamento, como essa
+
+<ruby>
+map.resources :photos
+</ruby>
+
+cria sete diferentes rotas na sua aplicação:
+
+|_.HTTP verb  |_.URL             |_.controller  |_.action   |_.used for|
+|GET        |/photos         |Photos      |index    |mostra a lista de todas as fotos|
+|GET        |/photos/new     |Photos      |new      |retorna um formulário HTML para a criação de uma nova foto|
+|POST       |/photos         |Photos      |create   |cria uma nova foto|
+|GET        |/photos/1       |Photos      |show     |mostra uma foto específica|
+|GET        |/photos/1/edit  |Photos      |edit     |retorna um formulário HTML para edição da foto|
+|PUT        |/photos/1       |Photos      |update   |atualiza uma foto específica|
+|DELETE     |/photos/1       |Photos      |destroy  |apaga uma foto específica|
+
+Para rotas específicas (aqueles que fazem referencia a um uníco recurso), o indetificador do recurso deverá ser disponível na ação correspondente de um controlador como um +params[:id]+.
+
+TIP: Se você consistentimente usar rotas RESTful na sua aplicação, você deverá desabilitar as rotas padrões em +routes.rb+ de modo que o Rails aplicará o mapeamento entre verbos HTTP e rotas.
+
+h4. URLs e Caminhos
+
+Criando uma rota RESTful também tornará disponível um monte de helpers dentro da sua aplicação:
+
+* +photos_url+ e +photos_path+ mapeia do caminho para as ações index e create.
+* +new_photo_url+ e +new_photo_path+ mapeia o caminho para a ação new
+* +edit_photo_url+ e +edit_photo_path+ mapeia o caminho para a ação edit
+* +photo_url+ e +photo_path+ mapeia o caminho para as ações show, update e destroy
+
+NOTE: Por que o roteamento faz uso de verbos HTTP, bem como o caminho no pedido para expedir requisições, as setes rotas geradas pelo roteamento RESTful só dão origem a quatro pares de helpers.
+
+Em cada caso, o helper +_url+ gera uma string contendo toda a URL que a aplicação irá entender, enquanto o helper +_path+ gera uma string contendo um caminho relativo para a raiz da aplicação. Por exemplo:
+
+<ruby>
+photos_url  # => "http://www.example.com/photos"
+photos_path # => "/photos"
+</ruby>
+
+h4. Definindo Múltiplos Recursos ao Mesmo Tempo
+
+Se você precisa criar rotas para mais de um recurso RESTful, você pode diminuir um pouco de digitar, definindo todas as chamadas para +map.resources+:
+
+<ruby>
+map.resources :photos, :books, :videos
+</ruby>
+
+Isto tem exatamente o mesmo efeito de
+
+<ruby>
+map.resources :photos
+map.resources :books
+map.resources :videos
+</ruby>
+
+h4. Recursos singulares
+
+Você pode também aplicar o roteamento RESTful para um único recurso dentro da sua aplicação. Neste caso, você usa +map.resource+ em vez de +map.resources+ e a geração das rotas é ligeiramente diferente. Por exemplo, uma entrada para o roteamento
+
+<ruby>
+map.resource :geocoder
+</ruby>
+
+cria seis rotas diferentes na sua aplicação:
+
+|_.HTTP verb  |_.URL             |_.controller  |_.action   |_.used for|
+|GET        |/geocoder/new   |Geocoders   |new      |retorna um formulário HTML para criação de um novo geocoder|
+|POST       |/geocoder       |Geocoders   |create   |cria um novo geocoder|
+|GET        |/geocoder       |Geocoders   |show     |mostra um e somente um recurso geocoder|
+|GET        |/geocoder/edit  |Geocoders   |edit     |retorna um formulário HTML para edição do geocoder|
+|PUT        |/geocoder       |Geocoders   |update   |atualiza um e somente um recurso do geocoder|
+|DELETE     |/geocoder       |Geocoders   |destroy  |apaga um recurso geocoder|
+
+NOTE: Mesmo que o nome do recurso seja singular em +routes.rb+, o controlador correspondente continua no plural.
+
+Uma rota RESTful singular gera um conjunto abreviados de helpers:
+
+* +new_geocoder_url+ e +new_geocoder_path+ mapeia o caminho para a ação new
+* +edit_geocoder_url+ e +edit_geocoder_path+ mapeia o caminho para a ação edit
+* +geocoder_url+ e +geocoder_path+ mapeia o caminho para as ações create, show, update e destroy.
+
+h4. Customizando recursos
+
+Apesar das convenções do roteamento RESTful serem suficientes para muitas aplicações, existe inúmeras formas de customizar a forma como uma rota RESTful funciona. Estas opções incluem:
+
+* +:controller+
+* +:singular+
+* +:requirements+
+* +:conditions+
+* +:as+
+* +:path_names+
+* +:path_prefix+
+* +:name_prefix+
+
+Você pode adicionar rotas adicionais pelas opções +:member+ e +:collection+, na qual serão discutidos mais tarde neste guia.
+
+h5. Usando :controller
+
+A opção +:controller+ permite você usar o nome do controlador diferente do nome do recurso público. Por exemplo, esta entrada de roteamento:
+
+<ruby>
+map.resources :photos, :controller => "images"
+</ruby>
+
+will recognize incoming URLs containing +photo+ but route the requests to the Images controller: 
+
+|_.HTTP verb  |_.URL             |_.controller  |_.action   |_.used for|
+|GET        |/photos         |Images      |index    |display a list of all images|
+|GET        |/photos/new     |Images      |new      |return an HTML form for creating a new image|
+|POST       |/photos         |Images      |create   |create a new image|
+|GET        |/photos/1       |Images      |show     |display a specific image|
+|GET        |/photos/1/edit  |Images      |edit     |return an HTML form for editing a image|
+|PUT        |/photos/1       |Images      |update   |update a specific image|
+|DELETE     |/photos/1       Images       |destroy  |delete a specific image|
+
+NOTE: The helpers will be generated with the name of the resource, not the name of the controller. So in this case, you'd still get +photos_path+, +new_photo_path+, and so on.
+
+h4. Controller Namespaces and Routing
+
+Rails allows you to group your controllers into namespaces by saving them in folders underneath +app/controllers+. The +:controller+ option provides a convenient way to use these routes. For example, you might have a resource whose controller is purely for admin users in the +admin+ folder:
+
+<ruby>
+map.resources :adminphotos, :controller => "admin/photos"
+</ruby>
+
+If you use controller namespaces, you need to be aware of a subtlety in the Rails routing code: it always tries to preserve as much of the namespace from the previous request as possible. For example, if you are on a view generated from the +adminphoto_path+ helper, and you follow a link generated with +<%= link_to "show", adminphoto(1) %>+ you will end up on the view generated by +admin/photos/show+ but you will also end up in the same place if you have +<%= link_to "show", {:controller => "photos", :action => "show"} %>+ because Rails will generate the show URL relative to the current URL.
+
+TIP: If you want to guarantee that a link goes to a top-level controller, use a preceding slash to anchor the controller name: +<%= link_to "show", {:controller => "/photos", :action => "show"} %>+
+
+You can also specify a controller namespace with the +:namespace+ option instead of a path:
+
+<ruby>
+map.resources :adminphotos, :namespace => "admin", :controller => "photos"
+</ruby>
+
+This can be especially useful when combined with +with_options+ to map multiple namespaced routes together:
+
+<ruby>
+map.with_options(:namespace => "admin") do |admin|
+  admin.resources :photos, :videos
+end
+</ruby>
+
+That would give you routing for +admin/photos+ and +admin/videos+ controllers.
+
+h5. Using :singular
+
+If for some reason Rails isn't doing what you want in converting the plural resource name to a singular name in member routes, you can override its judgment with the +:singular+ option:
+
+<ruby>
+map.resources :teeth, :singular => "tooth"
+</ruby>
+
+TIP: Depending on the other code in your application, you may prefer to add additional rules to the +Inflector+ class instead.
+
+h5. Using :requirements
+
+You an use the +:requirements+ option in a RESTful route to impose a format on the implied +:id+ parameter in the singular routes. For example:
+
+<ruby>
+map.resources :photos, :requirements => {:id => /[A-Z][A-Z][0-9]+/}
+</ruby>
+
+This declaration constrains the +:id+ parameter to match the supplied regular expression. So, in this case, +/photos/1+ would no longer be recognized by this route, but +/photos/RR27+ would.
+
+h5. Using :conditions
+
+Conditions in Rails routing are currently used only to set the HTTP verb for individual routes. Although in theory you can set this for RESTful routes, in practice there is no good reason to do so. (You'll learn more about conditions in the discussion of classic routing later in this guide.)
+
+h5. Using :as
+
+The +:as+ option lets you override the normal naming for the actual generated paths. For example:
+
+<ruby>
+map.resources :photos, :as => "images"
+</ruby>
+
+will recognize incoming URLs containing +image+ but route the requests to the Photos controller: 
+
+|_.HTTP verb  |_.URL             |_.controller  |_.action   |_.used for|
+|GET        |/images         |Photos      |index    |display a list of all photos|
+|GET        |/images/new     |Photos      |new      |return an HTML form for creating a new photo|
+|POST       |/images         |Photos      |create   |create a new photo|
+|GET        |/images/1       |Photos      |show     |display a specific photo|
+|GET        |/images/1/edit  |Photos      |edit     |return an HTML form for editing a photo|
+|PUT        |/images/1       |Photos      |update   |update a specific photo|
+|DELETE     |/images/1       |Photos      |destroy  |delete a specific photo|
+
+NOTE: The helpers will be generated with the name of the resource, not the path name. So in this case, you'd still get +photos_path+, +new_photo_path+, and so on.
+
+h5. Using :path_names
+
+The +:path_names+ option lets you override the automatically-generated "new" and "edit" segments in URLs:
+
+<ruby>
+map.resources :photos, :path_names => { :new => 'make', :edit => 'change' }
+</ruby>
+
+This would cause the routing to recognize URLs such as
+
+<pre>
+/photos/make
+/photos/1/change
+</pre>
+
+NOTE: The actual action names aren't changed by this option; the two URLs show would still route to the new and edit actions.
+
+TIP: If you find yourself wanting to change this option uniformly for all of your routes, you can set a default in your environment:
+
+<ruby>
+config.action_controller.resources_path_names = { :new => 'make', :edit => 'change' }
+</ruby>
+
+h5. Using :path_prefix
+
+The +:path_prefix+ option lets you add additional parameters that will be prefixed to the recognized paths. For example, suppose each photo in your application belongs to a particular photographer. In that case, you might declare this route:
+
+<ruby>
+map.resources :photos, :path_prefix => '/photographers/:photographer_id'
+</ruby>
+
+Routes recognized by this entry would include:
+
+<pre>
+/photographers/1/photos/2
+/photographers/1/photos
+</pre>
+
+NOTE: In most cases, it's simpler to recognize URLs of this sort by creating nested resources, as discussed in the next section.
+
+NOTE: You can also use +:path_prefix+ with non-RESTful routes.
+
+h5. Using :name_prefix
+
+You can use the :name_prefix option to avoid collisions between routes. This is most useful when you have two resources with the same name that use +:path_prefix+ to map differently. For example:
+
+<ruby>
+map.resources :photos, :path_prefix => '/photographers/:photographer_id', :name_prefix => 'photographer_'
+map.resources :photos, :path_prefix => '/agencies/:agency_id', :name_prefix => 'agency_'
+</ruby>>
+
+This combination will give you route helpers such as +photographer_photos_path+ and +agency_edit_photo_path+ to use in your code.
+
+NOTE: You can also use +:name_prefix+ with non-RESTful routes.
+
+h4. Nested Resources
+
+It's common to have resources that are logically children of other resources. For example, suppose your application includes these models:
+
+<ruby>
+class Magazine < ActiveRecord::Base
+  has_many :ads
+end
+
+class Ad < ActiveRecord::Base
+  belongs_to :magazine
+end
+<pre>
+
+Each ad is logically subservient to one magazine. Nested routes allow you to capture this relationship in your routing. In this case, you might include this route declaration:
+
+<ruby>
+map.resources :magazines do |magazine|
+  magazine.resources :ads
+end 
+<pre>
+
+In addition to the routes for magazines, this declaration will also create routes for ads, each of which requires the specification of a magazine in the URL:
+
+|_.HTTP verb  |_.URL                      |_.controller  |_.action   |_.used for|
+|GET        |/magazines/1/ads         |Ads         |index    |display a list of all ads for a specific magazine|
+|GET        |/magazines/1/ads/new     |Ads         |new      |return an HTML form for creating a new ad belonging to a specific magazine|
+|POST       |/magazines/1/ads         |Ads         |create   |create a new ad belonging to a specific magazine|
+|GET        |/magazines/1/ads/1       |Ads         |show     |display a specific ad belonging to a specific magazine|
+|GET        |/magazines/1/ads/1/edit  |Ads         |edit     |return an HTML form for editing an ad belonging to a specific magazine|
+|PUT        |/magazines/1/ads/1       |Ads         |update   |update a specific ad belonging to a specific magazine|
+|DELETE     |/magazines/1/ads/1       |Ads         |destroy  |delete a specific ad belonging to a specific magazine|
+
+
+This will also create routing helpers such as +magazine_ads_url+ and +edit_magazine_ad_path+.
+
+h5. Using :name_prefix
+
+The +:name_prefix+ option overrides the automatically-generated prefix in nested route helpers. For example,
+
+<ruby>
+map.resources :magazines do |magazine|
+  magazine.resources :ads, :name_prefix => 'periodical'
+end 
+</ruby>
+
+This will create routing helpers such as +periodical_ads_url+ and +periodical_edit_ad_path+. You can even use +:name_prefix+ to suppress the prefix entirely:
+
+<ruby>
+map.resources :magazines do |magazine|
+  magazine.resources :ads, :name_prefix => nil
+end 
+</ruby>
+
+This will create routing helpers such as +ads_url+ and +edit_ad_path+. Note that calling these will still require supplying an article id:
+
+<ruby>
+ads_url(@magazine)
+edit_ad_path(@magazine, @ad)
+</ruby>
+
+h5. Using :has_one and :has_many
+
+The +:has_one+ and +:has_many+ options provide a succinct notation for simple nested routes. Use +:has_one+ to nest a singleton resource, or +:has_many+ to nest a plural resource:
+
+<ruby>
+map.resources :photos, :has_one => :photographer, :has_many => [:publications, :versions]
+</ruby>
+
+This has the same effect as this set of declarations:
+
+<ruby>
+map.resources :photos do |photo|
+  photo.resource :photographer
+  photo.resources :publications
+  photo.resources :versions
+end
+</ruby>
+ 
+h5. Limits to Nesting
+
+You can nest resources within other nested resources if you like. For example:
+
+<ruby>
+map.resources :publishers do |publisher|
+  publisher.resources :magazines do |magazine|
+    magazine.resources :photos
+  end
+end
+</ruby>
+
+However, without the use of +name_prefix => nil+, deeply-nested resources quickly become cumbersome. In this case, for example, the application would recognize URLs such as
+
+<pre>
+/publishers/1/magazines/2/photos/3
+</pre>
+
+The corresponding route helper would be +publisher_magazine_photo_url+, requiring you to specify objects at all three levels. Indeed, this situation is confusing enough that a popular "article":http://weblog.jamisbuck.org/2007/2/5/nesting-resources by Jamis Buck proposes a rule of thumb for good Rails design:
+
+_Resources should never be nested more than 1 level deep._
+
+h5. Shallow Nesting
+
+The +:shallow+ option provides an elegant solution to the difficulties of deeply-nested routes. If you specify this option at any level of routing, then paths for nested resources which reference a specific member (that is, those with an +:id+ parameter) will not use the parent path prefix or name prefix. To see what this means, consider this set of routes:
+
+<ruby>
+map.resources :publishers, :shallow => true do |publisher|
+  publisher.resources :magazines do |magazine|
+    magazine.resources :photos
+  end
+end
+</ruby>
+
+This will enable recognition of (among others) these routes:
+
+<pre>
+/publishers/1           ==> publisher_path(1)
+/publishers/1/magazines ==> publisher_magazines_path(1)
+/magazines/2            ==> magazine_path(2)
+/magazines/2/photos     ==> magazines_photos_path(2)
+/photos/3               ==> photo_path(3)
+</pre>
+
+With shallow nesting, you need only supply enough information to uniquely identify the resource that you want to work with - but you _can_ supply more information. All of the nested routes continue to work, just as they would without shallow nesting, but less-deeply nested routes (even direct routes) work as well. So, with the declaration above, all of these routes refer to the same resource:
+
+<pre>
+/publishers/1/magazines/2/photos/3   ==> publisher_magazine_photo_path(1,2,3)
+/magazines/2/photos/3                ==> magazine_photo_path(2,3)
+/photos/3                            ==> photo_path(3)
+</pre>
+
+Shallow nesting gives you the flexibility to use the shorter direct routes when you like, while still preserving the longer nested routes for times when they add code clarity.
+
+If you like, you can combine shallow nesting with the +:has_one+ and +:has_many+ options:
+
+<ruby>
+map.resources :publishers, :has_many => { :magazines => :photos }, :shallow => true
+</ruby>
+
+h4. Route Generation from Arrays
+
+In addition to using the generated routing helpers, Rails can also generate RESTful routes from an array of parameters. For example, suppose you have a set of routes generated with these entries in routes.rb:
+
+<ruby>
+map.resources :magazines do |magazine|
+  magazine.resources :ads
+end
+</ruby>
+
+Rails will generate helpers such as magazine_ad_path that you can use in building links:
+
+<ruby>
+<%= link_to "Ad details", magazine_ad_path(@magazine, @ad) %>
+</ruby>
+
+Another way to refer to the same route is with an array of objects:
+
+<ruby>
+<%= link_to "Ad details", [@magazine, @ad] %>
+</ruby>
+
+This format is especially useful when you might not know until runtime which of several types of object will be used in a particular link.
+ 
+h4. Namespaced Resources
+
+It's possible to do some quite complex things by combining +:path_prefix+ and +:name_prefix+. For example, you can use the combination of these two options to move administrative resources to their own folder in your application:
+
+<ruby>
+map.resources :photos, :path_prefix => 'admin', :controller => 'admin/photos'
+map.resources :tags, :name_prefix => 'admin_photo_', :path_prefix => 'admin/photos/:photo_id', :controller => 'admin/photo_tags'
+map.resources :ratings, :name_prefix => 'admin_photo_', :path_prefix => 'admin/photos/:photo_id', :controller => 'admin/photo_ratings'
+</ruby>
+
+The good news is that if you find yourself using this level of complexity, you can stop. Rails supports _namespaced resources_ to make placing resources in their own folder a snap. Here's the namespaced version of those same three routes:
+
+<ruby>
+map.namespace(:admin) do |admin|
+	admin.resources :photos,
+	  :has_many => { :tags, :ratings}
+end
+</ruby>
+
+As you can see, the namespaced version is much more succinct than the one that spells everything out - but it still creates the same routes. For example, you'll get +admin_photos_url+ that expects to find an +Admin::PhotosController+ and that matches +admin/photos+, and +admin_photos_ratings_path+ that matches +/admin/photos/_photo_id_/ratings+, expecting to use +Admin::RatingsController+. Even though you're not specifying +path_prefix+ explicitly, the routing code will calculate the appropriate +path_prefix+ from the route nesting.
+
+h4. Adding More RESTful Actions
+
+You are not limited to the seven routes that RESTful routing creates by default. If you like, you may add additional member routes (those which apply to a single instance of the resource), additional new routes (those that apply to creating a new resource), or additional collection routes (those which apply to the collection of resources as a whole).
+
+h5. Adding Member Routes
+
+To add a member route, use the +:member+ option:
+
+<ruby>
+map.resources :photos, :member => { :preview => :get }
+</ruby>
+
+This will enable Rails to recognize URLs such as +/photos/1/preview+ using the GET HTTP verb, and route them to the preview action of the Photos controller. It will also create a +preview_photo+ route helper.
+
+Within the hash of member routes, each route name specifies the HTTP verb that it will recognize. You can use +:get+, +:put+, +:post+, +:delete+, or +:any+ here. You can also specify an array of methods, if you need more than one but you don't want to allow just anything:
+
+<ruby>
+map.resources :photos, :member => { :prepare => [:get, :post] }
+</ruby>
+
+h5. Adding Collection Routes
+
+To add a collection route, use the +:collection+ option:
+
+<ruby>
+map.resources :photos, :collection => { :search => :get }
+</ruby>
+
+This will enable Rails to recognize URLs such as +/photos/search+ using the GET HTTP verb, and route them to the search action of the Photos controller. It will also create a +search_photos+ route helper.
+
+Just as with member routes, you can specify an array of methods for a collection route:
+
+<ruby>
+map.resources :photos, :collection => { :search => [:get, :post] }
+</ruby>
+
+h5. Adding New Routes
+
+To add a new route (one that creates a new resource), use the +:new+ option:
+
+<ruby>
+map.resources :photos, :new => { :upload => :post }
+</ruby>
+
+This will enable Rails to recognize URLs such as +/photos/upload+ using the POST HTTP verb, and route them to the upload action of the Photos controller. It will also create a +upload_photos+ route helper.
+
+TIP: If you want to redefine the verbs accepted by one of the standard actions, you can do so by explicitly mapping that action. For example:
+
+<ruby>
+map.resources :photos, :new => { :new => :any }
+</ruby>
+
+This will allow the new action to be invoked by any request to +photos/new+, no matter what HTTP verb you use.
+
+h5. A Note of Caution
+
+If you find yourself adding many extra actions to a RESTful route, it's time to stop and ask yourself whether you're disguising the presence of another resource that would be better split off on its own. When the +:member+ and +:collection+ hashes become a dumping-ground, RESTful routes lose the advantage of easy readability that is one of their strongest points.
+
+h3. Regular Routes
+
+In addition to RESTful routing, Rails supports regular routing - a way to map URLs to controllers and actions. With regular routing, you don't get the masses of routes automatically generated by RESTful routing. Instead, you must set up each route within your application separately.
+
+While RESTful routing has become the Rails standard, there are still plenty of places where the simpler regular routing works fine. You can even mix the two styles within a single application. In general, you should prefer RESTful routing _when possible_, because it will make parts of your application easier to write. But there's no need to try to shoehorn every last piece of your application into a RESTful framework if that's not a good fit. 
+
+h4. Bound Parameters
+
+When you set up a regular route, you supply a series of symbols that Rails maps to parts of an incoming HTTP request. Two of these symbols are special: +:controller+ maps to the name of a controller in your application, and +:action+ maps to the name of an action within that controller. For example, consider one of the default Rails routes:
+
+<ruby>
+map.connect ':controller/:action/:id'
+</ruby>
+
+If an incoming request of +/photos/show/1+ is processed by this route (because it hasn't matched any previous route in the file), then the result will be to invoke the +show+ action of the +Photos+ controller, and to make the final parameter (1) available as +params[:id]+.
+
+h4. Wildcard Components
+
+You can set up as many wildcard symbols within a regular route as you like. Anything other than +:controller+ or +:action+ will be available to the matching action as part of the params hash. So, if you set up this route:
+
+<ruby>
+map.connect ':controller/:action/:id/:user_id'
+</ruby>
+
+An incoming URL of +/photos/show/1/2+ will be dispatched to the +show+ action of the +Photos+ controller. +params[:id]+ will be set to 1, and +params[:user_id]+ will be set to 2.
+
+h4. Static Text
+
+You can specify static text when creating a route. In this case, the static text is used only for matching the incoming requests:
+
+<ruby>
+map.connect ':controller/:action/:id/with_user/:user_id'
+</ruby>
+
+This route would respond to URLs such as +/photos/show/1/with_user/2+.
+
+h4. Querystring Parameters
+
+Rails routing automatically picks up querystring parameters and makes them available in the +params+ hash. For example, with this route:
+
+<ruby>
+map.connect ':controller/:action/:id'
+</ruby>
+
+An incoming URL of +/photos/show/1?user_id=2+ will be dispatched to the +show+ action of the +Photos+ controller. +params[:id]+ will be set to 1, and +params[:user_id]+ will be equal to 2.
+
+h4. Defining Defaults
+
+You do not need to explicitly use the +:controller+ and +:action+ symbols within a route. You can supply defaults for these two parameters in a hash:
+
+<ruby>
+map.connect 'photo/:id', :controller => 'photos', :action => 'show'
+</ruby>
+
+With this route, an incoming URL of +/photos/12+ would be dispatched to the +show+ action within the +Photos+ controller.
+
+You an also define other defaults in a route by supplying a hash for the +:defaults+ option. This even applies to parameters that are not explicitly defined elsewhere in the route. For example:
+
+<ruby>
+map.connect 'photo/:id', :controller => 'photos', :action => 'show', :defaults => { :format => 'jpg' }
+</ruby>
+
+With this route, an incoming URL of +photos/12+ would be dispatched to the +show+ action within the +Photos+ controller, and +params[:format]+ will be set to +jpg+.
+
+h4. Named Routes
+
+Regular routes need not use the +connect+ method. You can use any other name here to create a _named route_. For example,
+
+<ruby>
+map.logout '/logout', :controller => 'sessions', :action => 'destroy'
+</ruby>
+
+This will do two things. First, requests to +/logout+ will be sent to the +destroy+ method of the +Sessions+ controller. Second, Rails will maintain the +logout_path+ and +logout_url+ helpers for use within your code.
+
+h4. Route Requirements
+
+You can use the +:requirements+ option to enforce a format for any parameter in a route:
+
+<ruby>
+map.connect 'photo/:id', :controller => 'photos', :action => 'show',
+ :requirements => { :id => /[A-Z]\d{5}/ }
+</ruby>
+
+This route would respond to URLs such as +/photo/A12345+. You can more succinctly express the same route this way:
+
+<ruby>
+map.connect 'photo/:id', :controller => 'photos', :action => 'show',
+  :id => /[A-Z]\d{5}/ 
+</ruby>
+
+h4. Route Conditions
+
+Route conditions (introduced with the +:conditions+ option) are designed to implement restrictions on routes. Currently, the only supported restriction is +:method+:
+
+<ruby>
+map.connect 'photo/:id', :controller => 'photos', :action => 'show',
+ :conditions => { :method => :get }
+</ruby>
+
+As with conditions in RESTful routes, you can specify +:get+, +:post+, +:put+, +:delete+, or +:any+ for the acceptable method.
+
+h4. Route Globbing
+
+Route globbing is a way to specify that a particular parameter (which must be the last parameter in the route) should be matched to all the remaining parts of a route. For example
+
+<ruby>
+map.connect 'photo/*other', :controller => 'photos', :action => 'unknown',
+</ruby>
+
+This route would match +photo/12+ or +/photo/long/path/to/12+ equally well, creating an array of path segments as the value of +params[:other]+.
+
+h4. Route Options
+
+You can use +:with_options+ to simplify defining groups of similar routes:
+
+<ruby>
+map.with_options :controller => 'photo' do |photo|
+  photo.list '', :action => 'index'
+  photo.delete ':id/delete', :action => 'delete'
+  photo.edit ':id/edit', :action => 'edit'
+end
+</ruby>
+
+The importance of +map.with_options+ has declined with the introduction of RESTful routes.
+
+h3. Formats and respond_to
+
+There's one more way in which routing can do different things depending on differences in the incoming HTTP request: by issuing a response that corresponds to what the request specifies that it will accept. In Rails routing, you can control this with the special +:format+ parameter in the route.
+
+For instance, consider the second of the default routes in the boilerplate +routes.rb+ file:
+
+<ruby>
+map.connect ':controller/:action/:id.:format'
+</ruby>
+
+This route matches requests such as +/photo/edit/1.xml+ or +/photo/show/2.rss+. Within the appropriate action code, you can issue different responses depending on the requested format:
+
+<ruby>
+respond_to do |format|
+  format.html # return the default template for HTML
+  format.xml { render :xml => @photo.to_xml }
+end
+</ruby>
+
+h4. Specifying the Format with an HTTP Header
+
+If there is no +:format+ parameter in the route, Rails will automatically look at the HTTP Accept header to determine the desired format.
+
+h4. Recognized MIME types
+
+By default, Rails recognizes +html+, +text+, +json+, +csv+, +xml+, +rss+, +atom+, and +yaml+ as acceptable response types. If you need types beyond this, you can register them in your environment:
+
+<ruby>
+Mime::Type.register "image/jpg", :jpg
+</ruby>
+
+h3. The Default Routes
+
+When you create a new Rails application, +routes.rb+ is initialized with two default routes:
+
+<ruby>
+map.connect ':controller/:action/:id'
+map.connect ':controller/:action/:id.:format'
+</ruby>
+
+These routes provide reasonable defaults for many URLs, if you're not using RESTful routing.
+
+NOTE: The default routes will make every action of every controller in your application accessible to GET requests. If you've designed your application to make consistent use of RESTful and named routes, you should comment out the default routes to prevent access to your controllers through the wrong verbs. If you've had the default routes enabled during development, though, you need to be sure that you haven't unwittingly depended on them somewhere in your application - otherwise you may find mysterious failures when you disable them.
+
+h3. The Empty Route
+
+Don't confuse the default routes with the empty route. The empty route has one specific purpose: to route requests that come in to the root of the web site. For example, if your site is example.com, then requests to +http://example.com+ or +http://example.com/+ will be handled by the empty route.
+
+h4. Using map.root
+
+The preferred way to set up the empty route is with the +map.root+ command:
+
+<ruby>
+map.root :controller => "pages", :action => "main"
+</ruby>
+
+The use of the +root+ method tells Rails that this route applies to requests for the root of the site.
+
+For better readability, you can specify an already-created route in your call to +map.root+:
+
+<ruby>
+map.index :controller => "pages", :action => "main"
+map.root :index
+</ruby>
+
+Because of the top-down processing of the file, the named route must be specified _before_ the call to +map.root+.
+
+h4. Connecting the Empty String
+
+You can also specify an empty route by explicitly connecting the empty string:
+
+<ruby>
+map.connect '', :controller => "pages", :action => "main"
+</ruby>
+
+TIP: If the empty route does not seem to be working in your application, make sure that you have deleted the file +public/index.html+ from your Rails tree.
+
+h3. Inspecting and Testing Routes
+
+Routing in your application should not be a "black box" that you never open. Rails offers built-in tools for both inspecting and testing routes.
+
+h4. Seeing Existing Routes with rake
+
+If you want a complete list of all of the available routes in your application, run the +rake routes+ command. This will dump all of your routes to the console, in the same order that they appear in +routes.rb+. For each route, you'll see:
+
+* The route name (if any)
+* The HTTP verb used (if the route doesn't respond to all verbs)
+* The URL pattern
+* The routing parameters that will be generated by this URL
+
+For example, here's a small section of the +rake routes+ output for a RESTful route:
+
+<pre>
+          users GET  /users          {:controller=>"users", :action=>"index"}
+formatted_users GET  /users.:format  {:controller=>"users", :action=>"index"}
+                POST /users          {:controller=>"users", :action=>"create"}
+                POST /users.:format  {:controller=>"users", :action=>"create"}
+</pre>
+
+TIP: You'll find that the output from +rake routes+ is much more readable if you widen your terminal window until the output lines don't wrap.
+
+h4. Testing Routes
+
+Routes should be included in your testing strategy (just like the rest of your application). Rails offers three "built-in assertions":http://api.rubyonrails.com/classes/ActionController/Assertions/RoutingAssertions.html designed to make testing routes simpler:
+
+* +assert_generates+
+* +assert_recognizes+
+* +assert_routing+
+
+h5. The +assert_generates+ Assertion
+
+Use +assert_generates+ to assert that a particular set of options generate a particular path. You can use this with default routes or custom routes
+
+<ruby>
+assert_generates "/photos/1", { :controller => "photos", :action => "show", :id => "1" }
+assert_generates "/about", :controller => "pages", :action => "about"
+</ruby>
+
+h5. The +assert_recognizes+ Assertion
+
+The +assert_recognizes+ assertion is the inverse of +assert_generates+. It asserts that Rails recognizes the given path and routes it to a particular spot in your application.
+
+<ruby>
+assert_recognizes { :controller => "photos", :action => "show", :id => "1" }, "/photos/1"
+</ruby>
+
+You can supply a +:method+ argument to specify the HTTP verb:
+
+<ruby>
+assert_recognizes { :controller => "photos", :action => "create" }, { :path => "photos", :method => :post }
+</ruby>
+
+You can also use the RESTful helpers to test recognition of a RESTful route:
+
+<ruby>
+assert_recognizes new_photo_url, { :path => "photos", :method => :post }
+</ruby>
+
+h5. The +assert_routing+ Assertion
+
+The +assert_routing+ assertion checks the route both ways: it tests that the path generates the options, and that the options generate the path. Thus, it combines the functions of +assert_generates+ and +assert_recognizes+.
+
+<ruby>
+assert_routing { :path => "photos", :method => :post }, { :controller => "photos", :action => "create" }
+</ruby>
+
+h3. Changelog
+
+"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/3
+
+* October 4, 2008: Added additional detail on specifying verbs for resource member/collection routes , by "Mike Gunderloy":credits.html#mgunderloy
+* September 23, 2008: Added section on namespaced controllers and routing, by "Mike Gunderloy":credits.html#mgunderloy
+* September 10, 2008: initial version by "Mike Gunderloy":credits.html#mgunderloy

@@ -1,0 +1,937 @@
+h2. Um Guia para Testar Aplicações Rails
+
+Este guia abrange os mecanismos internos oferecidos pelo Rails para testar a sua aplicação. Ao ler este guia, você será capaz de:
+
+* Entender a terminologia de testes do Rails
+* Escrever testes unitários, funcionais e de integração para a sua aplicação
+* Identificar outros métodos de testes e plugins
+
+Este guia não vai te ensinar a escrever uma aplicação Rails; ele parte do princípio de que você está familiarizado com o "jeito Rails" de se fazer as coisas.
+
+endprologue.
+
+h3. Por que escrever testes para a sua aplicação Rails?
+
+* Rails facilita muito este trabalho. Ele começa produzindo o código-base de teste em segundo plano enquanto você está criando os seus models e controllers.
+* Rodando os seus testes você é capaz de garantir que o seu código atende às funcionalidades desejadas mesmo depois de algumas importantes refatorações.
+* Eles também podem simular requisições para que você teste as respostas da sua aplicação sem ter que fazer isso pelo navegador.
+
+h3. Introdução aos Testes
+
+O suporte a testes está presente no Rails desde o seu início. Isso não foi algo do tipo "opa! vamos fazer o suporte a testes porque isso é uma novidade legal".  Quase toda aplicação Rails interage muito com uma base de dados - e, como resultado, os seus testes também  precisarão de uma base de dados para interagir. Para escrever testes eficientes, você vai precisar entender como configurar e popular esta base com amostras de dados.
+
+h4. Os 3 Ambientes
+
+Toda aplicação rails que você constrói tem 3 ambientes: um para produção, um para desenvolvimento e um para testes.
+
+Um lugar em que você vai encontrar esta distinção é no arquivo +config/database.yml+. Este arquivo de configuração YAML tem 3 diferentes seções definindo 3 configurações únicas de bases de dados:
+
+* production (produção)
+* development (desenvolvimento)
+* test (testes)
+
+Isto permite que você configure e interaja com os dados de testes sem qualquer perigo de que os seus testes alterem dados do seu ambiente de produção.
+
+Por exemplo, suponha que você precise testar o seu novo método +apague_este_usuario_e_tudo_associado_a_ele+. Você não gostaria de executá-lo num ambiente em que não faça diferença destruir ou não dados?
+
+Quando você acaba destruindo a sua base de teste (e isto vai acontecer), você pode reconstruí-la do zero de acordo com as especificações definidas nela mesma. Você pode fazer isso executando +rake db:test:prepare+.
+
+h4. Rails preparado para Testes desde o Início
+
+O Rails gera uma pasta +test+ assim que você cria uma aplicação usando o comando +rails <em>nome_do_projeto</em>+. Se você listar o conteúdo desta pasta você verá
+
+<shell>
+$ ls -F test/
+
+fixtures/       functional/     integration/    test_helper.rb  unit/
+</shell>
+
+A pasta +unit+ é encarregada de armazenar testes para os seus models, a pasta +functional+ armazena testes para os seus controllers e a pasta +integration+ deve guardar testes que envolvam interações entre seus controllers. Fixtures são uma forma de organizar os dados de teste; elas ficam na pasta +fixtures+. O arquivo +test_helper.rb+ guarda as configurações padrão para os seus testes.
+
+h4. Os Segredos das Fixtures
+
+Para ter bons testes, você precisará configurar dados de testes. No Rails, isto pode ser feito definindo e ajustando fixtures.
+
+h5. O Que São Fixtures?
+
+_Fixtures_ é um nome bonito para amostra de dados. As fixtures permitem que você configure a sua base de dados de teste com informações pré-definidas antes de executar os seus testes. São independentes de banco de dados e assumem um de dois formatos: *YAML* ou *CSV*. Neste guia nós vamos usar o *YAML*, que é o formato preferido.
+
+Você encontrará as fixtures no diretório +test/fixtures+. Quando você executa +script/generate model+ para criar um novo model, esqueletos de fixtures serão criados e colocados neste diretório automaticamente.
+
+h5. YAML
+
+Fixtures do tipo YAML são uma forma muito amigável de descrever as suas amostras de dados. Estes tipos de fixtures têm a extensão *.yml* (como em +users.yml+).
+
+Aqui está um exemplo de um arquivo de fixture YAML:
+
+<ruby>
+# veja!  Eu sou um comentário YAML!
+david:
+ name: David Heinemeier Hansson
+ birthday: 1979-10-15
+ profession: Systems development
+
+steve:
+ name: Steve Ross Kellock
+ birthday: 1974-09-27
+ profession: guy with keyboard
+</ruby>
+
+Cada fixture tem um nome seguido por uma lista de pares chave/valor desejados. Registros são separados por um espaço em branco. Você pode colocar comentários em uma fixture digitando o caracter # na primeira coluna.
+
+h5. ERb Dando Uma Força
+
+ERb permite que você introduza código ruby em templates. Tanto as fixtures de formato YAML como CSV são pré-processadas com ERb quando carregadas. Com isso, é possível utilizar Ruby para ajudar a gerar dados para seus testes.
+
+<ruby>
+<% earth_size = 20 -%>
+mercury:
+  size: <%= earth_size / 50 %>
+  brightest_on: <%= 113.days.ago.to_s(:db) %>
+
+venus:
+  size: <%= earth_size / 2 %>
+  brightest_on: <%= 67.days.ago.to_s(:db) %>
+
+mars:
+  size: <%= earth_size - 69 %>
+  brightest_on: <%= 13.days.from_now.to_s(:db) %>
+</ruby>
+
+Qualquer coisa escrita ente a tag
+
+<ruby>
+<% %>
+</ruby>
+
+é considerada código Ruby. Quando esta fixture é carregada, o atributo +size+ dos três registros vai receber os valores 20/50, 20/2 e 20-69, respectivamente. O atributo +brightest_on+ também será calculado e formatado pelo Rails para ser compatível com a sua base de dados.
+
+h5. Fixtures em Ação
+
+Por padrão, o Rails carrega automaticamente para os testes unitários e funcionais todas as fixtures existentes na pasta 'test/fixtures'. O carregamento envolve três passos:
+
+ * Remoção de qualquer dado pré-existente na tabela correspondente à fixture
+ * Carregamento dos dados da fixture na tabela
+ * Cópia dos dados da fixture para uma variável, para o caso de você querer acessá-los diretamente
+
+h5. Hashes Com Poderes Especiais
+
+As fixtures são basicamente objetos Hash. Como mencionado no tópico #3 acima, é possível acessar o objeto hash diretamente porque ele é automaticamente atribuído como uma variável local do caso de teste. Por exemplo:
+
+<ruby>
+# isso retornará a Hash para a fixture de nome david
+users(:david)
+
+# isso retornará a propriedade id de david
+users(:david).id
+</ruby>
+
+As fixtures também podem tomar a forma da sua classe original. Desta forma, você poderá acessar os métodos disponíveis somente para aquela classe.
+
+<ruby>
+# usando o método find, nós temos o david como um objeto do tipo User
+david = users(:david).find
+
+# e agora nós temos acesso aos métodos disponíveis somente na classe User
+email(david.girlfriend.email, david.location_tonight)
+</ruby>
+
+h3. Testes Unitários para os seus Models
+
+No Rails, você testa os seus models escrevendo testes unitários.
+
+Para este guia, nós vamos usar o recurso _scaffolding_ do Rails. Ele vai gerar o model, uma migration, controller e views para o novo recurso numa única operação. Ele também vai gerar uma suíte de testes completa seguindo as melhores práticas do Rails. Vou usar exemplos deste código gerado e vou complementando-o com exemplos adicionais quando necessário.
+
+NOTE: Para mais informações a respeito do Rails _scaffolding_, consulte o "Começando com Rails":comecando_com_rails.html
+
+Quando você usa +script/generate scaffold+ para um recurso, o Rails cria,  dentre outras coisas, um esqueleto para o teste do model na pasta +test/unit+:
+
+<pre>
+$ script/generate scaffold post title:string body:text
+...
+create  app/models/post.rb
+create  test/unit/post_test.rb
+create  test/fixtures/posts.yml
+...
+</pre>
+
+O esqueleto padrão de testes em +test/unit/post_test.rb+ se parece com isso:
+
+<ruby>
+require 'test_helper'
+
+class PostTest < ActiveSupport::TestCase
+  # Troque isso pelo seu teste real
+  def test_truth
+    assert true
+  end
+end
+</ruby>
+
+Uma análise de cada linha deste arquivo vai lhe orientar em relação ao código de teste do Rails e à sua terminologia.
+
+<ruby>
+require 'test_helper'
+</ruby>
+
+O arquivo +test_helper.rb+ especifica a configuração padrão para rodar nossos testes. Ele é incluído em todos os testes, então todos os métodos existentes neste arquivo estão disponíveis para todos os seus testes.
+
+<ruby>
+class PostTest < ActiveSupport::TestCase
+</ruby>
+
+A classe +PostTest+ define um _test case_ (caso de teste) porque ela herda de +ActiveSupport::TestCase+. +PostTest+ tem, portanto, todos os métodos disponíveis em +ActiveSupport::TestCase+. Veremos estes métodos um pouco mais a frente neste guia.
+
+<ruby>
+def test_truth
+</ruby>
+
+Qualquer método definido em um test case que começa com +test+ (case sensitive) é considerado um teste. +test_password+, +test_valid_password+ e +testValidPassword+ são nomes de testes válidos e são executados automaticamente quando o test case é executado.
+
+<ruby>
+assert true
+</ruby>
+
+Esta linha de código é chamada de _assertion_. Uma assertion (ou asserção em português) é uma linha de código que avalia um objeto (ou uma expressão) e espera alguns resultados. Por exemplo, uma assertion pode validar coisas do tipo:
+
+* este valor é = a outro valor?  
+* este objeto é nulo?  
+* esta linha de código lança uma exceção?
+* a senha do usuário tem mais do que 5 caracteres? 
+
+Cada teste tem uma ou mais assertions. Somente quando todas as assertions são válidas o teste passa.
+
+h4. Preparando a sua Aplicação para ser Testada
+
+Antes de poder executar os testes, você precisa certificar-se de que a estrutura da sua base de testes está atualizada. Para isso, você pode usar os seguintes comandos rake:
+
+<shell>
+$ rake db:migrate
+...
+$ rake db:test:load
+</shell>
+
+O comando +rake db:migrate+ acima executa todas as migrations que estiverem pendentes no ambiente _development_ (ambiente de desenvolvimento) e atualiza o seu +db/schema.rb+. A task +rake db:test:load+ recria a base de testes a partir do db/schema.rb atual. Nas próximas vezes, é uma boa prática executar primeiro +db:test:prepare+ para verificar se há migrations pendentes e visualizar eventuais alertas apropriadamente.
+
+NOTE: +db:test:prepare+ irá falhar se o arquivo db/schema.rb não existir.
+
+h5. Rake Tasks para Preparar sua Aplicação para Testes
+
+|_.Tasks                        |_. Descrição|
+|+rake db:test:clone+           | Recria a base de teste a partir do schema atual do banco de dados|
+|+rake db:test:clone_structure+ | Recria as bases de teste a partir da estrutura de desenvolvimento|
+|+rake db:test:load+            | Recria a base de teste a partir do +schema.rb+ atual|
+|+rake db:test:prepare+         | Verifica se há migrations pendentes e carrega o schema de teste|
+|+rake db:test:purge+           | Limpa o banco de dados de teste.|
+
+TIP: Você pode consultar todas estas tasks rake e suas descrições executando +rake --tasks --describe+
+
+h4. Executando os Testes
+
+Para executar um teste basta invocar o arquivo contendo os testes pelo Ruby:
+
+<shel>
+</pre>
+$ cd test
+$ ruby unit/post_test.rb 
+
+Loaded suite unit/post_test
+Started
+.
+Finished in 0.023513 seconds.
+
+1 tests, 1 assertions, 0 failures, 0 errors
+</shell>
+
+Isto irá executar todos os métodos de teste do arquivo.
+
+Você também pode executar um método de teste específico usando a opção +-n+ com o +nome do método de teste+.
+
+<shell>
+$ ruby unit/post_test.rb -n test_truth
+
+Loaded suite unit/post_test
+Started
+.
+Finished in 0.023513 seconds.
+
+1 tests, 1 assertions, 0 failures, 0 errors
+</shell>
+
+O +.+ (ponto) acima indica um teste que passou. Quando um teste falhar, você verá um +F+; quando um teste lançar um erro, você verá no um +E+ no seu lugar. A última linha da saída é o sumário.
+
+Para ver como um teste falho é reportado, você pode adicionar um teste falhando ao +post_test.rb+.
+
+<ruby>
+def test_should_not_save_post_without_title
+  post = Post.new
+  assert !post.save
+end
+</ruby>
+
+Vamos executar este novo teste.
+
+<shell>
+$ ruby unit/post_test.rb -n test_should_not_save_post_without_title
+Loaded suite unit/post_test
+Started
+F
+Finished in 0.197094 seconds.
+
+  1) Failure:
+test_should_not_save_post_without_title(PostTest)
+    [unit/post_test.rb:11:in `test_should_not_save_post_without_title'
+     /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib/active_support/testing/setup_and_teardown.rb:33:in `__send__'
+     /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib/active_support/testing/setup_and_teardown.rb:33:in `run']:
+<false> is not true.
+
+1 tests, 1 assertions, 1 failures, 0 errors
+</shell>
+
+O +F+ na saída indica uma falha. Você pode ver o trace abaixo do +1)+ com o nome do teste que falhou. As próximas linhas contém o stack trace seguido por uma mensagem que indica o valor real (aquele produzido pelo seu programa) e o valor esperado pela assertion. As mensagens padrão da assertion nos dão somente a informação necessária para localizar o erro. Para tornar a mensagem de falha mais legível, toda assertion tem um parâmetro de mensagem opcional, como mostrado aqui:
+
+<ruby>
+def test_should_not_save_post_without_title
+  post = Post.new
+  assert !post.save, "Post salvo sem um título"
+end
+</ruby>
+
+Ao executar este teste, é exibida uma mensagem mais amigável:
+
+<shell>
+$ ruby unit/post_test.rb -n test_should_not_save_post_without_title
+Loaded suite unit/post_test
+Started
+F
+Finished in 0.198093 seconds.
+
+  1) Failure:
+test_should_not_save_post_without_title(PostTest)
+    [unit/post_test.rb:11:in `test_should_not_save_post_without_title'
+     /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib/active_support/testing/setup_and_teardown.rb:33:in `__send__'
+     /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib/active_support/testing/setup_and_teardown.rb:33:in `run']:
+Post salvo sem um título.
+<false> is not true.
+
+1 tests, 1 assertions, 1 failures, 0 errors
+</shell>
+
+Agora, para fazer com que este teste passe, podemos adicionar uma validação no model para o campo _title_.
+
+<ruby>
+class Post < ActiveRecord::Base
+  validates_presence_of :title
+end
+</ruby>
+
+Agora o teste deve passar. Vamos verificar executando-o novamente:
+
+<shell>
+$ ruby unit/post_test.rb -n test_should_not_save_post_without_title
+Loaded suite unit/post_test
+Started
+.
+Finished in 0.193608 seconds.
+
+1 tests, 1 assertions, 0 failures, 0 errors
+</shell>
+
+Se você reparar, primeiramente nós escrevemos um teste que falharia para uma funcionalidade desejada, então nós escrevemos um código que adiciona a funcionalidade e, finalmente, garantimos que nosso teste passaria. Este modo de desenvolver software é conhecido como _Test-Driven Development_ (TDD).
+
+TIP: Muitos desenvolvedores Rails praticam _Test-Driven Development_ (TDD). Este é um modo excelente de construir uma suíte de testes que exercita todas as partes da sua aplicação. TDD foge do escopo deste guia, mas um lugar para se começar é com "15 TDD steps to create a Rails application":http://andrzejonsoftware.blogspot.com/2007/05/15-tdd-steps-to-create-rails.html.
+
+Para ver como um erro é reportado, aqui está um teste contendo um erro:
+
+<ruby>
+def test_should_report_error
+  # some_undefined_variable is not defined elsewhere in the test case
+  some_undefined_variable
+  assert true
+end
+</ruby>
+
+Agora você pode ver muito mais informações no console ao rodar os testes:
+
+<shell>
+$ ruby unit/post_test.rb -n test_should_report_error
+Loaded suite unit/post_test
+Started
+E
+Finished in 0.195757 seconds.
+
+  1) Error:
+test_should_report_error(PostTest):
+NameError: undefined local variable or method `some_undefined_variable' for #<PostTest:0x2cc9de8>
+    /opt/local/lib/ruby/gems/1.8/gems/actionpack-2.1.1/lib/action_controller/test_process.rb:467:in `method_missing'
+    unit/post_test.rb:16:in `test_should_report_error'
+    /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib/active_support/testing/setup_and_teardown.rb:33:in `__send__'
+    /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.1/lib/active_support/testing/setup_and_teardown.rb:33:in `run'
+
+1 tests, 0 assertions, 0 failures, 1 errors
+</shell>
+
+Repare no 'E' da saída. Ele indica um teste com erro.
+
+NOTE: A execução de cada teste é interrompida assim que qualquer erro ou falha nas assertions seja encontrada, e a suíte de testes continua sendo executada no próximo método. Todos os testes são executados em ordem alfabética.
+
+h4. O Que Incluir Nos Seus Testes Unitários
+
+Idealmente, você deveria escrever testes para tudo que possa falhar na sua aplicação. É uma boa prática ter pelo menos um teste para cada validação e ao menos um teste para cada método no seu model.
+
+h4. Assertions Disponíveis
+
+Até agora, você teve somente uma idéia de algumas assertions disponíveis. Assertions são as 'formiguinhas' dos testes. Elas são quem realmente realizam as checagens e garantem que as coisas estão correndo como o planejado.
+
+Há muitos tipos de assertions diferentes que você pode usar. Aqui está uma listagem completa das assertions existentes na +test/unit+, a biblioteca de testes usada pelo Rails. O parâmetro +[msg]+ é uma mensagem de texto opcional que você pode usar para que as mensagens de falha dos testes sejam mais claras. Não é um parâmetro obrigatório.
+
+|_.Assertion                                                     |_.Objetivo|
+|+assert( boolean, [msg] )+                                      |Verifica se o objeto/expressão é true.|
+|+assert_equal( obj1, obj2, [msg] )+                             |Verifica se +obj1 == obj2+ é true.|
+|+assert_not_equal( obj1, obj2, [msg] )+                         |Verifica se +obj1 == obj2+ é false.|
+|+assert_same( obj1, obj2, [msg] )+			                      	 |Verifica se +obj1.equal?(obj2)+ é true.|
+|+assert_not_same( obj1, obj2, [msg] )+                          |Verifica se +obj1.equal?(obj2)+ é false.|
+|+assert_nil( obj, [msg] )+                                      |Verifica se +obj.nil?+ é true.|
+|+assert_not_nil( obj, [msg] )+                                  |Verifica se +obj.nil?+ é false.|
+|+assert_match( regexp, string, [msg] )+                         |Verifica se a string atende à expressão regular.|
+|+assert_no_match( regexp, string, [msg] )+                      |Verifica se a string não atende à expressão regular.|
+|+assert_in_delta( expecting, actual, delta, [msg] )+            |Verifica se os números +expecting+ e +actual+ estão dentro do +delta+.|
+|+assert_throws( symbol, [msg] ) { block }+                      |Verifica se o bloco lança o símbolo.|
+|+assert_raises( exception1, exception2, ... ) { block }+        |Verifica se o bloco lança uma das exceções.|
+|+assert_nothing_raised( exception1, exception2, ... ) { block }+  |Verifica se o bloco não lança nenhuma das exceções.|
+|+assert_instance_of( class, obj, [msg] )+                         |Verifica se +obj+ é do mesmo tipo de +class+.|
+|+assert_kind_of( class, obj, [msg] )+                             |Verifica se +obj+ é ou estende de +class+.|
+|+assert_respond_to( obj, symbol, [msg] )+                         |Verifica se +obj+ tem um método chamado +symbol+.|
+|+assert_operator( obj1, operator, obj2, [msg] )+                  |Verifica se +obj1.operator(obj2)+ é true.|
+|+assert_send( array, [msg] )+                                     |Verifica se executar o método listado em +array[1]+ no objeto +array[0]+ com os parâmetros de +array[2 e acima]+ é true. Esta assertion é estranha, não?|
+|+flunk( [msg] )+                                                  |Falha. É útil para marcar um teste que ainda não está terminado.|
+
+Por conta da natureza modular do framework de teste, é possível criar as suas próprias assertions. De fato, é exatamente o que o Rails faz. Ele inclui algumas assertions especializadas para facilitar o seu trabalho.
+
+NOTE: Criar as suas próprias assertions é um tópico avançado que nós não vamos cobrir neste tutorial.
+
+h4. Assertions Específicas do Rails
+
+Rails adiciona algumas assertions ao framework +test/unit+:
+
+|_.Assertion                                           |_.Objetivo|
+|+assert_valid(record)+                                |Verifica se o registro passado é valido segundo os padrões do Active Record e retorna mensagens de erro caso não seja.|
+|+assert_difference(expressions, difference = 1, message = nil) {...}+            |Testa a diferença numérica do valor de retorno de uma expressão, produzido pela execução do bloco.|
+|+assert_no_difference(expressions, message = nil, &block)+                          |Verifica se o resultado numérico da execução de uma expressão não é alterado antes e depois da invocação do bloco.|
+|+assert_recognizes(expected_options, path, extras={}, message=nil)+                 |Verifica se o roteamento do path passado como parâmetro foi tratado corretamente e que as opções (o hash expected_options de entrada) correspondem ao path. Basicamente, garante que o Rails reconhece a rota dada por expected_options.|
+|+assert_generates(expected_path, options, defaults={}, extras = {}, message=nil)+   |Verifica se as options informadas podem ser usadas para gerar o path informado. Isto é o inverso do assert_recognizes. Os outros parâmetros são usados para dizer ao request os nomes e valores de parâmetros adicionais que deveriam estar em uma query string. O parâmetro message permite que você especifique uma mensagem de erro customizada para assertions que falhem.|
+|+assert_response(type, message = nil)+                                              |Verifica se o response tem um código de status específico. Você pode especificar +:success+ para indicar 200, +:redirect+ para indicar 300-399, +:missing+ para indicar 404, ou +:error+ para a faixa 500-599.|
+|+assert_redirected_to(options = {}, message=nil)+                                   |Verifica se as opções de redirecionamento passadas como parâmetro correspondem àquelas de redirecionamento chamadas na última ação. Esta correspondência pode ser parcial, de modo que +assert_redirected_to(:controller => "weblog")+ também vai atender ao redirecionamento de +redirect_to(:controller => "weblog", :action => "show")+.|
+|+assert_template(expected = nil, message=nil)+                                      |Verifica se o request foi renderizado com o arquivo de template apropriado.|
+
+Você verá o uso de algumas dessas assertions no próximo capítulo.
+
+h3. Testes Funcionais Para Os Seus Controllers
+
+Em Rails, os testes de várias actions de um único controller são chamados de testes funcionais. Controllers tratam as requisições web para a sua aplicação e eventualmente respondem com uma view renderizada.
+
+h4. O que incluir nos seus Testes Funcionais
+
+Você deve testar coisas como:
+
+* a requisição foi bem sucedida?
+* o usuário foi redirecionado para página correta?
+* o usuário foi autenticado com sucesso?
+* o objeto correto foi armazenado no response template?
+* a mensagem apropriada foi exibida ao usuário na view?
+
+Como nós usamos o Rails scaffold generator para nosso +Post+, ele já criou o código do controller e os testes funcionais. Você pode dar uma olhada no arquivo +posts_controller_test.rb+ do diretório +test/functional+.
+
+Deixe-me mostrar um teste, +test_should_get_index+ do arquivo +posts_controller_test.rb+.
+
+<ruby>
+def test_should_get_index
+  get :index
+  assert_response :success
+  assert_not_nil assigns(:posts)
+end
+</ruby>
+
+No teste +test_should_get_index+, o Rails simula um request na action chamada index, certificando-se de que o request foi bem sucedido e também garantindo que ele associou uma instância +posts+ válida.
+
+O método +get+ faz o request e popula os resultados no response. Ele aceita 4 argumentos:
+
+* A action do controller para o qual você está disparando o request. Pode ser na forma de uma string ou de um símbolo.
+* Um hash opcional de parâmetros do request para passar para a action (ex. parâmetros query string ou variáveis post).
+* Um hash opcional de variáveis de sessão para passar ao request.
+* Um hash opcional de valores flash.
+
+Exemplo: Chamando a action +:show+, passando um +id+ 12 como +params+ e setando um +user_id+ 5 na sessão:
+
+<ruby>
+get(:show, {'id' => "12"}, {'user_id' => 5})
+</ruby>
+
+Outro exemplo: Chamando a action +:view+, passando um +id+ 12 como +params+, desta vez sem sessão, mas com uma mensagem flash.
+
+<ruby>
+get(:view, {'id' => '12'}, nil, {'message' => 'booya!'})
+</ruby>
+
+NOTE: Se você tentar executar o teste +test_should_create_post+ pelo +posts_controller_test.rb+ ele vai falhar por conta do novo nível de validação adicionado ao model.
+
+Vamos modificar o teste +test_should_create_post+ em +posts_controller_test.rb+ para que nossos testes passem:
+
+<ruby>
+def test_should_create_post
+  assert_difference('Post.count') do
+    post :create, :post => { :title => 'Um título'}
+  end
+
+  assert_redirected_to post_path(assigns(:post))
+end
+</ruby>
+
+Agora você pode tentar executar todos os testes e eles devem passar.
+
+h4. Tipos de Requisições Disponíveis para Testes Funcionais
+
+Se você estiver familiarizado com o protocolo HTTP, você saberá que +get+ é um tipo de requisição. Há 5 tipos de requisições suportadas nos testes funcionais do Rails:
+
+* +get+
+* +post+
+* +put+
+* +head+
+* +delete+
+
+Todos estes tipos de requisições são métodos que você pode usar, entretanto, você provavelmente vai acabar usando os dois primeiros com mais freqüência.
+
+h4. Os 4 Hashes do Apocalipse
+
+Depois que uma requisição tiver sido realizada e processada usando um dos 5 métodos (+get+, +post+, etc.), você terá 4 objetos Hash prontos para usar:
+
+* +assigns+ - Qualquer objeto que estiver armazenado como variável de instância em actions para uso nas views.
+* +cookies+ - Qualquer cookie que tiver sido atribuído.
+* +flash+ - Qualquer objeto que esteja na flash.
+* +session+ - Qualquer objeto que esteja em variáveis de sessão.
+
+Como ocorre com objetos Hash convencionais, você pode acessar os valores referenciando as chaves por string. Você pode também referenciá-las pelo nome do símbolo, com exceção de +assigns+. Por exemplo:
+
+<ruby>
+  flash["gordon"]               flash[:gordon]
+  session["shmession"]          session[:shmession]
+  cookies["are_good_for_u"]     cookies[:are_good_for_u]
+
+# Por que você não pode usar assigns[:something] por razões históricas:
+  assigns["something"]          assigns(:something)
+</ruby>
+
+h4. Variáveis de Instância Disponíveis
+
+Você também tem acesso a três variáveis de instância nos seus testes funcionais:
+
+* +@controller+ - O controller processando a requisição
+* +@request+ - A requisição
+* +@response+ - A resposta
+
+h4. Um Exemplo Mais Completo de Teste Funcional
+
+Aqui está outro exemplo que usa +flash+, +assert_redirected_to+, e +assert_difference+:
+
+<ruby>
+def test_should_create_post
+  assert_difference('Post.count') do
+    post :create, :post => { :title => 'Oi', :body => 'Este é o meu primeiro post.'}
+  end
+  assert_redirected_to post_path(assigns(:post))
+  assert_equal 'Post criado com sucesso.', flash[:notice]
+end
+</ruby>
+
+h4. Testando Views
+
+Testar a resposta da sua requisição validando a presença de elementos HTML e o seu conteúdo é um modo útil de testar as views da sua aplicação. A assertion +assert_select+ permite que você faça isso usando uma sintaxe simples e poderosa.
+
+NOTE: Você pode encontrar referências a +assert_tag+ em outra documentação, mas agora ela está desatualizada pois foi substituída pela +assert_select+.
+
+Há duas formas de se usar a +assert_select+:
+
++assert_select(selector, [equality], [message])`+ garante que a condição de igualdade é atingida nos elementos capturados pelo selector. O selector pode ser um seletor CSS (String), uma expressão com valores para substituição, ou um objeto +HTML::Selector+.
+
++assert_select(element, selector, [equality], [message])+ garante que a condição de igualdade é atendida para os elementos capturados pelo selector começando pelo _element_ (instância de +HTML::Node+) e seus descendentes.
+
+Por exemplo, você poderia verificar o conteúdo no elemento title do seu response com:
+
+<ruby>
+assert_select 'title', "Bem vindo ao Guia de Testes do Rails"
+</ruby>
+
+Você também pode usar blocos +assert_select+ aninhados. Neste caso, o +assert_select+ interno irá executar a asserção em cada elemento capturado pelo bloco +assert_select+ externo:
+
+<ruby>
+assert_select 'ul.navigation' do
+  assert_select 'li.menu_item'
+end
+</ruby>
+
+A asserção +assert_select+ é muito poderosa. Para um uso mais avançado, visite a sua "documentação":http://api.rubyonrails.com/classes/ActionController/Assertions/SelectorAssertions.html#M000749.
+
+h5. Assertions Adicionais Baseadas na View
+
+Há outras assertions que são mais usadas para testar views: 
+
+|_.Assertion|_.Objetivo|
+|+assert_select_email+|Permite que você faça assertions no corpo de um e-mail.|
+|+assert_select_rjs+|Permite que você faça assertions em um response RJS. +assert_select_rjs+ tem variações que permitem a você apontar para o elemento atualizado ou até mesmo realizar uma operação em um elemento.|
+|+assert_select_encoded+|Permite que você faça assertions em um HTML codificado. Ele faz isso descodificando os conteúdos de cada elemento e chamando o bloco com todos os elementos descodificados.|
+|+css_select(selector)+  ou +css_select(element, selector)+|Retorna um array de todos os elementos capturados pelo _selector_. Na segunda variação, ele primeiro encontra o _element_ base e tenta casar a expressão do _selector_ com qualquer um dos seus filhos. Se não existirem correspondências, as duas variantes retornam um array vazio.|
+
+Aqui está um exemplo de uso do +assert_select_email+:
+
+<ruby>
+assert_select_email do
+  assert_select 'small', 'Por favor, clique no link "Desinscrever-se" caso queira sair da lista.'
+end
+</ruby>
+
+h3. Testes de Integração
+
+Testes de integração são usados para testar a interação entre qualquer número de controllers. Eles são geralmente usados para testar importantes fluxos de trabalho da sua aplicação.
+
+Diferentemente dos testes Unitários e Funcionais, os testes de integração devem ser explicitamente criados dentro da pasta 'test/integration' na sua aplicação. O Rails provê um gerador para criar um esqueleto do teste de integração.
+
+<shell>
+$ script/generate integration_test user_flows 
+      exists  test/integration/
+      create  test/integration/user_flows_test.rb
+</shell>
+
+Um teste de integração recém-criado se parece com isso:
+
+<ruby>
+require 'test_helper'
+
+class UserFlowsTest < ActionController::IntegrationTest
+  # fixtures :your, :models
+
+  # Substitua isso pelos seus testes reais.
+  def test_truth
+    assert true
+  end
+end
+</ruby>
+
+Os testes de integração herdam de +ActionController::IntegrationTest+. Isto faz com que helpers adicionais estejam disponíveis para serem usados nos seus testes. Você também precisa incluir explicitamente as fixtures para que elas estejam disponíveis para o teste.
+
+h4. Helpers Disponíveis para testes de Integração
+
+Adicionalmente aos helpers padrão, há alguns outros disponíveis para os testes de integração:
+
+|_.Helper                |_.Objetivo|
+|+https?+|Retorna +true+ se a sessão está simulando uma requisição segura HTTPS.|
+|+https!+|Permite que você simule uma requisição segura HTTPS.|
+|+host!+|Permite que você configure o nome  do host para usar na próxima requisição.|
+|+redirect?+|Retorna +true+ se a última requisição foi um redirecionamento.|
+|+follow_redirect!+|Segue um simples redirect response.|
+|+request_via_redirect(http_method, path, [parameters], [headers])+|Permite que você faça uma requisição HTTP e siga qualquer redirecionamento subseqüente.|
+|+post_via_redirect(path, [parameters], [headers])+|Permite que você faça uma requisição HTTP POST e siga qualquer redirecionamento subseqüente.|
+|+get_via_redirect(path, [parameters], [headers])+|Permite que você faça uma requisição HTTP GET e siga qualquer redirecionamento subseqüente.|
+|+put_via_redirect(path, [parameters], [headers])+|Permite que você faça uma requisição HTTP PUT e siga qualquer redirecionamento subseqüente.|
+|+delete_via_redirect(path, [parameters], [headers])+|Permite que você faça uma requisição HTTP DELETE e siga qualquer redirecionamento subseqüente.|
+|+open_session+|Abre uma nova instância de sessão.|
+
+h4. Exemplos de Testes de Integração  
+
+Um simples teste de integração que exercita múltiplos controllers:
+
+<ruby>
+require 'test_helper'
+
+class UserFlowsTest < ActionController::IntegrationTest
+  fixtures :users
+
+  def test_login_and_browse_site
+    # login via https
+    https!
+    get "/login"
+    assert_response :success
+    
+    post_via_redirect "/login", :username => users(:avs).username, :password => users(:avs).password
+    assert_equal '/welcome', path
+    assert_equal 'Bem vindo avs!', flash[:notice]
+    
+    https!(false)
+    get "/posts/all"
+    assert_response :success
+    assert assigns(:products)
+  end
+end
+</ruby>
+
+Como você pode ver, o teste de integração envolve múltiplos controllers e exercita toda a pilha desde a base de dados até o envio. Além disto, você pode ter múltiplas sessões abertas simultâneamente em um teste e estender estas instâncias com métodos de asserção para criar uma poderosa DSL (linguagem específica de domínio) de testes exclusiva para a sua aplicação. 
+
+Aqui está um exemplo de múltiplas sessões e DSL customizada em um teste de integração
+
+<ruby>
+require 'test_helper'
+
+class UserFlowsTest < ActionController::IntegrationTest
+  fixtures :users
+
+  def test_login_and_browse_site
+    
+    # Usuário avs se loga
+    avs = login(:avs)
+    # User guest se loga
+    guest = login(:guest)
+    
+    # Ambos estão agora disponíveis em sessões diferentes
+    assert_equal 'Bem vindo avs!', avs.flash[:notice]
+    assert_equal 'Bem vindo guest!', guest.flash[:notice]
+    
+    # Usuário avs pode navegar pelo site
+    avs.browses_site
+    # Usuário guest também pode navegar pelo site
+    guest.browses_site
+    
+    # Continua com outras assertions
+  end
+  
+  private
+  
+    module CustomDsl
+      def browses_site
+        get "/products/all"
+        assert_response :success
+        assert assigns(:products)
+      end
+    end
+    
+    def login(user)
+      open_session do |sess|
+        sess.extend(CustomDsl)
+        u = users(user)
+        sess.https!
+        sess.post "/login", :username => u.username, :password => u.password
+        assert_equal '/welcome', path
+        sess.https!(false)
+      end
+    end
+end
+</ruby>
+
+h3. Tarefas Rake Para Executar Testes
+
+Você não precisa configurar e executar os seus testes um a um manualmente. O Rails vem com muitas tarefas rake para te ajudar a testar. A tabela abaixo lista todas as tarefas rake existentes por padrão no arquivo Rakefile quando você inicia um projeto Rails.
+
+|_.Tasks                          |_.Descrição|
+|+rake test+                     |Executa todos os testes unitários, funcionais e de integração. Você também pode simplesmente executar +rake+ pois o target _test_ é padrão.|
+|+rake test:units+               |Executa todos os testes unitários de +test/unit+|
+|+rake test:functionals+         |Executa todos os testes funcionais de +test/functional+|
+|+rake test:integration+         |Executa todos os testes de integração de +test/integration+|
+|+rake test:recent+              |Testa as mudanças recentes|
+|+rake test:uncommitted+         |Executa todos os testes que não foram comitados. Só suporta Subversion|
+|+rake test:plugins+             |Executa todos os testes de plugins de +vendor/plugins/*/**/test+ (ou de modo específico com +PLUGIN=_name_+)|
+
+h3. Breve Nota Sobre Test::Unit
+
+O Ruby contém um grande número de bibliotecas. Uma pequena gem de uma bibliotea é a +Test::Unit+, um framework para testes unitários em Ruby. Todas as assertions básicas discutidas anteriormente estão na verdade em +Test::Unit::Assertions+. A classe +ActiveSupport::TestCase+ que nós estamos usando em nossos testes unitários e funcionais estendem  +Test::Unit::TestCase+. É desta forma que nós podemos usar todas as assertions básicas em nossos testes.
+
+NOTE: Para mais informações a respeito de +Test::Unit+, visite a "Documentação do test/unit":http://ruby-doc.org/stdlib/libdoc/test/unit/rdoc/
+
+h3. Setup e Teardown
+
+Caso você queira executar um bloco de código antes de começar cada teste e outro bloco de código após o fim de cada teste, você tem dois callbacks especiais para te ajudar. Veremos isso passando por um exemplo de teste funcional do controller +Posts+:
+
+<ruby>
+require 'test_helper'
+
+class PostsControllerTest < ActionController::TestCase
+
+  # chamado antes de cada teste
+  def setup
+    @post = posts(:one)
+  end
+
+  # chamado depois de cada teste
+  def teardown
+    # como nós estamos reinicializando @post antes de cada teste,
+    # atribuir este objeto para nil aqui não é necessário, mas espero
+    # que você compreenda como pode utilizar o método teardown
+    @post = nil
+  end
+
+  def test_should_show_post
+    get :show, :id => @post.id
+    assert_response :success
+  end
+
+  def test_should_destroy_post
+    assert_difference('Post.count', -1) do
+      delete :destroy, :id => @post.id
+    end
+
+    assert_redirected_to posts_path
+  end
+  
+end
+</ruby>
+
+Acima, o método +setup+ é chamado antes de cada teste, então +@post+ está disponível para cada um dos testes. O Rails implementa +setup+ e +teardown+ como ActiveSupport::Callbacks. Isto significa que você não precisar usar +setup+ e +teardown+ somente como métodos nos seus testes. Você pode especificá-los usando:
+
+* um bloco
+* um método (como no exemplo anterior)
+* um nome de método como um símbolo
+* uma função lambda
+ 
+Vamos ver o exemplo anterior especificando o callback +setup+ por um nome de método como um símbolo:
+
+<ruby>
+require '../test_helper'
+
+class PostsControllerTest < ActionController::TestCase
+
+  # chamado antes de cada teste
+  setup :initialize_post
+
+  # chamado depois de cada teste
+  def teardown
+    @post = nil
+  end
+
+  def test_should_show_post
+    get :show, :id => @post.id
+    assert_response :success
+  end
+  
+  def test_should_update_post
+    put :update, :id => @post.id, :post => { }
+    assert_redirected_to post_path(assigns(:post))
+  end
+
+  def test_should_destroy_post
+    assert_difference('Post.count', -1) do
+      delete :destroy, :id => @post.id
+    end
+
+    assert_redirected_to posts_path
+  end
+  
+  private 
+  
+  def initialize_post
+    @post = posts(:one)
+  end
+  
+end
+</ruby>
+
+h3. Testando Rotas
+
+Como tudo mais na sua aplicação Rails, é recomendado que você teste as suas rotas. Um exemplo de teste para uma rota na action padrão +show+ do controller +Posts+ acima deve ser algo do tipo:
+
+<ruby>
+def test_should_route_to_post
+  assert_routing '/posts/1', { :controller => "posts", :action => "show", :id => "1" }
+end
+</ruby>
+
+h3. Testando os seus Mailers
+
+Testar classes que enviam emails (mailers) requer algumas ferramentas específicas.
+
+h4. De olho no Mailer
+
+Suas classes +ActionMailer+ -- como todas as outras partes da sua aplicação Rails -- devem ser testadas para garantir que estão funcionando como o esperado.
+
+Os objetivos de testar as suas classes +ActionMailer+ são para assegurar-se de que:
+
+* emails estão sendo processados (criados e enviados)
+* o conteúdo dos emails está correto (assunto, remetente, corpo, etc)
+* os emails corretos estão sendo enviados nos momentos certos
+
+h5. Por toda parte
+
+Há dois aspectos a serem analisados ao testar o seu mailer: os testes unitários e os testes funcionais. Nos testes unitários, você executa o mailer isoladamente com entradas muito bem controladas e compara a saída com um valor conhecido (uma fixture --yay! mais fixtures!). Nos testes funcionais, você não testa muito os detalhes produzidos pelo mailer. Ao contrário, nós testamos se nossos controllers e models estão usando o mailer da maneira correta. Você testa para provar que o email correto foi enviado na hora correta.
+
+h4. Testes Unitários
+
+Com o objetivo de testar se o seu mailer está trabalhando como esperado, você pode usar testes unitários para comparar os resultados gerados pelo mailer com exemplos (escritos previamente) do que deveria ser produzido.
+
+h5. Vingança das Fixtures
+
+Para o propósito de testar unitariamente um mailer, fixtures são usadas para nos dar um exemplo de como a saída _deve_ ser. Como esses são emails de exemplo, e não dados do Active Record como as outras fixtures, eles são mantidos em seus próprios subdiretórios, separados das outras fixtures. O nome do diretório em +test/fixtures+ corresponde ao nome do mailer. Então, para o mailer de nome +UserMailer+, as fixtures devem ficar no diretório +test/fixtures/user_mailer+.
+
+Quando você gerou o seu mailer, o generator criou esqueletos de fixtures para cada uma das suas actions mailers. Se você não usou o generator, você mesmo terá que criar esses arquivos.
+
+h5. O Caso de Teste Básico
+
+Aqui está um teste unitário para um mailer chamado +UserMailer+ cuja action +invite+ é usada para enviar um convite para um amigo. É uma versão adaptada do teste básico criado pelo generator para um action +invite+.
+
+<ruby>
+require 'test_helper'
+
+class UserMailerTest < ActionMailer::TestCase
+  tests UserMailer
+  def test_invite
+    @expected.from    = 'me@example.com'
+    @expected.to      = 'friend@example.com'
+    @expected.subject = "Você foi convidado por #{@expected.from}"
+    @expected.body    = read_fixture('invite')
+    @expected.date    = Time.now
+
+    assert_equal @expected.encoded, UserMailer.create_invite('me@example.com', 'friend@example.com', @expected.date).encoded
+  end
+
+end
+</ruby>
+
+Neste teste, +@expected+ é uma instância de +TMail::Mail+ que você pode usar nos seus testes. Ela é definida em +ActionMailer::TestCase+. O teste acima usa +@expected+ para construir um email, que então é comparado com o email criado pelo mailer customizado. A fixture +invite+ é o corpo do email e é usada como uma amostra de conteúdo para ser comparada. O helper +read_fixture+ é usado para ler o conteúdo deste arquivo.
+
+Aqui está o conteúdo da fixture +invite+:
+
+<pre>
+Olá friend@example.com,
+
+Você foi convidado. 
+
+Um abraço!
+</pre>
+
+Agora é o momento certo para entender um pouco mais sobre testes para os seus mailers. A linha +ActionMailer::Base.delivery_method = :test+ em +config/environments/test.rb+ configura o método delivery para o modo de teste, assim aquele email não vai ser realmente enviado (útil para evitar spams para os seus usuários enquanto estiver testando). Ao invés disso, o email vai ser colocado em um array (+ActionMailer::Base.deliveries+). 
+
+Entretanto, muitas vezes em testes unitários os emails não serão realmente enviados ou serão simples como no exemplo acima, em que o conteúdo exato do email é comparado com o que é esperado.
+
+h4. Testes Funcionais
+
+Escrever testes funcionais para mailers envolve muito mais do que simplesmente checar se o corpo do email, destinatários e outros detalhes estão corretos. Nos testes funcionais de emails você chama os métodos de envio de email e verifica que os emails apropriados foram adicionados à lista de destinatários. É muito seguro assumir que os métodos de envio fazem o trabalho deles. Você provavelmente está mais interessado em saber se a sua lógica de negócio está enviando emails conforme você espera. Por exemplo, você pode checar que a operação de convidar um amigo está enviando um email apropriadamente:
+
+<ruby>
+require 'test_helper'
+
+class UserControllerTest < ActionController::TestCase
+  def test_invite_friend
+    assert_difference 'ActionMailer::Base.deliveries.size', +1 do
+      post :invite_friend, :email => 'friend@example.com'
+    end
+    invite_email = ActionMailer::Base.deliveries.first
+    
+    assert_equal invite_email.subject, "Você foi convidado por me@example.com"
+    assert_equal invite_email.to[0], 'friend@example.com'
+    assert_match /Olá friend@example.com/, invite_email.body
+  end
+end
+</ruby>
+
+h3. Outras Formas de Testar
+
+O modo padrão baseado no +test/unit+ não é a única maneira de testar aplicações Rails. Programadores Rails produziram uma variedade enorme de formas e truques para realizar testar, incluindo:
+
+* "NullDB":http://avdi.org/projects/nulldb/, uma maneira de acelerar os testes ao evitar o uso de banco de dados.
+* "Factory Girl":http://github.com/thoughtbot/factory_girl/tree/master, como alternativa às fixtures.
+* "Shoulda":http://www.thoughtbot.com/projects/shoulda, uma extensão ao +test/unit+ com helpers, macros e assertions adicionais.
+* "RSpec": http://rspec.info/, um framework para behavior-driven development
+
+h3. Changelog
+
+"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/8
+
+* November 13, 2008: Revised based on feedback from Pratik Naik by "Akshay Surve":credits.html#asurve (not yet approved for publication)
+* October 14, 2008: Edit and formatting pass by "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)
+* October 12, 2008: First draft by "Akshay Surve":credits.html#asurve (not yet approved for publication)
+
