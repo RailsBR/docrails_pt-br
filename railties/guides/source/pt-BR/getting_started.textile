@@ -164,7 +164,7 @@ Em qualquer caso, o Rails irá criar um diretório no seu diretório de trabalho
 |+log/+		|Arquivos de log da aplicação.|
 |+public/+		|O único diretório visto pelo mundo como é. Aqui é onde suas imagens, javascript, stylesheets (CSS), e outros arquivos estáticos ficam.|
 |+script/+		|Scripts fornecidos pelo Rails para fazer tarefas repetitivas, tais como benchmarking, instalação de plugins, e iniciar o console ou o servidor web.|
-|+test/+		|Testes unitários, fixtures, e outros aparatos de teste. Estes são tratados em "Testando Aplicações Rails":testando_aplicacoes_rails.html.|
+|+test/+		|Testes unitários, fixtures, e outros aparatos de teste. Estes são tratados em "Testando Aplicações Rails":testing.html.|
 |+tmp/+		|Arquivos temporários.|
 |+vendor/+		|Um local para código de terceiros. Em uma aplicação Rails típica, isto inclui Ruby Gems, o código fonte do Rails (se você instalá-lo no seu projeto) e plugins contendo funcionalidades adicionais.|
 
@@ -288,7 +288,7 @@ Esta linha ilustra um minúsculo pedaço da idéia de "convenção ao invés de 
 
 Agora se você navegar para +http://localhost:3000+ em seu navegador, você verá a view +home/index+.
 
-NOTA: Para mais informações sobre rotas, ver em "Roteamento Rails de Fora para Dentro":roteamento_rails_de_fora_para_dentro.html.
+NOTA: Para mais informações sobre rotas, ver em "Roteamento Rails de Fora para Dentro":routing.html.
 
 h3. Iniciando e Executando Rapidamente com o Scaffolding
 

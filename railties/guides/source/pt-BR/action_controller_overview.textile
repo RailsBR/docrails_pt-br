@@ -20,7 +20,7 @@ Para a maioria das aplicações convencionais RESTful, o controller receberá a 
 
 Um controller pode ser pensado como um intermediário entre models e views. Ele torna dados do model disponíveis para que uma view possa apresentá-los ao usuário, e os salva ou atualiza conforme solicitado pelo usuário.
 
-NOTE: Para mais detalhes sobre o processamento de rotas, veja o "Roteamento Rails de Fora para Dentro":roteamento_rails_de_fora_para_dentro.html 
+NOTE: Para mais detalhes sobre o processamento de rotas, veja o "Roteamento Rails de Fora para Dentro":routing.html 
 
 h3. Métodos e Actions
 
@@ -166,7 +166,7 @@ Todos os métodos utilizam um cookie - isto é obrigatório e o Rails não permi
 
 A maioria utiliza um cookie para armazenar o ID da sessão, que é então utilizado para procurar os dados da sessão no servidor. O método padrão e recomendado, o CookieStore, não armazena dados da sessão no servidor, mas sim no próprio cookie. Os dados são assinados criptograficamente para torná-los a prova de alterações, mas eles não são criptografados, então qualquer um com acesso ao cookie pode ler seu conteúdo, mas não editá-lo (o Rails não irá aceitá-lo se ele tiver sido editado). Ele só pode armazenar cerca de 4kB de dados - bem menos do que os outros métodos - mas isto geralmente é o suficiente. O armazenamento de grandes quantidades de dados não é recomendado, não importa qual o método de armazenamento de sessão a sua aplicação utilize. Você deve evitar principalmente armazenar objetos complexos (qualquer coisa diferente de objetos Ruby básicos, sendo o exemplo mais comum uma instância de um model) na sessão, já que o servidor pode não conseguir recuperá-los entre requisições, o que resultará em um erro. O armazenamento CookieStore tem a vantagem de não requerir qualquer configuração antes de ser utilizado - o Rails irá gerar uma "chave secreta" que será utilizada para assinar o cookie quando você criar a aplicação.
 
-Leia mais sobre armazenamento de sessão no Guia de "Seguranca":seguranca.html.
+Leia mais sobre armazenamento de sessão no Guia de "Seguranca":security.html.
 
 Se você precisar de um mecanismo de armazenamento de sessão diferente, você pode alterá-lo no arquivo +config/environment.rb+:
 

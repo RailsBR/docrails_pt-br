@@ -1,0 +1,81 @@
+h2. Contribua com o Rails Guides
+
+Rails Guides tem o objetivo de melhorar a documentação do Rails e tornar a curva de aprendizado o menor possível. Um desenvolvedor razoávelmente experiente deve ser capaz de usar os Guides para se tornar ágil com Rails rapidamente. Você pode seguir os esforços gerais em "Rails Guides Lighthouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets (você também pode seguir os esforços de tradução para portguês em "Rails Guides pt-br":http://railsguides-pt_br.lighthouseapp.com/projects/19768-rails-guides-pt_br/overview). Nossos patrocinadores tem contribuido com prêmios para quem escrever um guia completo, mas existem várias outras formas de contribuir.
+
+endprologue.
+
+h3. Como contribuir?
+
+* Nós temos a política de commit aberto: qualquer um é bem vindo para contribuir, mas você precisará pedir para ter acesso.
+* Envie uma mensagem em "GitHub":http://github.om pedindo á "docrails":http://github.com/lifo/docrails para ter permissão de commits.
+* Guias são escritos em textile, e são armazenados na pasta railties/guides/source no projeto docrails.
+* Todas as imagens estão railties/guides/images directory.
+* Formato de Exemplo : "Active Record Associations":http://github.com/lifo/docrails/blob/3e56a3832415476fdd1cb963980d0ae390ac1ed3/railties/guides/source/association_basics.textile
+* Saída de Exemplo : "Active Record Associations":http://guides.rails.info/association_basics.html
+* Você pode gerar os guias para teste rodando railties/guides/rails_guides.rb.
+
+h3. Com o que contribuir?
+
+* Nós precisamos de autores, editores, revisores e tradutores. Adicinando um único parágrafo de material de qualidade é uma boa forma de começar. 
+* A forma mais fácil de começar é melhorando um guia existente:
+** Melhore a estrutura para faze-lo mais coerente.
+** Adicione informações que faltam
+** Corrija qualquer erro
+** Corrija erros de digitação ou melhore o estilo
+** Atualiza com as últimas alteração no Edge Rails
+* Nós também estamos abertos a sugestões de novos guias
+** Entre em contato com lifo ou mikeg1a no IRC ou via "email":mailto:MikeG1@larkfarm.com para ter a ideia aprovada
+** Se você é o autor principal de um guia importante, você é candidato a ganhar prêmios
+
+h3. Como commitar
+
+* Se você possui alguma pequena alteração ou correção gramatical, apenas peça ao lifo para ter permissão de commit e então envie a alteração para o projeto.
+* Se sua alteração é mais significativa, crie um patch ou mensagem no Lighthouse, e envie o commit depois de receber +1 do lifo ou mikeg1a.
+* Se o guia já está marcado como terminado, você deve receber um +1 antes de enviar suas alterações.
+* Coloque [#&lt;ticket number&gt;] na sua mensagem de commit para permitir a integração GitHub/Lighthouse.
+
+h3. Prêmios
+
+Para cada guia terminado, o contribuinte principal irá receber todos os prêmios abaixo:
+
+* $200 do Caboose Rails Documentation Project.
+* 1 ano de conta GitHub Micro no valor $84.
+* 1 ano de RPM Basic (Production performance management) para até 10 hosts no valor 12 meses x $40 por host x $10 hosts = $4800. E ainda, economizar $45 por host/month na lista de preços para upgrades em produtos mais avançados.
+
+h3. Regras
+
+* Os guias são licensiados sobre a licença Creative Commons Attribution-Noncommercial-Share Alike 3.0.
+* Se não tiver a certeza se é um guia está sendo trabalhado, para e pergunte no IRC.
+* Se o mesmo escritor desejar escrever mais de um guia, esta é a situação ideal que nós adorariamos! No entanto, o escritor receberá apenas o valor em dinheiro paras os guias subsequentes ( e não os prêmios GitHub ou RPM).
+* Nossa equipe de revisão precisará dizer se o guia está completo e com qualidade suficiente.
+
+h3. Revisores
+
+Estes são os o revisores e editores principais dos guias:
+
+* Hongli Lai
+* Mike Gunderloy
+* Pratik Naik
+* Xavier Noria
+
+Todos os autores devem seguir "Rails Guides Conventions":http://wiki.github.com/lifo/docrails/rails-guides-conventions e "Rails API Documentation Conventions":http://wiki.github.com/lifo/docrails/rails-api-documentation-conventions.
+
+h3. Traduções
+
+Estão acontecendo esforços de traduçãi dos Rails Guides. Nós sabemos sobre projetos de tradução em em Espanhol, Português, Polonês, e Francês. Para mais detalhes ou para se envolver veja "Translating Rails Guides":http://wiki.github.com/lifo/docrails/translating-rails-guides page.
+
+h4. Traduções em Português
+
+Se você deseja ajudar na tradução para o português acesse "DocRails pt-br":http://wiki.github.com/cassiomarques/docrails_pt-br para saber os passos a serem seguidos.
+
+h3. IRC Channel
+
+==#docrails @ irc.freenode.net==
+
+h3. Contato
+
+Se você possui qualquer dúvida ou precisa de esclarecimentos, sinta-se a vontade para entrar em contato:
+
+* IRC : lifo, mikeg1a, fxn, or FooBarWidget in #docrails
+* Email : pratiknaik aT gmail
+

@@ -142,7 +142,7 @@ No Rails, você testa os seus models escrevendo testes unitários.
 
 Para este guia, nós vamos usar o recurso _scaffolding_ do Rails. Ele vai gerar o model, uma migration, controller e views para o novo recurso numa única operação. Ele também vai gerar uma suíte de testes completa seguindo as melhores práticas do Rails. Vou usar exemplos deste código gerado e vou complementando-o com exemplos adicionais quando necessário.
 
-NOTE: Para mais informações a respeito do Rails _scaffolding_, consulte o "Começando com Rails":comecando_com_rails.html
+NOTE: Para mais informações a respeito do Rails _scaffolding_, consulte o "Começando com Rails":getting_started.html
 
 Quando você usa +script/generate scaffold+ para um recurso, o Rails cria,  dentre outras coisas, um esqueleto para o teste do model na pasta +test/unit+:
 

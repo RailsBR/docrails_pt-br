@@ -1,5 +1,5 @@
 <% content_for :header_section do %>
-h2. Sobre os tradutores (pt-br)
+h2. Sobre os tradutores/revisores (pt-br)
 
 Gostariamos de agradecer às seguintes pessoas, por terem dedicado seu tempo e esforço para traduzirem os guias originais para a Língua Portuguesa, tornando possível que um número maior de desenvolvedores tenha acesso a essa fonte de informação sobre o Rails
 <% end %>

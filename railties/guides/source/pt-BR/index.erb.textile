@@ -3,8 +3,8 @@ h2. Ruby on Rails guides
 
 Estes guias são desenvolvidos para trazer produtividade imediata com Rails, e ajuda-lo a entender como todas as peças funcionam juntas. Existem duas versões diferentes deste site Guia, e você deve certificar-se de estar lendo a que atenda melhor a sua situação:
 
-* "Versão Atual (baseado no Rails 2.2)":http://guides.rubyonrails.org/
-* "Versão para o Edge Rails (baseado no branch do Rails 2.3)":http://guides.rails.info
+* "Versão Atual":http://guides.rubyonrails.org/ - baseado no Rails 2.3
+* "Versão para o Edge Rails":http://guides.rails.info
 
 <% end %>
 
@@ -20,7 +20,7 @@ Estes guias são desenvolvidos para trazer produtividade imediata com Rails, e a
 h3. Comece aqui
 
 <dl>
-<% guide('Começando com Rails', 'comecando_com_rails.html') do %>
+<% guide('Começando com Rails', 'getting_started.html') do %>
   Tudo que você precisa saber para instalar o Rails e criar sua primeira aplicação.
 <% end %>
 </dl>
@@ -36,7 +36,7 @@ h3. Models
   Este guia explica como você pode utilizar as validações e callbacks do Active Record.
 <% end %>
 
-<% guide("Associações do Active Record", 'associacoes_basicas.html') do %>
+<% guide("Associações do Active Record", 'association_basics.html') do %>
   Este guia cobre todas as associações fornecidas pelo Active Record.
 <% end %>
 
@@ -89,7 +89,7 @@ Este é um guia para a compreenção da prática de testes unitários e funciona
   Este guia descreve problemas de segurança comuns em aplicações web e como evita-los com Rails.
 <% end %>
 
-<% guide("Depurando Aplicações Rails", 'depurando_aplicacoes_rails.html') do %>
+<% guide("Depurando Aplicações Rails", 'debugging_rails_applications.html') do %>
   Este guia descreve como depurar aplicações Rails. Ele cobre diferentes formas de faze-lo e como entender o que está acontecendo "nos bastidores" do seu código.
 <% end %>
 
