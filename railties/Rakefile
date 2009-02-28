@@ -249,6 +249,11 @@ task :guides do
   ruby "guides/rails_guides.rb"
 end
 
+desc 'Generate pt-br guides (for authors), use ONLY=foo to process just "foo.textile"'
+task :guides_pt_br do
+  ruby "guides/rails_guides_pt_br.rb"
+end
+
 
 # Generate documentation ------------------------------------------------------------------
 
