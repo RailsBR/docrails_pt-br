@@ -93,7 +93,7 @@ Este é um guia para a compreenção da prática de testes unitários e funciona
   Este guia descreve como depurar aplicações Rails. Ele cobre diferentes formas de faze-lo e como entender o que está acontecendo "nos bastidores" do seu código.
 <% end %>
 
-<% guide("Benchmarking e Profiling em Aplicações Rails", 'performance_testing.html') do %>
+<% guide("Testando Performance em Aplicações Rails", 'performance_testing.html') do %>
   Este guia ensina maneiras de analizar e otimizar a execução do seu código no Rails.
 <% end %>
 
