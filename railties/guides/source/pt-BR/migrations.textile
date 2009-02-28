@@ -467,6 +467,7 @@ gerará a seguinte saída
 Se você quiser que o Active Record mantenha-se em silêncio, então execute +rake db:migrate VERBOSE=false+ e irá suprimir qualquer saída.
 
 h3. Usando models nas suas migrações
+
 Ao criar ou atualizar dados na sua migração, muitas vezes, é tentador utilizar um de seus models. Afinal eles existem para fornecer acesso fácil nos dados subjacentes. Isto pode ser feito mas um certo cuidado devem ser observados.
 
 Considere por exemplo a migração que usa o modelo Product para atualizar a linha na tabela correspondente. Alice depois atualiza o modelo Product, adicionando uma nova coluna e uma validação. Bob volta do feriado, atualiza o código e roda as migrações pendentes com +rake db:migrate+, incluindo o modelo que é utilizado para o Product. Quando o código é atualizado e só então o modelo Product possui a validação adicionada pela Alice. O banco de dados entretanto não é atualizado e assim não possui a coluna e então gerará um erro, por que a validação para esta coluna ainda não existe.

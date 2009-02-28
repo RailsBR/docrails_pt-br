@@ -40,7 +40,7 @@ Com as associações do ActiveRecord, podemos simplificar - e outras - operaçõ
 
 <ruby>
 class Customer < ActiveRecord::Base
-  has_many :orders
+  has_many :orders, :dependent => :destroy
 end
 
 class Order < ActiveRecord::Base
@@ -232,7 +232,7 @@ class CreateSuppliers < ActiveRecord::Migration
 end
 </ruby>
 
-NOTE: Usando +t.integer :supplier_id+ faz a nomeação da chave estrangeira óbvia e implicitamente. Nas versões atuais do Rails, você pode abstrair a implementação deste detalhe usando +t.references :supplier+.
+NOTE: Usando +t.integer :supplier_id+ faz a nomeação da chave estrangeira óbvia e explicitamente. Nas versões atuais do Rails, você pode abstrair a implementação deste detalhe usando +t.references :supplier+.
 
 h4. Escolhendo Entre has_many :through e has_and_belongs_to_many
 
@@ -267,7 +267,7 @@ class Part < ActiveRecord::Base
 end
 </ruby>
 
-A regra é simples, você deve criar um relacionamento +has_many :through+ se você precisa trabalhar com o relacionamento do modelo como uma entidade independente. Se você não precisa fazer nada com relacionamento do modelo, pode ser mais simples se criar um relacionamento +has_and_belongs_to_many+ (mas você precisa se lembrar se precisa criar joins nas tabelas).
+A regra é simples, você deve criar um relacionamento +has_many :through+ se você precisa trabalhar com o relacionamento do modelo como uma entidade independente. Se você não precisa fazer nada com relacionamento do modelo, pode ser mais simples se criar um relacionamento +has_and_belongs_to_many+ (mas você precisa se lembrar que precisa criar joins nas tabelas do banco de dados).
 
 Você deve usar +has_many :through+ se você precisar de validações, callbacks (chamadas), ou atributos extras no join do modelo.
 
@@ -330,12 +330,13 @@ end
 
 h4. Self Joins
 
-Na criação de um modelo de dados, às vezes você irá encontrar um modelo que deverá ter uma relação a si própria. Por exemplo, você pode armazenar todos os empregados em uma única base de dados, mas ser capaz de rastrear relacionamentos como gerentes e subordinados. Esta situação pode ser modelada com as associações com ele mesmo:
+Na criação de um modelo de dados, às vezes você irá encontrar um modelo que deverá ter uma relação a si própria. Por exemplo, você pode armazenar todos os empregados em uma única base de dados, mas ser capaz de rastrear relacionamentos entre gerentes e subordinados. Esta situação pode ser modelada com as associações com ele mesmo:
 
 <ruby>
 class Employee < ActiveRecord::Base
-  has_many :subordinates, :class_name => "User", :foreign_key => "manager_id"
-  belongs_to :manager, :class_name => "User"
+  has_many :subordinates, :class_name => "Employee",
+    :foreign_key => "manager_id"
+  belongs_to :manager, :class_name => "Employee"
 end
 </ruby>
 
@@ -404,7 +405,7 @@ Se você criar alguma associação depois que você tiver construído o respecti
 
 Segundo, se você criar uma associação +has_and_belongs_to_many+ , você precisa explicitamente criar uma tabela para o join. A menos que o nome da tabela para o join seja explicitamente especificada usando a opção +:join_table+ , Active Record cria o nome usando uma ordem léxica de acordo com os nomes das classes. Então uma associação entre os modelos customer e order irá gerar uma tabela para a junção com o nome "customers_orders" porque o "c" é superior ao "o" no ordenamento léxico.
 
-WARNING: A precedência entre nomes de modelos é calculada usando o operado +<+ para +String+. O que significa que as strings são de tamanhos diferentes, e a string é menor quando comparada com outra com tamanho menor, então a string maior será considerada com maior precedência léxica que a menor. Por exemplo, seria de se esperar que as tabelas "paper_boxes" e "papers" iriam gerar uma tabela de associação com o "papers_paper_boxes" por causa do tamanho de "paper_boxes", mas de fato o nome da tabela de associação será "paper_boxes_papers".
+WARNING: A precedência entre nomes de modelos é calculada usando o operado +<+ para +String+. O que significa que as strings são de tamanhos diferentes, e a string é menor quando comparada com outra com tamanho menor, então a string maior será considerada com maior precedência léxica que a menor. Por exemplo, seria de se esperar que as tabelas "paper_boxes" e "papers" iriam gerar uma tabela de associação com o "papers_paper_boxes" por causa do tamanho de "paper_boxes", mas de fato o nome da tabela de associação será "paper_boxes_papers"( porque o sublinhado '_' e lexicograficamente _menor_ que 's' em encodings comuns).
 
 Independente do nome, você deve gerar manualmente a tabela de associação com uma migration apropriada. Por exemplo, considere esta associação:
 
@@ -677,7 +678,7 @@ TIP: Em caso algum, Rails irá criar as colunas de chave estrangeira para você.
 
 h6. :include
 
-Você pode usar a opção :include para especificar as associações de segunda ordem que devem ser eager-loaded (pré-carregada) quando esta associação for utilizada. Por exemplo:
+Você pode usar a opção +:include+ para especificar as associações de segunda ordem que devem ser eager-loaded (pré-carregada) quando esta associação for utilizada. Por exemplo:
 
 <ruby>
 class LineItem < ActiveRecord::Base
@@ -711,7 +712,7 @@ NOTE: Não há necessidade de usar +:include+ para associações imediatas - sig
 
 h6. :polymorphic
 
-Passando +true+ para a opção +:polymorphic+ indica que isso será uma associação polymorphic. Associações polimórficas serão discutidas em detalhes neste guia.
+Passando +true+ para a opção +:polymorphic+ indica que isso será uma associação polymorphic. Associações polimórficas "já foram discutidas em detalhes neste guia":#associaespolimrficas.
 
 h6. :readonly
 
@@ -820,6 +821,7 @@ end
 A associação +has_one+ suporta essas opções:
 
 * +:as+
+* +:autosave+
 * +:class_name+
 * +:conditions+
 * +:dependent+
@@ -836,7 +838,11 @@ A associação +has_one+ suporta essas opções:
 
 h6. :as
 
-Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas serão discutidas mais adiante neste guia.
+Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas "já foram discutidas em detalhes neste guia":#associaespolimrficas.
+
+h6. +:autosave+
+
+Se você definir a opção +:autosave+ para +true+, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
 
 h6. :class_name
 
@@ -876,7 +882,7 @@ TIP: Em nenhum caso, Rails irá criar a coluna da chave estrangeira para você. 
 
 h6. :include
 
-Você pode usar a opção :include para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os modelos abaixo:
+Você pode usar a opção +:include+ para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os modelos abaixo:
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -932,7 +938,7 @@ A opção +:source_type+ específica o tipo da fonte para a associação +has_on
 
 h6. :through
 
-A opção +:through+ específica um model para a junção (join) para executar a query. Associações +has_one :through+ serão discutidas em detalhes mais adiante.
+A opção +:through+ específica um model para a junção (join) para executar a query. "Associações +has_one :through+ já foram discutidas em detalhes":#a-associaohas-onethrough.
 
 h6. :validate
 
@@ -1024,7 +1030,7 @@ WARNING: Os objetos associados serão destruídos, se existir +:dependent => :de
 
 h6. <em>collection</em>=objects
 
-O método <tt><em>collection</em></tt>= faz com que a coleção contenha apenas os objetos passados, adicionando ou removendo o que não interessa.
+O método <tt><em>collection</em>=</tt> faz com que a coleção contenha apenas os objetos passados, adicionando ou removendo o que não interessa.
 
 h6. <em>collection_singular</em>_ids
 
@@ -1102,6 +1108,7 @@ end
 Uma associação +has_many+ suporta estas opções:
 
 * +:as+
+* +:autosave+
 * +:class_name+
 * +:conditions+
 * +:counter_sql+
@@ -1125,7 +1132,11 @@ Uma associação +has_many+ suporta estas opções:
 
 h6. :as
 
-Definindo a opção +:as+ indica que essa será uma associação polimórfica, como discutido previamente neste guia.
+Definindo a opção +:as+ indica que essa será uma associação polimórfica, "como já discutido previamente neste guia":#associaespolimrficas.
+
+h6. +:autosave+
+
+Se você definir a opção +:autosave+ para +true+, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
 
 h6. :class_name
 
@@ -1201,7 +1212,7 @@ end
 
 h6. :include
 
-Você pode usar a opção :include para especificar associações de segunda ordem que devem ser carregadas previamente ( eager-loaded ) quando a associação for usada. Por exemplo, considere os models abaixo:
+Você pode usar a opção +:include+ para especificar associações de segunda ordem que devem ser carregadas previamente ( eager-loaded ) quando a associação for usada. Por exemplo, considere os models abaixo:
 
 <ruby>
 class Customer < ActiveRecord::Base
@@ -1279,7 +1290,7 @@ A opção +:source_type+ especifica o tipo da associação de origem para uma as
 
 h6. :through
 
-A opção +:through+ especifica um model para uma junção. Associações +has_many :through+ criam uma forma de implementar uma associação many-to-many (muitos para muitos), como discutido anteriormente neste guia.
+A opção +:through+ especifica um model para uma junção. Associações +has_many :through+ criam uma forma de implementar uma associação many-to-many (muitos para muitos), "como discutido anteriormente neste guia":#a-associaohas-manythrough.
 
 h6. :uniq
 
@@ -1321,7 +1332,7 @@ Quando você declara uma associação +has_and_belongs_to_many+, a classe que de
 * <tt><em>collection</em>.build(attributes = {})</tt>
 * <tt><em>collection</em>.create(attributes = {})</tt>
 
-Em todos estes métodos, <tt><em>collection</em></tt> é substituído pelo símbolo passado como primeiro argumento do +has_many+, e <tt><em>collection_singular</em></tt> é substituído pela versão no singular do símbolo. Por exemplo, a declaração abaixo:
+Em todos estes métodos, <tt><em>collection</em></tt> é substituído pelo símbolo passado como primeiro argumento do +has_and_belongs_to_many+, e <tt><em>collection_singular</em></tt> é substituído pela versão no singular do símbolo. Por exemplo, a declaração abaixo:
 
 <ruby>
 class Part < ActiveRecord::Base
@@ -1397,7 +1408,7 @@ O método <tt><em>collection_singular</em>_ids=</tt> faz com que a coleção con
 
 h6. <em>collection</em>.clear
 
-O método <tt><em>collection</em>.clear</tt> remove cada objeto da coleção através da exclusão das linhas na tabela de junção. Isso não destrói os objetos associados.
+O método <tt><em>collection</em>.clear</tt> remove cada objeto da coleção através da exclusão das linhas na tabela. Isso não destrói os objetos associados.
 
 h6. <em>collection</em>.empty?
 
@@ -1458,6 +1469,7 @@ end
 Associação +has_and_belongs_to_many+ suporta essas opções:
 
 * +:association_foreign_key+
+* +:autosave+
 * +:class_name+
 * +:conditions+
 * +:counter_sql+
@@ -1489,6 +1501,10 @@ class User < ActiveRecord::Base
     :foreign_key => "this_user_id", :association_foreign_key => "other_user_id"
 end
 </ruby>
+
+h6. +:autosave+
+
+Se você definir a opção +:autosave+ para +true+, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
 
 h6. :class_name
 
@@ -1532,7 +1548,7 @@ Normalmente Rails gera automaticamente o SQL apropriado para remover as ligaçõ
 
 h6. :extend
 
-A opção +:extend+ especifica um módulo para estender o proxy de associação. Extensão de associações serão discutidas com mais detalhes neste guia.
+A opção +:extend+ especifica um módulo para estender o proxy de associação. Extensão de associações "serão discutidas com mais detalhes neste guia":#extensesde-associao.
 
 h6. :finder_sql
 
@@ -1561,7 +1577,7 @@ end
 
 h6. :include
 
-Você pode usar a opção :include para especificar uma associação de segunda ordem que deve ser previamente carregada quando a associação for utilizada.
+Você pode usar a opção +:include+ para especificar uma associação de segunda ordem que deve ser previamente carregada quando a associação for utilizada.
 
 h6. :insert_sql
 
@@ -1577,7 +1593,8 @@ A opção +:limit+ permite a você restringir o número total de objeto que ser�
 
 <ruby>
 class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :order => "created_at DESC", :limit => 50
+  has_and_belongs_to_many :assemblies, :order => "created_at DESC",
+    :limit => 50
 end
 </ruby>
 
@@ -1714,6 +1731,8 @@ h3. Changelog
 
 "Ticket no Lighthouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/11
 
+* February  28, 2009: Atualização da tradução com a opção +:autosave+ "Daniel Lopes":translators.html#danielvlopes
+* Fevereiro 1, 2009: Adicionado a opção +:autosave+ "Mike Gunderloy":credits.html#mgunderloy
 * Janeiro   18, 2009: Primeira versão da tradução para português por "Daniel Lopes":translators.html#danielvlopes
 * Setembro  28, 2008: Corrigido o diagrama +has_many :through+, adicionado o diagrama para associações polimórficas, por "Mike Gunderloy":credits.html#mgunderloy. First release version.
 * Setembro  22, 2008: Adicionado diagramas, coisas diversas. por "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)
