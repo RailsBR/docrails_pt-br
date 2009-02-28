@@ -525,7 +525,7 @@ Another way to refer to the same route is with an array of objects:
 </ruby>
 
 This format is especially useful when you might not know until runtime which of several types of object will be used in a particular link.
- 
+
 h4. Namespaced Resources
 
 It's possible to do some quite complex things by combining +:path_prefix+ and +:name_prefix+. For example, you can use the combination of these two options to move administrative resources to their own folder in your application:

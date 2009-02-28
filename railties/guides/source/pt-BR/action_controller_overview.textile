@@ -175,34 +175,6 @@ Se você precisar de um mecanismo de armazenamento de sessão diferente, você p
 config.action_controller.session_store = :active_record_store
 </ruby>
 
-<!-- h4. Desabilitando a Sessão
-
-Algumas vezes você pode não precisar de uma sessão. Neste caso, você pode desligá-la para evitar desperdícios de recursos. Para fazê-lo, utilize o método de classe +session+ em seu controller:
-
-<ruby>
-class ApplicationController < ActionController::Base
-  session :off
-end
-</ruby>
-
-Você também pode desligar a sessão em um controller específico:
-
-<ruby>
-# A sessão é desligada por padrão no ApplicationController, mas nós queremos
-# ligá-la para entrar/sair do sistema.
-class LoginsController < ActionController::Base
-  session :on
-end
-</ruby>
-
-Ou até mesmo para actions específicas:
-
-<ruby>
-class ProductsController < ActionController::Base
-  session :on, :only => [:create, :update]
-end
-</ruby> -->
-
 h4. Acessando a Sessão
 
 Em seu controller, você pode acessar a sessão através do método de instância +session+.

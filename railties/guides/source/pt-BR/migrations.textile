@@ -72,7 +72,7 @@ O Active Record fornece métodos para executar as tarefas comuns na definição 
 * +add_index+
 * +remove_index+
 
-Se você precisa executar tarefas específicas para seu banco de dados (por exemplo, criar uma "foreign key":#active-recordand-referential-integrity ) então a função +execute+ permite que você execute SQL arbitrarias. A migração é apenas uma classe regular em Ruby, então você não esta limitado a apenas essas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus modelos).
+Se você precisa executar tarefas específicas para seu banco de dados (por exemplo, criar uma "foreign key":#active-recorde-integridade-referencial ) então a função +execute+ permite que você execute SQL arbitrarias. A migração é apenas uma classe regular em Ruby, então você não esta limitado a apenas essas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus modelos).
 
 Em banco de dados que suportam transações com paramêtros para mudar o esquema (como o PostreSQL), migrações são empacotados na transação. Se o banco de dados não suporta isso (por exemplo MySQL e SQLite) então quando a migração falhar as partes que tiveram sucesso não poderão voltar para trás. Você terá que desfazer essas mudanças na mão.
 
@@ -394,7 +394,7 @@ Nenhuma dessas tarefas Rake fazem qualquer coisa que você não poderia fazer co
 
 Finalmente, a tarefa +db:reset+ irá destruir sua base de dados, recria-la e carregar o schema atual dentro dela.
 
-NOTE: Isto não é o mesmo que você rodar todas as migrações - veja a seção "schema.rb":#schemadumpingandyou.
+NOTE: Isto não é o mesmo que você rodar todas as migrações - veja a seção "schema.rb":#armazenandoesquemasevoc
 
 h4. Especificando uma migração
 
@@ -410,15 +410,14 @@ h4. Sendo comunicativo
 
 Por padrão, as migrações falam exatamente o que elas estão fazendo e o tempo de duração. Uma migração criando uma tabela e adicionando um index produz uma saída como esta
 
-h3. 20080906170109 CreateProducts: migrating
-
-<pre> 
-create_table(:products)
+<shell>
+20080906170109 CreateProducts: migrating
+-- create_table(:products)
    -> 0.0021s
 -- add_index(:products, :name)
    -> 0.0026s
-h3. 20080906170109 CreateProducts: migrated (0.0059s)
-</pre>
+20080906170109 CreateProducts: migrated (0.0059s)
+</shell>
 
 Vários método fornecem para você o controle tudo isto:
 
@@ -455,19 +454,18 @@ end
 
 gerará a seguinte saída
 
-<pre>
-h3. 20080906170109 CreateProducts: migrating
--- Created a table
+<shell>
+20080906170109 CreateProducts: migrating
+  Created a table
    -> and an index!
--- Waiting for a while
+  Waiting for a while
    -> 10.0001s
    -> 250 rows
-h3. 20080906170109 CreateProducts: migrated (10.0097s)
-</pre>
+20080906170109 CreateProducts: migrated (10.0097s)
+</shell>
 
 Se você quiser que o Active Record mantenha-se em silêncio, então execute +rake db:migrate VERBOSE=false+ e irá suprimir qualquer saída.
 
-[[models]]
 h3. Usando models nas suas migrações
 Ao criar ou atualizar dados na sua migração, muitas vezes, é tentador utilizar um de seus models. Afinal eles existem para fornecer acesso fácil nos dados subjacentes. Isto pode ser feito mas um certo cuidado devem ser observados.
 
