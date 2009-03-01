@@ -1,0 +1,533 @@
+h2. Testando a Performance de Aplicações Rails
+
+Esse guia aborda as várias maneiras de se realizar testes de performance em aplicações Rails. Com dele você será capaz de:
+
+* Entender os vários tipo de benchmarking e métricas de profiling
+* Criar testes de performance e benchmarking
+* Usar bibliotecas Ruby com o Garbage Collector modificado para medir o uso de memória e a alocação de objetos
+* Entender as informações de benchmarking fornecidas pelos logs gerados pelo Rails
+* Conhecer várias ferramentas que facilitam as tarefas de benchmarking e profiling
+
+Fazer testes de performance é uma parte obrigatória de qualquer ciclo de desenvolvimento. É muito importante que seus usuários não tenham de esperar muito tempo para ter uma página completamente carregada. Garantir uma experiência de navegação agradável para eles e reduzir custos desnecessários de hardware é importante para qualquer aplicação web séria.
+
+endprologue.
+
+h3. Performance Test Cases
+
+Testes de performance em Rails são um tipo especial de testes de integração, desenvolvidos para fazer o benchmarking e o profiling do código testado. Através dos testes de performance, você pode determinar onde se originam eventuais problemas de memória ou velocidade, e pode obter informações detalhadas sobre eles.
+
+Numa aplicação Rails recém criada o arquivo +test/performance/browsing_test.rb+ contêm um exemplo de teste de performance:
+
+<ruby>
+require 'test_helper'
+require 'performance_test_help'
+
+# Os resultados do profiling de cada teste são gravados em tmp/performance.
+class BrowsingTest < ActionController::PerformanceTest
+  def test_homepage
+    get '/'
+  end
+end
+</ruby>
+
+Esse é um exemplo de um teste de performance simples, para fazer o profiling de uma requição GET na homepage da aplicação.
+
+h4. Criando testes de performance
+
+O Rails disponibiliza um gerador chamado  +performance_test+ para criar testes de performance:
+
+<shell>
+script/generate performance_test homepage
+</shell>
+
+Esse comando irá gerar o arquivo +homepage_test.rb+ no diretório +test/performance+:
+
+<ruby>
+require 'test_helper'
+require 'performance_test_help'
+
+class HomepageTest < ActionController::PerformanceTest
+  # Replace this with your real tests.
+  def test_homepage
+    get '/'
+  end
+end
+</ruby>
+
+h4. Exemplos
+
+Suponhamos que sua aplicação tem o seguinte controller e model:
+
+<ruby>
+# routes.rb
+map.root :controller => 'home'
+map.resources :posts
+
+# home_controller.rb
+class HomeController < ApplicationController
+  def dashboard
+    @users = User.last_ten(:include => :avatars)
+    @posts = Post.all_today
+  end
+end
+
+# posts_controller.rb
+class PostsController < ApplicationController
+  def create
+    @post = Post.create(params[:post])
+    redirect_to(@post)
+  end
+end
+
+# post.rb
+class Post < ActiveRecord::Base
+  before_save :recalculate_costly_stats
+
+  def slow_method
+    # I fire gallzilion queries sleeping all around
+  end
+
+  private
+
+  def recalculate_costly_stats
+    # CPU heavy calculations
+  end
+end
+</ruby>
+
+h5. Exemplo para controllers
+
+Uma vez que os testes de performance são um tipo especial de testes de integração, você pode usar os métodos +get+ e +post+ neles.
+
+Esse é um teste de performance para +HomeController#dashboard+ e +PostsController#create+:
+
+<ruby>
+require 'test_helper'
+require 'performance_test_help'
+
+class PostPerformanceTest < ActionController::PerformanceTest
+  def setup
+    # Application requires logged-in user
+    login_as(:lifo)
+  end
+
+  def test_homepage
+    get '/dashboard'
+  end
+
+  def test_creating_new_post
+    post '/posts', :post => { :body => 'lifo is fooling you' }
+  end
+end
+</ruby>
+
+Você pode encontrar mais detalhes sobre os métodos +get+ e +post+ no link:../testing_rails_applications.html#mgunderloy[Testing Rails Applications] guide.
+
+h5. Exemplo para models
+
+Ainda que os testes de performance seja testes de integração e portanto naturalmente mais próximos do ciclo request/response, você também pode realizar testes de performance somente com código de modelos.
+
+Teste de performance para o model +Post+:
+
+<ruby>
+require 'test_helper'
+require 'performance_test_help'
+
+class PostModelTest < ActionController::PerformanceTest
+  def test_creation
+    Post.create :body => 'still fooling you', :cost => '100'
+  end
+
+  def test_slow_method
+    # Using posts(:awesome) fixture
+    posts(:awesome).slow_method
+  end
+end
+</ruby>
+
+h4. Modos de operação
+
+Testes de performance podem ser executados em dois modos diferentes: Benchmarking e Profiling.
+
+h5. Benchmarking
+
+O modo Benchmarking nos ajuda a saber o quão rápido cada teste é executado. Nesse modo, cada test case é executado +4 vezes+.
+
+Para executá-los no modo de benchmarking, faça o seguinte:
+
+<shell>
+$ rake test:benchmark
+</shell>
+
+h5. Profiling
+
+O modo Profiling nos ajuda a ver os detalhes dos testes de performance e nos fornecem informações detalhadas sobre as partes mais lentas ou que consomem mais memória. Cada teste é executado +1 vez+ no modo de profiling.
+
+Para executá-los no modo de profiling, faça o seguinte:
+
+<shell>
+$ rake test:profile
+</shell>
+
+h4. Métricas
+
+Dependendo do modo escolhido, Benchmarking ou Profiling, os testes de performance geram as seguintes medidas:
+
+h5. Wall time
+
+O wall time mede o tempo real de duração do teste executado. Esse tempo é afetado pela execução e processos concorrentes sendo executados no sistema.
+
+Modo: Benchmarking
+
+h5. Process time
+
+##Verificar se isso são ciclos do processador ou coisa do tipo, a explicação não está boa
+O process time mede o tempo gasto pelo processo. Ele não é afetado por processos concorrentes executados no sistema. Assim, esse valor deve ser constante para cada teste de performance, não importando o nível de utilização da máquina.
+
+Modo: Profiling
+
+h5. Memória
+
+Mede o consumo de memória de cada teste de performance.
+
+Modo: Benchmarking, no modo Profiling exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+
+h5. Objetos
+
+Mede o número de objetos alocados para cada teste de performance.
+
+Modo: Benchmarking, no modo Profiling exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+
+h5. Execuções do GC (Garbage Collector)
+
+Mede quantas vezes o GC foi executado para cada teste de performance.
+
+Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+
+h5. Tempo de execução do GC
+
+Mede quanto tempo foi gasto com a execução do GC para cada teste de performance.
+
+Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+
+h4. Entendo as informações obtidas
+
+Os testes de performance colocam os diversos resultados obtidos no dentro do diretório +tmp/performance+ variando de acordo com o modo e a métrica utilizados.
+
+h5. Benchmarking
+
+No modo benchmarking, os testes de performance mostram os resultados de duas formas diferentes:
+
+h6. Linha de comando
+
+É a principal forma de apresentação dos resultados no modo benchmarking mode. Por exemplo:
+
+<shell>
+BrowsingTest#test_homepage (31 ms warmup)
+           wall_time: 6 ms
+              memory: 437.27 KB
+             objects: 5514
+             gc_runs: 0
+             gc_time: 19 ms
+</shell>
+
+h6. Arquivos CSV (Comma Separated Values - Valores Separados por Vírgulas)
+
+Os resultados dos testes de performance também são adicionados à arquivos +.csv+ dentro do diretório +tmp/performance+. Por exemplo, executar o teste padrão +BrowsingTest#test_homepage+ vai gerar os cinco arquivos a seguir:
+
+* BrowsingTest#test_homepage_gc_runs.csv
+* BrowsingTest#test_homepage_gc_time.csv
+* BrowsingTest#test_homepage_memory.csv
+* BrowsingTest#test_homepage_objects.csv
+* BrowsingTest#test_homepage_wall_time.csv
+
+Os resultados são adicionados aos arquivos a cada vez que os testes de performance são executados no modo benchmarking mode, e assim você pode coletar os resultados ao longo de um determinado período, o que pode ser bastante útil para analisar os efeitos gerados por alterações no código.
+
+Exemplo de resultados do arquivo +BrowsingTest#test_homepage_wall_time.csv+:
+
+<shell>
+measurement,created_at,app,rails,ruby,platform
+0.00738224999999992,2009-01-08T03:40:29Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00755874999999984,2009-01-08T03:46:18Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00762099999999993,2009-01-08T03:49:25Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00603075000000008,2009-01-08T04:03:29Z,,2.3.0.master.0744148,ruby-1.8.6.111,i686-darwin9.1.0
+0.00619899999999995,2009-01-08T04:03:53Z,,2.3.0.master.0744148,ruby-1.8.6.111,i686-darwin9.1.0
+0.00755449999999991,2009-01-08T04:04:55Z,,2.3.0.master.0744148,ruby-1.8.6.110,i686-darwin9.0.0
+0.00595999999999997,2009-01-08T04:05:06Z,,2.3.0.master.0744148,ruby-1.8.6.111,i686-darwin9.1.0
+0.00740450000000004,2009-01-09T03:54:47Z,,2.3.0.master.859e150,ruby-1.8.6.110,i686-darwin9.0.0
+0.00603150000000008,2009-01-09T03:54:57Z,,2.3.0.master.859e150,ruby-1.8.6.111,i686-darwin9.1.0
+0.00771250000000012,2009-01-09T15:46:03Z,,2.3.0.master.859e150,ruby-1.8.6.110,i686-darwin9.0.0
+</shell>
+
+h5. Profiling
+
+No modo profiling, você pode escolher ver os resultados de quatro formas diferentes:
+
+h6. Linha de comando
+
+Esse é o modo básico de ver os resultados no modo profiling:
+
+<shell>
+BrowsingTest#test_homepage (58 ms warmup)
+        process_time: 63 ms
+              memory: 832.13 KB
+             objects: 7882
+</shell>
+
+h6. Arquivo texto
+
+No formato arquivo texto ele mostra o tempo total gasto em cada método. "Veja a documentação do ruby prof para obter informações mais detalhadas":http://ruby-prof.rubyforge.org/files/examples/flat_txt.html.
+
+h6. Grafos
+
+No formato de grafos ele mostra quanto tempo levou a execução de cada método, quais métodos o chamaram e quais são chamados por ele. "Veja a documentação do ruby prof para obter informações mais detalhadas":http://ruby-prof.rubyforge.org/files/examples/graph_txt.html.
+
+h6. Árvore
+
+No formato de árvore as informações são mostradas como uma árvore de chamadas que pode ser utilizada pelo "kcachegrind":http://kcachegrind.sourceforge.net/html/Home.html e ferramentas similares.
+
+h4. Ajustando a execução dos testes
+
+Por padrão, cada teste de performance é executado +4 vezes+ no modo benchmarking e +1 vez+ no modo profiling. Porém, é muito fácil alterar esse comportamento.
+
+ATENÇÃO: A capacidade de se configurar os testes de performance ainda não está disponível no Rails, mas estará em breve.
+
+h4. Ambiente dos testes de performance
+
+Os testes de performance são executados no ambiente de +development+, mas ao fazê-lo ele irá adicionar os seguintes parâmetros de configuração:
+
+<shell>
+ActionController::Base.perform_caching = true
+ActiveSupport::Dependencies.mechanism = :require
+Rails.logger.level = ActiveSupport::BufferedLogger::INFO
+</shell>
+
+Com o +ActionController::Base.perform_caching+ alterado para +true+, os testes de performance irão se comportar de maneira muito parecida com sua execução num ambiente de +production+.
+
+h4. Instalando o Ruby com o GC modificado
+
+Para utilizar todo potencial dos testes de performance do Rails, você precisará compilar uma versão alternativa e "super poderosa" do Ruby - "GC patch":http://rubyforge.org/tracker/download.php/1814/7062/17676/3291/ruby186gc.patch para medir os tempos gastos no GC e também a alocação de memória e objetos.
+
+O processo é bastante trivial. Se você já compilou o Ruby uma vez na vida, siga essas instruções para compilá-lo dentro do seu diretório home:
+
+h5. Instalação
+
+Compile o Ruby e aplique a "modificação do GC":http://rubyforge.org/tracker/download.php/1814/7062/17676/3291/ruby186gc.patch.
+
+h5. Faça o download e descompacte
+
+<shell>
+[lifo@null ~]$ mkdir rubygc
+[lifo@null ~]$ wget <download the latest stable ruby from ftp://ftp.ruby-lang.org/pub/ruby>
+[lifo@null ~]$ tar -xzvf <ruby-version.tar.gz>
+[lifo@null ~]$ cd <ruby-version>
+</shell>
+
+h5. Aplique a modificação
+
+<shell>
+[lifo@null ruby-version]$ curl http://rubyforge.org/tracker/download.php/1814/7062/17676/3291/ruby186gc.patch | patch -p0
+</shell>
+
+h5. Configure e instale
+
+Os comandos abaixo irão instalar o Ruby no diretório +/rubygc+ dentro do seu diretório home. Lembre-se de substituir +<homedir>+ com o caminho completo do seu diretório home.
+
+<shell>
+[lifo@null ruby-version]$ ./configure --prefix=/<homedir>/rubygc
+[lifo@null ruby-version]$ make && make install
+</shell>
+
+h5. Crie alguns aliases
+
+Para facilitar, adicione os seguintes comandos ao seu arquivo +~/.profile+:
+
+<shell>
+alias gcruby='~/rubygc/bin/ruby'
+alias gcrake='~/rubygc/bin/rake'
+alias gcgem='~/rubygc/bin/gem'
+alias gcirb='~/rubygc/bin/irb'
+alias gcrails='~/rubygc/bin/rails'
+</shell>
+
+h5. Instale o Rubygems e as gems necessárias
+
+Faça o download do "Rubygems":http://rubyforge.org/projects/rubygems e o instale a partir do código-fonte. Você encontrará as instruções de instalação necessárias no README do Rubygems.
+
+Depois, instale as seguintes gems:
+
+* +rake+
+* +rails+
+* +ruby-prof+
+* +rack+
+* +mysql+
+
+Se tiver problemas para instalar o +mysql+, tente instalá-lo manualmente.
+
+<shell>
+[lifo@null mysql]$ gcruby extconf.rb --with-mysql-config
+[lifo@null mysql]$ make && make install
+</shell>
+
+E pronto. Não se esqueça que você deve utilizar os aliases +gcruby+ e +gcrake+ quando estiver executando os testes de performance.
+
+h3. Ferramentas de linha de comando
+
+Escrever testes de performance pode ser um exagero se você só quer fazer testes esporádicos, que serão executados apenas uma vez. O Rails vêem com duas ferramentas de linha de comando que permitem a execução de testes de performance de maneira rápida e simples:
+
+h4. +benchmarker+
+
+O +benchmarker+ é um wrapper sobre a biblioteca padrão "Benchmark":http://ruby-doc.org/core/classes/Benchmark.html do Ruby.
+
+Deve ser usado da seguinte forma:
+
+<shell>
+$ script/performance/benchmarker [times] 'Person.expensive_way' 'Person.another_expensive_way' ...
+</shell>
+
+Exemplos:
+
+<shell>
+$ script/performance/benchmarker 10 'Item.all' 'CouchItem.all'
+</shell>
+
+Se o argumento +[times]+ (vezes) for omitido, ele irá ser executado apenas uma vez:
+
+<shell>
+$ script/performance/benchmarker 'Item.first' 'Item.last'
+</shell>
+
+h4. +profiler+
+
+O +profiler+ é um wrapper sobre a gem http://ruby-prof.rubyforge.org/[ruby-prof].
+
+Deve ser usado da seguinte forma:
+
+<shell>
+$ script/performance/profiler 'Person.expensive_method(10)' [times] [flat|graph|graph_html]
+</shell>
+
+Exemplos:
+
+<shell>
+$ script/performance/profiler 'Item.all'
+</shell>
+
+Esse comando irá fazer o profile de +Item.all+ usando a métrica +RubyProf::WALL_TIME+. Por padrão, ele irá mostrar os resultados no prompt.
+
+<shell>
+$ script/performance/profiler 'Item.all' 10 graph
+</shell>
+
+Esse comando irá fazer o profile de +10.times { Item.all }+ (10 execuções) usando a métrica +RubyProf::WALL_TIME+ e vai mostrar os resultados no formato de grafos no prompt.
+
+Se você quiser gravar os resultados em um arquivo, faça o seguinte:
+
+<shell>
+$ script/performance/profiler 'Item.all' 10 graph 2> graph.txt
+</shell>
+
+h3. Métodos Helper
+
+O Rails disponibiliza vários helpers no Active Record, Action Controller e Action View para medir o tempo gasto por uma determinada parte do código. O método se chama +benchmark()+ em todos os três componentes.
+
+h4. Model
+
+<ruby>
+Project.benchmark("Creating project") do
+  project = Project.create("name" => "stuff")
+  project.create_manager("name" => "David")
+  project.milestones << Milestone.find(:all)
+end
+</ruby>
+
+Essas instruções irão fazer o benchmark do código dentro do bloco +Project.benchmark("Creating project") do...end+ e irá gravar o resultado para no arquivo de log:
+
+<ruby>
+Creating project (185.3ms)
+</ruby>
+
+De uma olhada na "documentação da API":http://api.rubyonrails.com/classes/ActiveRecord/Base.html#M001336 para obter mais informações sobre outros parâmetros do método +benchmark()+.
+
+h4. Controller
+
+De maneira semelhante, você pode utilizar esse helper dentro de "controllers":http://api.rubyonrails.com/classes/ActionController/Benchmarking/ClassMethods.html#M000715
+
+<ruby>
+def process_projects
+  self.class.benchmark("Processing projects") do
+    Project.process(params[:project_ids])
+    Project.update_cached_projects
+  end
+end
+</ruby>
+
+OBSERVAÇÃO: +benchmark+ é um método de classe dentro de controllers.
+
+h4. View
+
+E dentro de "views":http://api.rubyonrails.com/classes/ActionController/Benchmarking/ClassMethods.html#M000715:
+
+<erb>
+<% benchmark("Showing projects partial") do %>
+  <%= render :partial => @projects %>
+<% end %>
+</erb>
+
+h3. Fazendo o log de requisições
+
+Os arquivos de log do Rails contém informações muito úteis sobre o tempo gasto para servir cada requisição. Esse é um trecho típico de um arquivo de log:
+
+<shell>
+Processing ItemsController#index (for 127.0.0.1 at 2009-01-08 03:06:39) [GET]
+Rendering template within layouts/items
+Rendering items/index
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://0.0.0.0/items]
+</shell>
+
+No momento só a última linha nos interessa:
+
+<shell>
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://0.0.0.0/items]
+</shell>
+
+A informação é bastante óbvia. O Rails mede o tempo gasto em milissegundos(ms). A requisição levou 5 ms para ser completada pelo Rails, sendo que 2 ms foram gastos renderizando a view e não houve comunicação com o banco de dados. Com esse cenário é razoável afirmar que os 3 ms restantes foram gastos dentro do controller.
+
+Michael Koziarski escreveu um "artigo interessante":http://www.therailsway.com/2009/1/6/requests-per-second explicando a importância de se utilizar milissegundos como métrica.
+
+h3. Links úteis
+
+h4. Plugins Rails e gems
+
+* "Rails Analyzer":http://rails-analyzer.rubyforge.org
+* "Palmist":http://www.flyingmachinestudios.com/projects
+* "Rails Footnotes":http://github.com/josevalim/rails-footnotes/tree/master
+* "Query Reviewer":http://github.com/dsboulder/query_reviewer/tree/master
+
+h4. Ferramentas genéricas
+
+* "httperf":http://www.hpl.hp.com/research/linux/httperf
+* "ab":http://httpd.apache.org/docs/2.2/programs/ab.html
+* "JMeter":http://jakarta.apache.org/jmeter
+* "kcachegrind":http://kcachegrind.sourceforge.net/html/Home.html
+
+h4. Tutoriais e documentação
+
+* "ruby-prof API Documentation":http://ruby-prof.rubyforge.org
+* "Request Profiling Railscast":http://railscasts.com/episodes/98-request-profiling - Desatualizado mas útil para entender os grafos de chamada de métodos
+
+h3. Produtos comerciais
+
+O Rails tem a sorte de ter três startups diferentes dedicadas à criar ferramentas de análise de performance:
+
+* "New Relic":http://www.newrelic.com
+* "Fiveruns":http://www.fiveruns.com
+* "Scout":http://scoutapp.com
+
+h3. Changelog
+
+"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/4
+
+* 9 de Janeiro de 2009: Completamente reescrito por "Pratik":credits.html#lifo
+* 6 de Setembro de 2008: Primeira versão escrita por Matthew Bergma
+
