@@ -1,6 +1,6 @@
 h2. Testando a Performance de Aplicações Rails
 
-Esse guia aborda as várias maneiras de se realizar testes de performance em aplicações Rails. Com dele você será capaz de:
+Esse guia aborda as várias maneiras de se realizar testes de performance em aplicações Rails. Com ele você será capaz de:
 
 * Entender os vários tipo de benchmarking e métricas de profiling
 * Criar testes de performance e benchmarking
@@ -30,7 +30,7 @@ class BrowsingTest < ActionController::PerformanceTest
 end
 </ruby>
 
-Esse é um exemplo de um teste de performance simples, para fazer o profiling de uma requição GET na homepage da aplicação.
+Esse é um exemplo de um teste de performance simples, para fazer o profiling de uma requisição GET na homepage da aplicação.
 
 h4. Criando testes de performance
 
@@ -121,11 +121,11 @@ class PostPerformanceTest < ActionController::PerformanceTest
 end
 </ruby>
 
-Você pode encontrar mais detalhes sobre os métodos +get+ e +post+ no link:../testing_rails_applications.html#mgunderloy[Testing Rails Applications] guide.
+Você pode encontrar mais detalhes sobre os métodos +get+ e +post+ no guia "Testando Aplicações Rails":testing.html.
 
 h5. Exemplo para models
 
-Ainda que os testes de performance seja testes de integração e portanto naturalmente mais próximos do ciclo request/response, você também pode realizar testes de performance somente com código de modelos.
+Ainda que os testes de performance sejam testes de integração e portanto naturalmente mais próximos do ciclo request/response, você também pode realizar testes de performance somente com código de modelos.
 
 Teste de performance para o model +Post+:
 
@@ -139,7 +139,7 @@ class PostModelTest < ActionController::PerformanceTest
   end
 
   def test_slow_method
-    # Using posts(:awesome) fixture
+    # Usando a fixture posts(:awesome)
     posts(:awesome).slow_method
   end
 end
@@ -181,7 +181,6 @@ Modo: Benchmarking
 
 h5. Process time
 
-##Verificar se isso são ciclos do processador ou coisa do tipo, a explicação não está boa
 O process time mede o tempo gasto pelo processo. Ele não é afetado por processos concorrentes executados no sistema. Assim, esse valor deve ser constante para cada teste de performance, não importando o nível de utilização da máquina.
 
 Modo: Profiling
@@ -190,29 +189,29 @@ h5. Memória
 
 Mede o consumo de memória de cada teste de performance.
 
-Modo: Benchmarking, no modo Profiling exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+Modo: Benchmarking, Profiling requer a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
 
 h5. Objetos
 
 Mede o número de objetos alocados para cada teste de performance.
 
-Modo: Benchmarking, no modo Profiling exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+Modo: Benchmarking, Profiling requer a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
 
 h5. Execuções do GC (Garbage Collector)
 
 Mede quantas vezes o GC foi executado para cada teste de performance.
 
-Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
 
 h5. Tempo de execução do GC
 
 Mede quanto tempo foi gasto com a execução do GC para cada teste de performance.
 
-Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#installing-gc-patched-ruby
+Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
 
 h4. Entendo as informações obtidas
 
-Os testes de performance colocam os diversos resultados obtidos no dentro do diretório +tmp/performance+ variando de acordo com o modo e a métrica utilizados.
+Os testes de performance colocam os diversos resultados obtidos no diretório +tmp/performance+ variando de acordo com o modo e a métrica utilizada.
 
 h5. Benchmarking
 
@@ -220,7 +219,7 @@ No modo benchmarking, os testes de performance mostram os resultados de duas for
 
 h6. Linha de comando
 
-É a principal forma de apresentação dos resultados no modo benchmarking mode. Por exemplo:
+É a principal forma de apresentação dos resultados no modo benchmarking. Por exemplo:
 
 <shell>
 BrowsingTest#test_homepage (31 ms warmup)
@@ -441,7 +440,7 @@ Project.benchmark("Creating project") do
 end
 </ruby>
 
-Essas instruções irão fazer o benchmark do código dentro do bloco +Project.benchmark("Creating project") do...end+ e irá gravar o resultado para no arquivo de log:
+Estas instruções irão fazer o benchmark do código dentro do bloco +Project.benchmark("Creating project") do...end+ e irá gravar o resultado para no arquivo de log:
 
 <ruby>
 Creating project (185.3ms)
@@ -451,7 +450,7 @@ De uma olhada na "documentação da API":http://api.rubyonrails.com/classes/Acti
 
 h4. Controller
 
-De maneira semelhante, você pode utilizar esse helper dentro de "controllers":http://api.rubyonrails.com/classes/ActionController/Benchmarking/ClassMethods.html#M000715
+De maneira semelhante, você pode utilizar este helper dentro de "controllers":http://api.rubyonrails.com/classes/ActionController/Benchmarking/ClassMethods.html#M000715
 
 <ruby>
 def process_projects
@@ -528,6 +527,8 @@ h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/4
 
+* 1 de Março de 2009: Revisão por "Daniel Lopes":translators.html#danielvlopes
+* 1 de Março de 2009: Tradução por Rafael Rosa Fu
 * 9 de Janeiro de 2009: Completamente reescrito por "Pratik":credits.html#lifo
 * 6 de Setembro de 2008: Primeira versão escrita por Matthew Bergma
 
