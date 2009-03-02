@@ -1,6 +1,6 @@
 h2. Começando com Rails
 
-Este guia cobre como começar e colocar o Ruby on Rails em funcionamento. Após lê-lo, você deveria estar familiarizado com:
+Este guia abrange como começar e colocar o Ruby on Rails em funcionamento. Após lê-lo, você deveria estar familiarizado com:
 
 * Instalando o Rails, criando uma nova aplicação Rails, e conectando sua aplicação com uma base de dados.
 * O layout geral de uma aplicação Rails
@@ -9,15 +9,17 @@ Este guia cobre como começar e colocar o Ruby on Rails em funcionamento. Após 
 
 endprologue.
 
+WARNING. Este Guia é baseado no Rails 2.3. Alguns dos códigos mostrados aqui não funcionarão em versões antigas do Rails.
+
 h3. Este guia assume
 
-Este guia é designado para iniciantes que querem iniciar com uma aplicação Rails do zero. Ele não supõe que você tenha alguma experiência anterior com Rails. Entretanto, para obter o máximo dele, você precisa ter alguns pré-requisitos instalados:
+Este guia é designado para principiantes que querem iniciar com uma aplicação Rails do zero. Ele não supõe que você tenha alguma experiência anterior com Rails. Entretanto, para obter o máximo dele, você precisa ter alguns pré-requisitos instalados:
 
 * A linguagem "Ruby":http://www.ruby-lang.org/en/downloads/
 * O sistema de pacotes "RubyGems":http://rubyforge.org/frs/?group_id=126
 * Uma instalação em funcionamento do "SQLite":http://www.sqlite.org/ (preferencialmente), "MySQL":http://www.mysql.com/, ou "PostgreSQL":http://www.postgresql.org/
 
-É extremamente recomendado que você *se familiarize com o Ruby antes de mergulhar no Rails*. Você achará muito mais fácil seguir o que está acontecendo com uma aplicação Rails se você entender a sintaxe básica do Ruby. O Rails não irá revolucionar magicamente o modo como você escreve aplicações web se você não tiver experiência com a linguagem que ele utiliza. Existem alguns bons recursos grátis na Internet para aprender Ruby, incluindo:
+É extremamente recomendado que você *se familiarize com o Ruby antes de mergulhar no Rails*. Você achará muito mais fácil seguir o que está acontecendo com uma aplicação Rails se entender a sintaxe básica do Ruby. O Rails não irá revolucionar magicamente o modo como você escreve aplicações web se você não tiver experiência com a linguagem que ele utiliza. Existem alguns bons recursos grátis na Internet para aprender Ruby, incluindo:
 
 * "Mr. Neigborly’s Humble Little Ruby Book":http://www.humblelittlerubybook.com/
 * "Programming Ruby":http://www.rubycentral.com/book/
@@ -27,11 +29,11 @@ h3. O que é o Rails?
 
 O Rails é um framework de desenvolvimento web escrito na linguagem Ruby. Ele é designado para tornar a programação de aplicações web mais fácil fazendo várias suposições sobre o que cada desenvolvedor precisa para iniciar. Ele permite que você escreva menos código enquanto faz mais que muitas outras linguagens e frameworks. Desenvolvedores Rails mais experientes também dizem que ele faz o desenvolvimento de aplicações web mais divertido.
 
-O Rails é um _software com opinião_. Isto é, ele assume que existe um modo melhor para fazer as coisas, e ele é desenhado para encoragar este modo - e em alguns casos desencorajando alternativas. Se você aprender "O Modo Rails" você vai provavelmente descobrir um aumento tremendo de produtividade. Se você persistir em trazer velhos hábitos das outras linguages para o desenvolvimento Rails, tentando usar padrões que aprendeu em outros lugares, você pode ter uma experiência menos divertida.
+O Rails é um software com opinião. Isto é, ele supõe que existe um modo melhor para fazer as coisas, e ele é desenhado para encorajar este modo - e em alguns casos desencorajando alternativas. Se você aprender "O Modo Rails" você vai provavelmente descobrir um aumento tremendo de produtividade. Se persistir em trazer velhos hábitos das outras linguages para o desenvolvimento Rails, tentando usar padrões que aprendeu em outros lugares, você pode ter uma experiência menos divertida.
 
-A filosifia Rails inclui vários princípios guia:
+A filosifia Rails inclui diversos princípios guia:
 
-* DRY - "Don't Repeat Yourself" - sugere que escrevendo o mesmo código várias vezes é uma coisa ruim.
+* DRY - "Don't Repeat Yourself" - sugere que escrever o mesmo código várias vezes é uma coisa ruim.
 * Convenção ao invés de Configuração - significa que o Rails faz suposições sobre o que você quer fazer e como você estará fazendo isto, em vez de deixá-lo mudar cada minúscula coisa através de intermináveis arquivos de configuração.
 * REST é o melhor modelo para aplicações web - organizando sua aplicação em torno de recursos e verbos HTTP padrão é o modo mais rápido para proceder.
 
@@ -45,11 +47,11 @@ O Rails é organizado usando a arquitetura Model, View e Controller, normalmente
 
 h5. Models
 
-Um model representa a informação (dados) da aplicação e as regras para manipular estes dados. No caso do Rails, models são usados primariamente para gerenciar as regras de interação com uma tabela correspondente no banco de dados. Na maioria dos casos, uma tabela de sua base de dados corresponderá a um model em sua aplicação. O grosso da lógica de negócio de sua aplicação estará concentrado nos modelos.
+Um model representa a informação (dados) da aplicação e as regras para manipular estes dados. No caso do Rails, models são usados primariamente para gerenciar as regras de interação com uma tabela correspondente no banco de dados. Na maioria dos casos, uma tabela de sua base de dados corresponderá a um model em sua aplicação. O grosso da lógica de negócio de sua aplicação estará concentrado nos models.
 
 h5. Views
 
-Views representam a interface de usuário na sua aplicação. No Rails, as views são freqüentemente arquivos HTML com código Ruby embutido que efetua tarefaas relacionadas somente com a apresentação dos dados. As views gerenciam o trabalho de fornecer dados para o navegador web ou outro acessório que é usado para enviar requisições à sua aplicação.
+Views representam a interface de usuário na sua aplicação. No Rails, as views são freqüentemente arquivos HTML com código Ruby embutido que efetua tarefas relacionadas somente com a apresentação dos dados. As views gerenciam o trabalho de fornecer dados para o navegador web ou outro acessório que é usado para enviar requisições à sua aplicação.
 
 h5. Controllers
 
@@ -81,7 +83,7 @@ Active Record é a base para os models em uma aplicação Rails. Ele fornece ind
 
 h5. Action Mailer
 
-Action Mailer é o framework para criação de serviços de e-mail. Você pode usar o Action Mailer para enviar e-mails baseados em templates flexíveis, ou para receber e processar um e-mai.
+Action Mailer é o framework para criação de serviços de e-mail. Você pode usar o Action Mailer para enviar e-mails baseados em templates flexíveis, ou para receber e processar um e-mail.
 
 h5. Active Resource
 
@@ -104,7 +106,7 @@ A base da arquitetura RESTful é geralmente considerada como a tese de doutorado
 
 Por exemplo, para uma aplicação Rails uma requisição como esta:
 
-+DELETE /photos/17+
+<tt>DELETE /photos/17</tt>
 
 seria entendida para referenciar o recurso photo com o ID de 17, e para indicar a ação desejada - deletando este recurso. REST é um estilo natural para a arquitetura de aplicações web, e o Rails o faz ainda mais natural usando convenções para proteger você de algumas complexidades do RESTful.
 
@@ -116,7 +118,7 @@ Se você gostaria de mais detalhes sobre REST como um estilo arquitetural, estes
 
 h3. Criando um Novo Projeto Rails
 
-Se você seguir este guia, você criará um projeto Rails chamado +blog+, um (muito) simples weblog. Antes de iniciar a construção da aplicação, você precisa ter certeza de que tem o Rails instalado.
+Se você seguir este guia, criará um projeto Rails chamado <tt>blog</tt>, um (muito) simples weblog. Antes de iniciar a construção da aplicação, você precisa ter certeza de que tem o Rails instalado.
 
 h4. Instalando o Rails
 
@@ -133,13 +135,13 @@ NOTA: Existem algumas circunstâncias especiais nas quais você poderia querer u
 
 h4. Criando a Aplicação de Blog
 
-Abra um terminal, navega para um diretório onde você tem direitos para criar arquivos, e digite:
+Abra um terminal, navegue para um diretório onde você tem direitos para criar arquivos, e digite:
 
 <shell>
 $ rails blog
 </shell>
 
-Isto irá criar uma aplicação Rails que usa o banco de dados SQLLite para armazenamento. Se você preferir usar o MySQL, execute este comando ao invés:
+Isto irá criar uma aplicação Rails que usa o banco de dados SQLite para armazenamento. Se você preferir usar o MySQL, execute este comando ao invés:
 
 <shell>
 $ rails blog -d mysql
@@ -151,22 +153,30 @@ E se você está usando PostgreSQL para armazenamento de dados, execute este com
 $ rails blog -d postgresql
 </shell>
 
-Em qualquer caso, o Rails irá criar um diretório no seu diretório de trabalho atual chamado +blog+. Abra este diretório e explore seu conteúdo. A maioria do trabalho deste tutorial acontecerá no diretório +app/+, mas aqui está uma pequena descrição da função de cada diretório que o Rails cria em uma nova aplicação por padrão:
+TIP. Você pode ver todas as opções que o contrutor de aplicação do Rails aceita rodando <tt>rails -h</tt>.
 
-|_.Arquivo/Diretório	|_.Propósito|
-|+README+		|Este é um breve manual de instrução para sua aplicação. Use ele para explicar à outros o que sua aplicação faz, como configurá-la, etc..|
-|+Rakefile+	|Este arquivo contém um grupo de tarefas que podem ser executadas do terminal.|
-|+app/+		|Contém os controllers, models, e views para sua aplicação. Você irá focar neste diretório para o restante deste guia.|
-|+config/+		|Configure suas regras de execução para a aplicação, roteamentos, banco de dados, e mais.|
-|+db/+			|Exibe o seu schema de banco de dados atual, bem como as migrações de banco de dados. Você aprenderá sobre migrações brevemente.|
-|+doc/+		|Documentação completa para sua aplicação.|
-|+lib/+		|Módulos de extensão para sua aplicação (não explicados neste guia).|
-|+log/+		|Arquivos de log da aplicação.|
-|+public/+		|O único diretório visto pelo mundo como é. Aqui é onde suas imagens, javascript, stylesheets (CSS), e outros arquivos estáticos ficam.|
-|+script/+		|Scripts fornecidos pelo Rails para fazer tarefas repetitivas, tais como benchmarking, instalação de plugins, e iniciar o console ou o servidor web.|
-|+test/+		|Testes unitários, fixtures, e outros aparatos de teste. Estes são tratados em "Testando Aplicações Rails":testing.html.|
-|+tmp/+		|Arquivos temporários.|
-|+vendor/+		|Um local para código de terceiros. Em uma aplicação Rails típica, isto inclui Ruby Gems, o código fonte do Rails (se você instalá-lo no seu projeto) e plugins contendo funcionalidades adicionais.|
+Após criar a aplicação de blog, mude para a sua pasta para continuar trabalhando diretamente na aplicação:
+
+<shell>
+$ cd blog
+</shell>
+
+Em qualquer caso, o Rails irá criar uma pasta no seu diretório de trabalho atual chamado <tt>blog</tt>. Abra esta pasta e explore seu conteúdo. A maioria do trabalho deste tutorial acontecerá no diretório <tt>app/</tt>, mas aqui está uma pequena descrição da função de cada pasta que o Rails cria em uma nova aplicação por padrão:
+
+|_.Arquivo/Diretório|_.Propósito|
+|README|Este é um breve manual de instrução para sua aplicação. Use ele para explicar à outros o que sua aplicação faz, como configurá-la, etc.|
+|Rakefile|Este arquivo contém tarefas em lote que podem ser executadas do terminal.|
+|app/|Contém os controllers, models, e views para sua aplicação. Você irá focar neste diretório para o restante deste guia.|
+|config/|Configure suas regras de execução para a aplicação, rotas, banco de dados, e mais.|
+|db/|Exibe o seu schema de banco de dados atual, bem como as migrações de banco de dados. Você aprenderá sobre migrações em breve.|
+|doc/|Documentação completa para sua aplicação.|
+|lib/|Módulos de extensão para sua aplicação (não explicados neste guia).|
+|log/|Arquivos de log da aplicação.|
+|public/|A única pasta vista pelo mundo como ela é. Aqui é onde suas imagens, javascript, stylesheets(CSS), e outros arquivos estáticos ficam.|
+|script/|Scripts fornecidos pelo Rails para fazer tarefas repetitivas, tais como benchmarking, instalação de plugins, e iniciar o console ou o servidor web.|
+|test/|Testes unitários, fixtures, e outros aparatos de teste. Estes são tratados em "Testando Aplicações Rails":testing.html.|
+|tmp/|Arquivos temporários.|
+|vendor/|Um local para código de terceiros. Em uma aplicação Rails típica, isto inclui Ruby Gems, o código fonte do Rails (se você instalá-lo no seu projeto) e plugins contendo funcionalidades adicionais.|
 
 h4. Configurando um Banco de Dados
 
@@ -179,55 +189,66 @@ Se você abrir este arquivo em uma nova aplicação Rails, você verá uma confi
 
 h5. Configurando um Banco de Dados SQLite
 
-O Rails vem com suporte padrão para o "SQLite":http://www.sqlite.org/, que é uma aplicação de banco de dados bastante leve. Enquanto um ambiente de produção ativo pode sobrecarregar o SQLite, ele trabalha bem para desenvolvimento e teste. O Rails usa por padrão o SQLite quando um novo projeto é criado, mas você pode sempre modificar isso depois.
+O Rails vem com suporte padrão para o "SQLite":http://www.sqlite.org/, que é uma aplicação de banco de dados bastante leve e sem servidor. Enquanto um ambiente de produção ativo pode sobrecarregar o SQLite, ele trabalha bem para desenvolvimento e teste. O Rails usa por padrão o SQLite quando um novo projeto é criado, mas você pode sempre modificar isso mais tarde.
 
 Aqui está a seção do arquivo de configuração padrão com informação de conexão para o ambiente de desenvolvimento:
 
-<ruby>
+<yaml>
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-  timeout: 5000
-</ruby>
+adapter: sqlite3
+database: db/development.sqlite3
+pool: 5
+timeout: 5000
+</yaml>
 
 Se você não tem nenhum banco de dados configurado, o SQLite é o mais fácil para instalar. Se você está usando OS X 10.5 ou superior em um Mac, você já tem ele. Caso contrário, você pode instalá-lo através do RubyGems:
-
-Se você não está rodando o OS X 10.5 ou superior, você precisará instalar a gem do SQLite. Similar a instalação o Rails você só precisa executar:
 
 <shell>
 $ gem install sqlite3-ruby
 </shell>
 
-h5. Configurando um Bando de Dados MySQL
+h5. Configurando um Banco de Dados MySQL
 
 Se você escolher usar o MySQL, seu +config/database.yml+ parecerá um pouco diferente. Aqui está a seção de desenvolvimento:
 
-<ruby>
+<yaml>
 development:
-  adapter: mysql
-  encoding: utf8
-  database: blog_development
-  username: root
-  password:
-  socket: /tmp/mysql.sock
-</ruby>  
+adapter: mysql
+encoding: utf8
+database: blog_development
+pool: 5
+username: root
+password:
+socket: /tmp/mysql.sock
+</yaml>
 
-Se a instalação do MySQL em seu computador de desenvolvimento inclui um usuário root com uma senha em branco, essa configuração deveria funcionar para você. Caso contrário, altere o usuário (username) e a senha (password) na seção de +desenvolvimento+ (development) como for adequado.
+Se a instalação do MySQL em seu computador de desenvolvimento inclui um usuário root com uma senha em branco, essa configuração deveria funcionar para você. Caso contrário, altere o usuário (username) e a senha (password) na seção +development+ como for adequado.
 
-h5. Configurando um Bando de Dados PostgreSQL
+h5. Configurando um Banco de Dados PostgreSQL
 
 Se você escolher usar o PostgreSQL, seu +config/database.yml+ será customizado para usar bancos de dados PostgreSQL:
 
-<ruby>
+<yaml>
 development:
-  adapter: postgresql
-  encoding: unicode
-  database: blog_development
-  username: blog
-  password:
-</ruby>  
+adapter: postgresql
+encoding: unicode
+database: blog_development
+pool: 5
+username: blog
+password:
+</yaml>
 
-Altere o usuário (username) e a senha (password) na seção de +desenvolvimento+ (development) conforme necessário.
+Altere o usuário (username) e a senha (password) na seção +development+ conforme necessário.
+
+h4. Criando o Banco de Dados
+
+Agora que você tem seu banco de dados configurado, é hora de deixar o Rails criar um banco de dados vazio para você. Você pode fazer isto executando um comando rake:
+
+<shell>
+$ rake db:create
+</shell>
+
+NOTE. O Rake é um executador de comandos genérico que o Rails usa para diversas coisas. Você pode ver uma lista dos comandos rake disponíveis em sua aplicação executando +rake -T+.
 
 h3. Hello, Rails!
 
@@ -237,39 +258,39 @@ Um dos meios tradicionais para se iniciar com uma nova linguagem é mostrando al
 $ script/generate controller home index
 </shell>
 
-DICA: Se você está no Windows, ou seu Ruby está configurado de algum modo não-padrão, você pode precisar passar explicitamente os comandos +script+ do Rails para o Ruby: +ruby script/generate controller home index+.
+TIP. Se você está no Windows, ou seu Ruby está configurado de algum modo não-padrão, você pode precisar passar explicitamente os comandos +script+ do Rails para o Ruby: +ruby script/generate controller home index+.
 
 O Rails criará vários arquivos para você, incluindo +app/views/home/index.html.erb+. Este é o template que será usado para mostrar os resultados da ação (método) +index+ no controller +home+. Abra este arquivo no seu editor de texto e altere-o para conter uma única linha de código:
 
-<html>
+<code class="html">
 <h1>Hello, Rails!</h1>
-</html>
+</code>
 
 h4. Iniciando o Servidor Web
 
-Na verdade você já tem uma aplicação Rails funcional - depois de executar apenas dois comandos! Para vê-la, você precisa iniciar o servidor web em sua máquina de desenvolvimento. Você pode fazer isto rodando outro comando:
+Na verdade você já tem uma aplicação Rails funcional - depois de executar apenas dois comandos! Para vê-la, você precisa iniciar o servidor web em sua máquina de desenvolvimento. Você pode fazer isto executando outro comando:
 
 <shell>
 $ script/server
 </shell>
 
-Isto irá iniciar o servidor web Webrick por padrão. Para ver sua aplicação em ação, abra uma janela do navegador e vá para +http://localhost:3000+. Você deveria ver a página de informação padrão do Rails:
+Isto irá iniciar uma instância do servidor web Mongrel por padrão (O Rails pode também usar vários outros servidores web). Para ver sua aplicação em ação, abra uma janela do navegador e vá para +http://localhost:3000+. Você deveria ver a página de informação padrão do Rails:
 
-!images/rails_welcome.png(Welcome Abord screenshot)!
+!images/rails_welcome.png(Welcome Aboard screenshot)!
 
-DICA: Para parar o servidor web, aperte Ctrl+C na janela do terminal onde ele está rodando. No modo de desenvolvimento, o Rails geralmente não necessita que você pare o servidor; as alterações que você faz nos arquivos serão automaticamente atualizadas pelo servidor.
+TIP. Para parar o servidor web, aperte Ctrl+C na janela do terminal onde ele está rodando. No modo de desenvolvimento, o Rails geralmente não precisa que você pare o servidor; as alterações que você faz nos arquivos serão automaticamente atualizadas pelo servidor.
 
-A página "Bem Vindo a Bordo" é o teste de fumaça para uma nova aplicação Rails: ele se assegura que você tem seu software configurado corretamente para servir a página. Para visualizar a página que você acabou de criar, navegue para +http://localhost:3000/home/index+.
+A página "Bem Vindo a Bordo" é o _teste de fumaça_ para uma nova aplicação Rails: ele se assegura que você tem seu software configurado corretamente para servir a página. Para visualizar a página que você acabou de criar, navegue para +http://localhost:3000/home/index+.
 
 h4. Configurando a Página Inicial da Aplicação
 
-Você provavelmente gostaria de substituir a página de "Bem Vindo a Bordo" com sua própria página inicial da aplicação. O primeiro passo para fazer isto é excluir a página padrão de sua aplicação:
+Você provavelmente gostaria de substituir a página de "Bem Vindo a Bordo" com sua própria página inicial para a aplicação. O primeiro passo para fazer isto é excluir a página padrão de sua aplicação:
 
 <shell>
 $ rm public/index.html
 </shell>
 
-Agora, você deve dizer ao Rails onde sua página inicial atual está localizada. Abra o arquivo +config/routes.rb+ em seu editor. Este é o _arquivo de roteamento_ de sua aplicação, que armazena entradas em uma DSL (domain-specific language - linguagem de domínio específica) especial que diz ao Rails como conectar as requisições que chegam com os controllers e ações. No final do arquivo você verá as _rotas padrão_:
+Agora, você deve dizer ao Rails onde sua página inicial atual está localizada. Abra o arquivo +config/routes.rb+ em seu editor. Este é o _arquivo de roteamento_ de sua aplicação, que armazena entradas em uma DSL (domain-specific language - linguagem de domínio específica) especial que diz ao Rails como conectar as requisições que chegam com os controllers e actions. No final do arquivo você verá as _rotas padrão_:
 
 <ruby>
 map.connect ':controller/:action/:id'
@@ -284,31 +305,31 @@ Para configurar sua página inicial, você precisa adicionar uma outra linha ao 
 map.root :controller => "home"
 </ruby>
 
-Esta linha ilustra um minúsculo pedaço da idéia de "convenção ao invés de configuração": se você não especificar nenhuma ação, o Rails assume a ação +index+.
+Esta linha ilustra um pedacinho da abordagem de "convenção ao invés de configuração": se você não especificar nenhuma ação, o Rails assume a ação +index+.
 
 Agora se você navegar para +http://localhost:3000+ em seu navegador, você verá a view +home/index+.
 
-NOTA: Para mais informações sobre rotas, ver em "Roteamento Rails de Fora para Dentro":routing.html.
+NOTE. Para mais informações sobre rotas, ver em "Roteamento Rails de Fora para Dentro":routing.html.
 
-h3. Iniciando e Executando Rapidamente com o Scaffolding
+h3. Começando e Executando Rapidamente com o Scaffolding
 
-O _scaffolding_ do Rails é um modo rápido para gerar algumas das partes maiores de uma aplicação. Se você quer criar os models, views e controllers para um novo recurso em uma única operação, o scaffolding é a ferramenta para o trabalho.
+O _scaffolding_ do Rails é um modo rápido para gerar algumas das partes principais de uma aplicação. Se você quer criar os models, views e controllers para um novo recurso em uma única operação, o scaffolding é a ferramenta para o trabalho.
 
 h3. Criando um Recurso
 
-No caso de uma aplicação de blog, você pode iniciar gerando um recurso Post através do scaffold: isto representará um post individual no blog. Para fazer isto, entre com este comando no seu terminal:
+No caso de uma aplicação de blog, você pode começar gerando um recurso Post através do scaffold: isto representará um post individual no blog. Para fazer isto, execute este comando no seu terminal:
 
 <shell>
 $ script/generate scaffold Post name:string title:string content:text
 </shell>
 
-NOTA: Enquanto o scaffold o ajudará a iniciar rapidamente, o código padrão que ele gera é improvável para servir perfeitamente para sua aplicação. Na maioria dos casos, você precisará customizar o código gerado. Muitos desenvolvedores Rails experientes evitam usar o scaffolding por completo, preferindo escrever todo ou a maior parte do seu código fonte a partir do zero.
+NOTE. Enquanto o scaffold o ajudará a iniciar rapidamente, o código padrão que ele gera é improvável para servir perfeitamente para sua aplicação. Na maioria dos casos, você precisará customizar o código gerado. Muitos desenvolvedores Rails experientes evitam usar o scaffolding por completo, preferindo escrever todo ou a maior parte do seu código fonte a partir do zero.
 
-O gerador do scaffold criará 13 arquivos em sua aplicação, ao longo de alguns diretórios, e alterar mais um. Aqui está uma rápida visão geral do que ele cria:
+O gerador do scaffold criará 14 arquivos em sua aplicação, ao longo de alguns diretórios, e alterar mais um. Aqui está uma rápida visão geral do que ele cria:
 
 |_.Arquivo                                       |_.Propósito|
 |app/models/post.rb                            |O model Post|
-|db/migrate/20081013124235_create_posts.rb     |A Migração para criar a tabela de posts em sua base de dados. (o nome do seu arquivo terá uma data/hora diferente)|
+|db/migrate/20090113124235_create_posts.rb     |A Migração para criar a tabela de posts em sua base de dados. (o nome do seu arquivo terá uma data/hora diferente)|
 |app/views/posts/index.html.erb                |Uma view para visualizar um index de todos os posts|
 |app/views/posts/show.html.erb                 |Uma view para visualizar um único post|
 |app/views/posts/new.html.erb                  |Uma view para criar um novo post|
@@ -321,12 +342,13 @@ O gerador do scaffold criará 13 arquivos em sua aplicação, ao longo de alguns
 |config/routes.rb                              |Editado para incluir informações de roteamento para os posts|
 |test/fixtures/posts.yml                       |Dados de Posts simulados para uso nos testes|
 |test/unit/post_test.rb                        |Estrutura de testes unitários para o model Post|
+|test/unit/helpers/posts_helper_test.rb        |Estrutura de testes unitários para o helper de posts|
 
 h4. Rodando uma Migração
 
 Um dos resultados do comando +script/generate scaffold+ é uma _migração de banco de dados_. Migrações são classes Ruby designadas a facilitar a criação e modificação de tabelas do banco de dados. O Rails usa comandos rake para executar as migrações, e é possível voltar uma migração após ela ter sido aplicada no seu banco de dados. Os nomes de arquivo das migrações incluem a data/hora para garantir que eles serão processados na ordem em que foram criados.
 
-Se você verificar no arquivo +db/migrate/20081013124235_create_posts.rb+ (lembre-se, o seu arquivo terá um nome ligeiramente diferente), aqui está o que você encontrará:
+Se você verificar no arquivo +db/migrate/20090113124235_create_posts.rb+ (lembre-se, o seu arquivo terá um nome ligeiramente diferente), aqui está o que você encontrará:
 
 <ruby>
 class CreatePosts < ActiveRecord::Migration
@@ -346,24 +368,25 @@ class CreatePosts < ActiveRecord::Migration
 end
 </ruby>
 
-Se você fosse traduzir em palavras, isto diz algo como: quando esta migração for executada, cria uma tabela chamada +posts+ com duas colunas string (+name+ e +title+) e uma coluna textual (+content+), e gere campos data/hora para armazenar dados de criação e atualização. Você pode aprender a sintaxe detalhada das migrações no guia "Migrations de Banco de Dados do Rails":migrations.html.
+Se você fosse traduzir em palavras, isto diz algo como: quando esta migração for executada, cria uma tabela chamada +posts+ com duas colunas string (+name+ e +title+) e uma coluna textual (+content+), e gere campos data/hora para rastrear registro de criação e atualização. Você pode aprender a sintaxe detalhada das migrações no guia "Migrations de Banco de Dados do Rails":migrations.html.
 
-Neste ponto, você precisa fazer duas coisas: criar o banco de dados e executar a migração. Você pode usar comandos rake no terminal para ambas as tarefas:
+Neste ponto, você pode usar um comando rake para executar a migração:
 
 <shell>
 $ rake db:migrate
 </shell>
 
-NOTE: Because you're working in the development environment by default, this command will apply to the database defined in the +development+ section of your +config/database.yml+ file.
+Lembre-se que você não pode rodar migrações antes de executar +rake db:create+ para criar seu banco de dados, como explicado antes.
 
-h4. Adding a Link
+NOTE: Porque você está trabalhando no ambiente de desenvolvimento por padrão, este comando será aplicado ao banco de dados definido na seção +development+ do seu arquivo +config/database.yml+.
+
+h4. Adicionando um Link
 
 To hook the posts up to the home page you've already created, you can add a link to the home page. Open +/app/views/home/index.html.erb+ and modify it as follows:
 
 <code lang="ruby">
 <h1>Hello, Rails!</h1>
 <%= link_to "My Blog", posts_path %>
-
 </code>
 
 The +link_to+ method is one of Rails' built-in view helpers. It creates a hyperlink based on text to display and where to go - in this case, to the path for posts.
@@ -416,14 +439,14 @@ After the console loads, you can use it to work with your application's models:
 
 <shell>
 >> p = Post.create(:content => "A new post")
-=> #<Post id: nil, name: nil, title: nil, content: "A new post", 
+=> #<Post id: nil, name: nil, title: nil, content: "A new post",
 created_at: nil, updated_at: nil>
 >> p.save
 => false
 >> p.errors
-=> #<ActiveRecord::Errors:0x23bcf0c @base=#<Post id: nil, name: nil, 
-title: nil, content: "A new post", created_at: nil, updated_at: nil>, 
-@errors={"name"=>["can't be blank"], "title"=>["can't be blank", 
+=> #<ActiveRecord::Errors:0x23bcf0c @base=#<Post id: nil, name: nil,
+title: nil, content: "A new post", created_at: nil, updated_at: nil>,
+@errors={"name"=>["can't be blank"], "title"=>["can't be blank",
 "is too short (minimum is 5 characters)"]}>
 </shell>
 
@@ -469,7 +492,7 @@ The +respond_to+ block handles both HTML and XML calls to this action. If you br
     <td><%=h post.content %></td>
     <td><%= link_to 'Show', post %></td>
     <td><%= link_to 'Edit', edit_post_path(post) %></td>
-    <td><%= link_to 'Destroy', post, :confirm => 'Are you sure?', 
+    <td><%= link_to 'Destroy', post, :confirm => 'Are you sure?',
             :method => :delete %></td>
   </tr>
 <% end %>
@@ -498,7 +521,7 @@ The view is only part of the story of how HTML is displayed in your web browser.
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta http-equiv="content-type" 
+  <meta http-equiv="content-type"
         content="text/html;charset=UTF-8" />
   <title>Posts: <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'scaffold' %>
@@ -572,11 +595,11 @@ def create
     if @post.save
       flash[:notice] = 'Post was successfully created.'
       format.html { redirect_to(@post) }
-      format.xml  { render :xml => @post, :status => :created, 
+      format.xml  { render :xml => @post, :status => :created,
 	                :location => @post }
     else
       format.html { render :action => "new" }
-      format.xml  { render :xml => @post.errors, 
+      format.xml  { render :xml => @post.errors,
 	                :status => :unprocessable_entity }
     end
   end
@@ -677,7 +700,7 @@ def update
       format.xml  { head :ok }
     else
       format.html { render :action => "edit" }
-      format.xml  { render :xml => @post.errors, 
+      format.xml  { render :xml => @post.errors,
 	                :status => :unprocessable_entity }
     end
   end
@@ -772,7 +795,7 @@ class PostsController < ApplicationController
   # ...
   def show
     @post = Post.find(params[:id])
-  # ... 
+  # ...
   end
 
   def edit
@@ -795,11 +818,11 @@ Four instances of the exact same line of code doesn’t seem very DRY. Rails pro
 
 <ruby>
 class PostsController < ApplicationController
-  before_filter :find_post, 
+  before_filter :find_post,
     :only => [:show, :edit, :update, :destroy]
   # ...
   def show
-  # ... 
+  # ...
   end
 
   def edit
@@ -828,12 +851,12 @@ h3. Adding a Second Model
 
 Now that you've seen what's in a model built with scaffolding, it's time to add a second model to the application. The second model will handle comments on blog posts.
 
-h4. Generating a Model 
+h4. Generating a Model
 
 Models in Rails use a singular name, and their corresponding database tables use a plural name. For the model to hold comments, the convention is to use the name Comment. Even if you don't want to use the entire apparatus set up by scaffolding, most Rails developers still use generators to make things like models and controllers. To create the new model, run this command in your terminal:
 
 <shell>
-$ script/generate model Comment commenter:string body:text 
+$ script/generate model Comment commenter:string body:text
     post:references
 </shell>
 
@@ -987,7 +1010,7 @@ class CommentsController < ApplicationController
       render :action => "new"
     end
   end
-  
+
   def edit
     @post = Post.find(params[:post_id])
     @comment = @post.comments.find(params[:id])
@@ -1051,7 +1074,7 @@ The +views/comments/index.html.erb+ view:
         <%= link_to 'Edit', edit_post_comment_path(@post, comment) %>
     </td>
     <td>
-        <%= link_to 'Destroy', post_comment_path(@post, comment), 
+        <%= link_to 'Destroy', post_comment_path(@post, comment),
             :confirm => 'Are you sure?', :method => :delete %>
     </td>
   </tr>
@@ -1196,7 +1219,7 @@ class Post < ActiveRecord::Base
   validates_length_of :title, :minimum => 5
   has_many :comments
   has_many :tags
-  
+
   accepts_nested_attributes_for :tags, :allow_destroy => :true  ,
     :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
 end
