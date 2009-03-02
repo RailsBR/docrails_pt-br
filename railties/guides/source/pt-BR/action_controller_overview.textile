@@ -786,7 +786,7 @@ NOTE: Algumas exceções só são resgatáveis a partir da classe ApplicationCon
 
 h3. Changelog
 
-http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/17[Lighthouse ticket]
+"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/17
 
 * Março 2, 2008: Revisão da tradução por "Daniel Lopes":translators.html#danielvlopes
 * Novembro 4, 2008: Primeira versão por Tore Darrell
