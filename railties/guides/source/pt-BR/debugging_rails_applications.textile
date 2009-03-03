@@ -31,7 +31,7 @@ O helper +debug+ retornará uma tag +&lt;pre&gt;+ que renderiza o objeto utiliza
 
 Você verá algo parecido com isto:
 
-<pre>
+<yaml>
 --- !ruby/object:Post
 attributes:
   updated_at: 2008-09-05 22:55:47
@@ -44,7 +44,7 @@ attributes_cache: {}
 
 
 Title: Guia de depuração com Rails
-</pre>
+</yaml>
 
 h4. to_yaml
 
@@ -62,7 +62,7 @@ O método +to_yaml+ converte o método para o formato YAML, deixando-o mais leg�
 
 Como resultado, você terá o seguinte em sua view:
 
-<pre>
+</yaml>
 --- !ruby/object:Post
 attributes:
 updated_at: 2008-09-05 22:55:47
@@ -74,7 +74,7 @@ created_at: 2008-09-05 22:55:47
 attributes_cache: {}
 
 Title: Guia de depuração com Rails
-</pre>
+</yaml>
 
 h4. inspect
 
@@ -149,7 +149,7 @@ config.log_level = Logger::WARN # Em qualquer inicializador de ambiente, ou
 ActiveRecord::Base.logger.level = 0 # a qualquer momento
 </ruby>
 
-Isto é útil para quando você deseja depurar algo durante o desenvolvimento e estagiamento, mas não deseja encher seu log de produção com informações desnecessárias.
+Isto é útil para quando você deseja depurar algo durante o desenvolvimento ou staging, mas não deseja encher seu log de produção com informações desnecessárias.
 
 TIP:O nível de log padrão do Rails é +info+ no modo de produção e +debug+ nos modos de desenvolvimento e teste.
 
@@ -189,23 +189,23 @@ end
 
 Aqui temos um exemplo do log gerado por este método:
 
-<pre>
+<shell>
 Processing PostsController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
   Session ID: BAh7BzoMY3NyZl9pZCIlMDY5MWU1M2I1ZDRjODBlMzkyMWI1OTg2NWQyNzViZjYiCmZsYXNoSUM6J0FjdGl
 vbkNvbnRyb2xsZXI6OkZsYXNoOjpGbGFzaEhhc2h7AAY6CkB1c2VkewA=--b18cd92fba90eacf8137e5f6b3b06c4d724596a4
-  Parameters: {"commit"=>"Create", "post"=>{"title"=>"Depurando Rails", 
- "body"=>"Estou aprendendo a imprimir em logs!!!", "published"=>"0"}, 
+  Parameters: {"commit"=>"Create", "post"=>{"title"=>"Debugging Rails",
+ "body"=>"I'm learning how to print in logs!!!", "published"=>"0"},
  "authenticity_token"=>"2059c1286e93402e389127b1153204e0d1e275dd", "action"=>"create", "controller"=>"posts"}
-Novo post: {"updated_at"=>nil, "title"=>"Depurando Rails", "body"=>"Estou aprendendo a imprimir em logs!!!", 
+New post: {"updated_at"=>nil, "title"=>"Debugging Rails", "body"=>"I'm learning how to print in logs!!!",
  "published"=>false, "created_at"=>nil}
-Post deve ser válido: true
-  Post Create (0.000443)   INSERT INTO "posts" ("updated_at", "title", "body", "published", 
- "created_at") VALUES('2008-09-08 14:52:54', 'Depurando Rails', 
- 'Estou aprendendo a imprimir em logs!!!', 'f', '2008-09-08 14:52:54')
-O post foi salvo e agora o usuário será redirecionado...
+Post should be valid: true
+  Post Create (0.000443)   INSERT INTO "posts" ("updated_at", "title", "body", "published",
+ "created_at") VALUES('2008-09-08 14:52:54', 'Debugging Rails',
+ 'I''m learning how to print in logs!!!', 'f', '2008-09-08 14:52:54')
+The post was saved and now is the user is going to be redirected...
 Redirected to #<Post:0x20af760>
 Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/posts]
-</pre>
+</shell>
 
 Adicionar informações de logs extras como estas torna mais simples a busca por comportamentos inexperados ou incomuns em seus logs. Se você adicionar informações extras de log, certifique-se de utilizar corretamente os níveis de log, para evitar encher seu log de produção com informações não-úteis.
 
@@ -223,7 +223,7 @@ O depurador utilizado pelo Rails, +ruby-debug+, vem em forma de uma gem. Para in
 $ sudo gem install ruby-debug
 </shell>
 
-No caso do você precisar baixar uma versão diferente ou o código fonte, você pode acessar "a página do projeto no rubyforge":http://rubyforge.org/projects/ruby-debug/.
+No caso de você precisar baixar uma versão diferente ou o código fonte, você pode acessar "a página do projeto no rubyforge":http://rubyforge.org/projects/ruby-debug/.
 
 O Rails tem suporte ao ruby-debug desde a versão 2.0. Dentro de qualquer aplicação Rails você pode utilizar o depurador chamando o método +debugger+.
 
@@ -240,9 +240,9 @@ end
 
 Se você receber a seguinte mensagem no console ou nos logs:
 
-<pre>
+<shell>
 ***** Debugger requested, but was not available: Start server with --debugger to enable *****
-</pre>
+</shell>
 
 Certifique-se de iniciar o seu servidor web com a opção +--debugger+:
 
@@ -266,14 +266,14 @@ Se o código for chamado a partir de uma requisição de um navegador, a aba do 
 
 Por exemplo:
 
-<pre>
+<shell>
 @posts = Post.find(:all)
 (rdb:7)
-</pre>
+</shell>
 
 Agora é a hora de explorar a sua aplicação. Uma boa forma de começar é pedir ajuda ao depurador... então digite: +help+ (você não esperava por esta, né?)
 
-<pre>
+<shell>
 (rdb:7) help
 ruby-debug help v0.10.2
 Type 'help <command-name>' for help on a specific command
@@ -284,7 +284,7 @@ break      disable  eval    info    p     reload   source  undisplay
 catch      display  exit    irb     pp    restart  step    up
 condition  down     finish  list    ps    save     thread  var
 continue   edit     frame   method  putl  set      tmate   where
-</pre>
+</shell>
 
 TIP:Para visualizar o menu de ajuda de qualquer comando utilize +help <command-name>+ durante o modo de depuração. Por exemplo: _+help var+_
 
@@ -292,7 +292,7 @@ O próximo comando que veremos é um dos mais úteis: +list+. Você também pode
 
 Este comando mostra onde você está no código imprimindo 10 linhas ao redor da linha atual; neste exemplo, a linha atual é a 6 e está marcada com um +=>+.
 
-<pre>
+<shell>
 (rdb:7) list
 [1, 10] in /PathToProject/posts_controller.rb
    1  class PostsController < ApplicationController
@@ -305,11 +305,11 @@ Este comando mostra onde você está no código imprimindo 10 linhas ao redor da
    8      respond_to do |format|
    9        format.html # index.html.erb
    10        format.xml  { render :xml => @posts }
-</pre>
+</shell>
 
 Se você repetir o comando +list+, desta vez utilizando somente o +l+, as próximas dez linhas do arquivo serão impressas.
 
-<pre>
+<shell>
 (rdb:7) l
 [11, 20] in /PathTo/project/app/controllers/posts_controller.rb
    11      end
@@ -322,7 +322,7 @@ Se você repetir o comando +list+, desta vez utilizando somente o +l+, as próxi
    18
    19      respond_to do |format|
    20        format.html # show.html.erb
-</pre>
+</shell>
 
 E assim por diante, até o fim do arquivo atual. Quando chegar ao final do arquivo, o comando +list+ irá continuar do começo do arquivo e seguir novamente até seu final, tratando o arquivo como um buffer cíclico.
 
@@ -334,7 +334,7 @@ O ruby-debug cria conteúdo quando um ponto de parada é alcançado ou quando um
 
 A qualquer momento você pode chamar o comando +backtrace+ (ou o seu atalho +where+) para imprimir o backtrace (rastros) de sua aplicação. Isto pode ser muito útil para descobrir como você chegou onde está agora. Se você em algum momento se perguntou como chegou a algum lugar em seu código, o comando +backtrace+ lhe dará a resposta.
 
-<pre>
+<shell>
 (rdb:5) where
     #0 PostsController.index
        at line /PathTo/project/app/controllers/posts_controller.rb:6
@@ -345,15 +345,15 @@ A qualquer momento você pode chamar o comando +backtrace+ (ou o seu atalho +whe
     #3 ActionController::Filters::InstanceMethods.call_filters(chain#ActionController::Fil...,...)
        at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/filters.rb:617
 ...
-</pre>
+</shell>
 
 Você pode mover-se dentro dos rastros (alterando seu contexto) utilizando o comando +frame _n_+, onde _n_ é o número do frame desejado.
 
-<pre>
+<shell>
 (rdb:5) frame 2
 #2 ActionController::Base.perform_action_without_filters
        at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/base.rb:1175
-</pre>
+</shell>
 
 As variáveis disponíveis são as mesmas que você tem ao executar o código linha por linha. Afinal, isto é o que uma depuração significa.
 
@@ -377,29 +377,29 @@ Qualquer expressão pode ser avaliada no contexto atual. Para avaliar uma expres
 
 Este exemplo mostra como você pode imprimir as variáveis de instância (instance_variables) definidas no contexto atual:
 
-<pre>
+<shell>
 @posts = Post.find(:all)
 (rdb:11) instance_variables
 ["@_response", "@action_name", "@url", "@_session", "@_cookies", "@performed_render", "@_flash", "@template", "@_params", "@before_filter_chain_aborted", "@request_origin", "@_headers", "@performed_redirect", "@_request"]
-</pre>
+</shell>
 
 Como você pode ver, todas as variáveis acessíveis de um controller são mostradas. Esta lista é atualizada dinamicamente enquanto você executa código. Por exemplo, execute a próxima linha utilizando o comando +next+ (você aprenderá mais sobre este comando mais adiante).
 
-<pre>
+<shell>
 (rdb:11) next
 Processing PostsController#index (for 127.0.0.1 at 2008-09-04 19:51:34) [GET]
   Session ID: BAh7BiIKZmxhc2hJQzonQWN0aW9uQ29udHJvbGxlcjo6Rmxhc2g6OkZsYXNoSGFzaHsABjoKQHVzZWR7AA==--b16e91b992453a8cc201694d660147bba8b0fd0e
   Parameters: {"action"=>"index", "controller"=>"posts"}
 /PathToProject/posts_controller.rb:8
 respond_to do |format|
-</pre>
+</shell>
 
 E então solicite novamente as variáveis de instância:
 
-<pre>
+<shell>
 (rdb:11) instance_variables.include? "@posts"
 true
-</pre>
+</shell>
 
 Agora +@posts+ está incluído nas variáveis de instância, pois a linha que o define foi executada.
 
@@ -407,38 +407,38 @@ TIP:Você também pode entrar no modo *irb* com o comando +irb+ (claro!). Assim,
 
 O método +var+ é a forma mais conveniente para mostrar variáveis e seus valores:
 
-<pre>
+<shell>
 var
 (rdb:1) v[ar] const <object>            mostra constantes de um objeto
 (rdb:1) v[ar] g[lobal]                  mostra variáveis globais
 (rdb:1) v[ar] i[nstance] <object>       mostra variáveis de instância de um objeto
 (rdb:1) v[ar] l[ocal]                   mostra variáveis locais
-</pre>
+</shell>
 
 Esta é uma ótima forma de inspecionar valores de variáveis no contexto atual. Por exemplo:
 
-<pre>
+<shell>
 (rdb:9) var local
   __dbg_verbose_save => false
-</pre>
+</shell>
 
 Você também pode inspecionar um método de um objeto desta forma:
 
-<pre>
+<shell>
 (rdb:9) var instance Post.new
 @attributes = {"updated_at"=>nil, "body"=>nil, "title"=>nil, "published"=>nil, "created_at"...
 @attributes_cache = {}
 @new_record = true
-</pre>
+</shell>
 
 TIP:Os comandos +p+ (print - imprimir) e +pp+ (pretty print - melhor impressão) podem ser utilizados para avaliar expressões Ruby e mostrar os valores de variáveis no console.
 
 Você também pode utilizar o comando +display+ para observar variáveis. Esta é uma boa forma de avaliar os valores de uma variável enquanto o código é executado.
 
-<pre>
+<shell>
 (rdb:1) display @recent_comments
 1: @recent_comments =
-</pre>
+</shell>
 
 As variáveis dentro da lista de observações serão impressas com seus valores assim que você avançar na pilha de execução. Para parar a observação de uma variável, utilize <tt>undisplay <em>n</em></tt>, onde _n_ é o número da variável (1 no último exemplo).
 
@@ -474,7 +474,7 @@ end
 
 TIP:Você pode utilizar o ruby-debug enquanto estiver utilizando o script/console. Lembre-se apenas de fazer um +require "ruby-debug"+ antes de chamar o método +debugger+.
 
-<pre>
+<shell>
 /PathTo/project $ script/console
 Loading development environment (Rails 2.1.0)
 >> require "ruby-debug"
@@ -484,11 +484,11 @@ Loading development environment (Rails 2.1.0)
 >> author.find_recent_comments
 /PathTo/project/app/models/author.rb:11
 )
-</pre>
+</shell>
 
 Com o código paralisado, dê uma olhada:
 
-<pre>
+<shell>
 (rdb:1) list
 [6, 15] in /PathTo/project/app/models/author.rb
    6      debugger
@@ -499,19 +499,19 @@ Com o código paralisado, dê uma olhada:
 => 11      )
    12    end
    13  end
-</pre>
+</shell>
 
 Você está no fim da linha, mas... será que esta linha já foi executada? Você pode inspecionar as variáveis de instância.
 
-<pre>
+<shell>
 (rdb:1) var instance
 @attributes = {"updated_at"=>"2008-07-31 12:46:10", "id"=>"1", "first_name"=>"Bob", "las...
 @attributes_cache = {}
-</pre>
+</shell>
 
 +@recent_comments+ ainda não foi definida, então fica claro que esta linha ainda não foi executada. Utilize o comando +next+ para avançar no código:
 
-<pre>
+<shell>
 (rdb:1) next
 /PathTo/project/app/models/author.rb:12
 @recent_comments
@@ -520,7 +520,7 @@ Você está no fim da linha, mas... será que esta linha já foi executada? Voc�
 @attributes_cache = {}
 @comments = []
 @recent_comments = []
-</pre>
+</shell>
 
 Agora você pode ver que o relacionamento +@comments+ foi carregado e @recent_comments foi definido, porque a linha foi executada.
 
@@ -536,26 +536,26 @@ Você pode adicionar breakpoints dinamicamente com o comando +break+ (ou somente
 * +break file:line [if expression]+: coloca um breakpoint na linha de número _line_ do arquivo _file_. Se existir uma _expressão_ ela deve se avaliada como _true_ para ativar o depurador.
 * +break class(.|\#)method [if expression]+: coloca um breakpoint no método _method_ (. e \# para classes e métodos de instância, respectivamente) definido na classe _class_. A _expressão_ funciona da mesma forma como em file:line.
 
-<pre>
+<shell>
 (rdb:5) break 10
 Breakpoint 1 file /PathTo/project/vendor/rails/actionpack/lib/action_controller/filters.rb, line 10
-</pre>
+</shell>
 
 Utilize +info breakpoints _n_+ ou +info break _n_+ para listar breakpoints. Se você passar um número, ele listará o breakpoint correspondente ao número. Caso contrário, ele listará todos os breakpoints.
 
-<pre>
+<shell>
 (rdb:5) info breakpoints
 Num Enb What
   1 y   at filters.rb:10
-</pre>
+</shell>
 
 Para remover breakpoints: utilize o comando +delete _n_+ para remover o breakpoint de número _n_. Se nenhum número for passado, todos os breakpoints ativos serão removidos...
 
-<pre>
+<shell>
 (rdb:5) delete 1
 (rdb:5) info breakpoints
 No breakpoints.
-</pre>
+</shell>
 
 Você também pode ativar ou desativar breakpoints:
 
@@ -623,9 +623,9 @@ Se um objeto Ruby não ficar fora de escopo, o Ruby Garbage Collector não irá 
 
 Para instalá-lo, execute:
 
-<pre>
+<shell>
 sudo gem install bleak_house
-</pre>
+</shell>
 
 Agora você deve configurar sua aplicação para utilizá-lo. E então adicione o seguinte ao final do seu config/environment.rb:
 
@@ -635,21 +635,21 @@ require 'bleak_house' if ENV['BLEAK_HOUSE']
 
 Inicie uma instância do servidor integrado com o BleakHouse:
 
-<pre>
+<shell>
 RAILS_ENV=production BLEAK_HOUSE=1 ruby-bleak-house ./script/server
-</pre>
+</shell>
 
 Certifique-se de executar algumas centenas de requisições para ter uma amostra melhor de dados, e então digite +CTRL-C+. O servidor será finalizado e o Bleak House irá gerar uma saída em +/tmp+:
 
-<pre>
+<shell>
 ** BleakHouse: working...
 ** BleakHouse: complete
 ** Bleakhouse: run 'bleak /tmp/bleak.5979.0.dump' to analyze.
-</pre>
+</shell>
  
 Para analisá-lo, execute o comando listado. As 20 linhas com maior probabilidade de estouro serão listadas: 
 
-<pre>
+<shell>
   191691 total objects
   Final heap size 191691 filled, 220961 free
   Displaying top 20 most common line/class pairs
@@ -662,7 +662,7 @@ Para analisá-lo, execute o comando listado. As 20 linhas com maior probabilidad
    935 /opt/local//lib/ruby/site_ruby/1.8/rubygems/specification.rb:557:String
    834 /opt/local//lib/ruby/site_ruby/1.8/rubygems/version.rb:146:Array
   ...
-</pre>
+</shell>
 
 Desta forma você pode descobrir onde a sua aplicação está com maior probabilidade de estourar memória e corrígi-la.
 
@@ -704,6 +704,7 @@ h3. Log de Alterações
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/5
 
+* Março 3, 2008: Revisão da tradução por "Daniel Lopes":translators.html#danielvlopes
 * November 3, 2008: Accepted for publication. Added RJS, memory leaks and plugins chapters by "Emilio Tagua":credits.html#miloops
 * October 19, 2008: Copy editing pass by "Mike Gunderloy":credits.html#mgunderloy
 * September 16, 2008: initial version by "Emilio Tagua":credits.html#miloops
