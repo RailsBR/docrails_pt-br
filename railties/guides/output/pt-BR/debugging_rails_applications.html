@@ -1,0 +1,638 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  
+<title>Depurando Aplicações Rails</title>
+
+<link rel="stylesheet" type="text/css" href="files/stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/syntax.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/print.css" media="print" />
+
+<script type="text/javascript" src="files/javascripts/guides.js"></script>
+<script type="text/javascript" src="files/javascripts/code_highlighter.js"></script>
+<script type="text/javascript" src="files/javascripts/highlighters.js"></script>
+
+</head>
+<body class="guide">
+  <div id="topNav">
+    <div class="wrapper">
+      <strong>Mais em <a href="http://www.rubyonrails.pro.br/">rubyonrails.pro.br:</a> </strong>
+      <a href="http://www.rubyonrails.pro.br/">Geral</a> |
+      <a href="http://rubyonrails.pro.br/down">Download</a> |
+      <a href="http://rubyonrails.pro.br/deploy">Deploy</a> |
+      <a href="http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/overview">C&oacute;digo</a> |
+      <a href="http://www.rubyonrails.pro.br/apresentacoes">Apresentações</a> |
+      <a href="http://www.rubyonrails.pro.br/documentacao">Documentação</a> |
+      <a href="http://www.rubyonrails.pro.br/ecossistema">Ecossistema</a> |
+      <a href="http://www.rubyonrails.pro.br/comunidade">Comunidade</a> |
+      <a href="http://podcast.rubyonrails.pro.br">Podcasts</a> |
+      <a href="http://www.rubyonrails.pro.br/planeta/">Blogs</a>
+    </div>
+  </div>
+  <div id="header">
+    <div class="wrapper clearfix">
+      <h1><a href="index.html" title="Retorne para a página princípal">Guides.rubyonrails.org</a></h1>
+      <p class="hide"><a href="#mainCol">Pule a navegação</a>.</p>
+      <ul class="nav">
+        <li><a href="index.html">Início</a></li>
+        <li class="index"><a href="#" onclick="guideMenu();" id="guidesMenu">Índice dos Guias</a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+              <dt>Start Here</dt>
+              <dd><a href="getting_started.html">Começando com Rails</a></dd>
+              <dt>Models</dt>
+              <dd><a href="migrations.html">Rails Database Migrations</a></dd>
+              <dd><a href="activerecord_validations_callbacks.html">Validações e Callbacks do Active Record</a></dd>
+              <dd><a href="association_basics.html">Associações do Active Record</a></dd>
+              <dd><a href="active_record_querying.html">Interface de Queries do Active Record</a></dd>
+              <dt>Views</dt>
+              <dd><a href="layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
+              <dd><a href="form_helpers.html">Form Helpers do Action View</a></dd>
+              <dt>Controllers</dt>
+              <dd><a href="action_controller_overview.html">Visão Geral do Action Controller</a></dd>
+              <dd><a href="routing.html">Roteamento Rails de Fora para Dentro</a></dd>
+            </dl>
+            <dl class="R">
+              <dt>Aprofundando</dt>
+              <dd><a href="i18n.html">API de Internacionalização do Rails</a></dd>
+              <dd><a href="action_mailer_basics.html">Conceitos Básicos do Action Mailer</a></dd>
+              <dd><a href="testing.html">Testando Aplicações Rails</a></dd>
+              <dd><a href="security.html">Segurança em Aplicações Rails</a></dd>
+              <dd><a href="debugging_rails_applications.html">Depurando Aplicações Rails</a></dd>
+              <dd><a href="performance_testing.html">Testando Performance em Aplicações Rails</a></dd>
+              <dd><a href="plugins.html">O Básico da Criação de Plugins</a></dd>
+              <dd><a href="configuring.html">Configurando Aplicações Rails</a></dd>
+            </dl>
+          </div>
+        </li>
+        <li><a href="contribute.html">Contribua</a></li>
+        <li><a href="credits.html">Créditos</a></li>
+      </ul>     
+    </div>
+  </div>
+  <hr class="hide" />
+  
+  <div id="feature">
+    <div class="wrapper">
+      <h2>Depurando Aplicações Rails</h2>
+<p>Este guia apresenta técnicas para depurar aplicações no Ruby on Rails. Através deste guia, você será capaz de:</p>
+<ul>
+	<li>Compreender o próposito de uma depuração</li>
+	<li>Pesquisar problemas e questões em sua aplicação que não estão sendo identificados pelos seus testes</li>
+	<li>Aprender os diferentes métodos de depuração</li>
+	<li>Analizar a pilha de execução</li>
+</ul>
+
+            <div id="subCol">
+        <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
+        <ol class="chapters">
+<li><a href="#view-helperspara-depurao">View Helpers para Depuração</a><ul><li><a href="#debug">debug</a></li><li><a href="#to-yaml">to_yaml</a></li><li><a href="#inspect">inspect</a></li><li><a href="#depurando-javascript">Depurando Javascript</a></li></ul></li><li><a href="#o-logger">O Logger</a><ul><li><a href="#oqueo-logger">O que é o Logger?</a></li><li><a href="#nveisde-log">Níveis de Log</a></li><li><a href="#enviando-mensagens">Enviando Mensagens</a></li></ul></li><li><a href="#depurandocomruby-debug">Depurando com ruby-debug</a><ul><li><a href="#configurao">Configuração</a></li><li><a href="#a-interface">A Interface</a></li><li><a href="#o-contexto">O Contexto</a></li><li><a href="#threads">Threads</a></li><li><a href="#inspecionando-variveis">Inspecionando Variáveis</a></li><li><a href="#passoa-passo">Passo a Passo</a></li><li><a href="#breakpoints">Breakpoints</a></li><li><a href="#capturando-excees">Capturando Exceções</a></li><li><a href="#continuandoa-execuo">Continuando a Execução</a></li><li><a href="#editando">Editando</a></li><li><a href="#saindo">Saindo</a></li><li><a href="#configuraes">Configurações</a></li></ul></li><li><a href="#depurando-estourosde-memria">Depurando Estouros de Memória</a><ul><li><a href="#bleak-house">BleakHouse</a></li><li><a href="#valgrind">Valgrind</a></li></ul></li><li><a href="#pluginspara-depurao">Plugins para Depuração</a><ul></ul></li><li><a href="#referncias">Referências</a><ul></ul></li><li><a href="#logde-alteraes">Log de Alterações</a><ul></ul></li></ol></div>
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <h3 id="view-helperspara-depurao">1 View Helpers para Depuração</h3>
+<p>Uma tarefa comum é inspecionar os conteúdos de uma variável. No Rails, você pode fazer isto de três formas:</p>
+<ul>
+	<li><tt>debug</tt></li>
+	<li><tt>to_yaml</tt></li>
+	<li><tt>inspect</tt></li>
+</ul>
+<h4 id="debug">1.1 debug</h4>
+<p>O helper <tt>debug</tt> retornará uma tag <tt>&lt;pre&gt;</tt> que renderiza o objeto utilizando o formato <span class="caps">YAML</span>. Isto gera um bloco de dados legível para um humano a partir de qualquer objeto. Por exemplo, se você tiver este código em uma view:</p>
+<div class="code_container"><code class="html">
+&lt;%= debug @post %&gt;
+&lt;p&gt;
+  &lt;b&gt;Título:&lt;/b&gt;
+  &lt;%=h @post.title %&gt;
+&lt;/p&gt;
+</code></div>
+<p>Você verá algo parecido com isto:</p>
+<div class="code_container"><code class="yaml">
+--- !ruby/object:Post
+attributes:
+  updated_at: 2008-09-05 22:55:47
+  body: É um guia muito útil para depurar suas aplicações Rails.
+  title: Guia de depuração com Rails
+  published: t
+  id: &quot;1&quot;
+  created_at: 2008-09-05 22:55:47
+attributes_cache: {}
+
+
+Title: Guia de depuração com Rails
+</code></div>
+<h4 id="to-yaml">1.2 to_yaml</h4>
+<p>Para imprimir no formato <span class="caps">YAML</span> uma variável de instância ou qualquer outro objeto ou método, você pode fazer da seguinte forma:</p>
+<div class="code_container"><code class="html">
+&lt;%= simple_format @post.to_yaml %&gt;
+&lt;p&gt;
+  &lt;b&gt;Título:&lt;/b&gt;
+  &lt;%=h @post.title %&gt;
+&lt;/p&gt;
+</code></div>
+<p>O método <tt>to_yaml</tt> converte o método para o formato <span class="caps">YAML</span>, deixando-o mais legível, e então o helper <tt>simple_format</tt> é utilizado para renderizar cada linha como acontece em um console. Esta é a forma pela qual o método <tt>debug</tt> realiza a sua mágica.</p>
+<p>Como resultado, você terá o seguinte em sua view:</p>
+</yaml>
+<hr />
+!ruby/object:Post
+<p>attributes:
+updated_at: 2008-09-05 22:55:47
+body: É um guia muito útil para depurar suas aplicações Rails.
+title: Guia de depuração com Rails
+published: t
+id: &#8220;1&#8221;
+created_at: 2008-09-05 22:55:47
+attributes_cache: {}</p>
+<p>Title: Guia de depuração com Rails</p>
+</yaml>
+<h4 id="inspect">1.3 inspect</h4>
+<p>Outro método útil para imprimir valores de objetos é o <tt>inspect</tt>, especialmente quando se está trabalhando com arrays ou hashes.  Ele imprimirá o valor do objeto como uma string. Por exemplo:</p>
+<div class="code_container"><code class="html">
+&lt;%= [1, 2, 3, 4, 5].inspect %&gt;
+&lt;p&gt;
+  &lt;b&gt;Título:&lt;/b&gt;
+  &lt;%=h @post.title %&gt;
+&lt;/p&gt;
+</code></div>
+<p>Será renderizado da seguinte forma:</p>
+<pre>
+[1, 2, 3, 4, 5]
+
+Title: Guia de depuração com Rails
+</pre>
+<h4 id="depurando-javascript">1.4 Depurando Javascript</h4>
+<p>Rails possui suporte embutido para se depurar <span class="caps">RJS</span>. Para ativá-lo, ajuste <tt>ActionView::Base.debug_rjs</tt> para <em>true</em>. Isto especificará que respostas <span class="caps">RJS</span> serão encapsuladas em um bloco try/catch que realizará alert()s quando uma exceção for capturada (a exceção então é relançada).</p>
+<p>Para habilitá-lo, adicione a seguinte linha ao bloco <tt>Rails::Initializer do |config|</tt> dentro de <tt>environment.rb</tt>:</p>
+<div class="code_container"><code class="ruby">
+config.action_view[:debug_rjs] = true
+</code></div>
+<p>Ou, a qualquer momento, ajuste <tt>ActionView::Base.debug_rjs</tt> para <em>true</em>:</p>
+<div class="code_container"><code class="ruby">
+ActionView::Base.debug_rjs = true
+</code></div>
+<div class='info'><p>Para mais informações ao depurar javascript visite a página do <a href="http://getfirebug.com/">Firebug</a>, uma popular extensão de depuração para o Firefox.</p></div>
+<h3 id="o-logger">2 O Logger</h3>
+<p>Também pode ser útil guardar informações em arquivos de log durante a execução de sua aplicação. O Rails mantém um arquivo de log separado para cada ambiente de execução.</p>
+<h4 id="oqueo-logger">2.1 O que é o Logger?</h4>
+<p>O Rails utiliza o <tt>logger</tt> padrão do Ruby para escrever informações de log. Você pode substituí-lo por outros loggers, como o <tt>Log4R</tt> se você preferir.</p>
+<p>Você pode especificar um logger alternativo em seu <tt>environment.rb</tt> ou em qualquer arquivo de ambiente:</p>
+<div class="code_container"><code class="ruby">
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+ActiveRecord::Base.logger = Log4r::Logger.new(&quot;Log da Aplicação&quot;)
+</code></div>
+<p>Ou, na seção <tt>Initializer</tt>, adicione <em>algum</em> dos seguintes</p>
+<div class="code_container"><code class="ruby">
+config.logger = Logger.new(STDOUT)
+config.logger = Log4r::Logger.new(&quot;Log da Aplicação&quot;)
+</code></div>
+<div class='info'><p>Por padrão, cada log é criado em <tt>RAILS_ROOT/log/</tt> e o nome do arquivo de log é <tt>environment_name.log</tt>.</p></div>
+<h4 id="nveisde-log">2.2 Níveis de Log</h4>
+<p>Quando uma mensagem é enviada para o log, ela é impressa no arquivo de log correspondente se o nível de log da mensagem é igual ou maior do que o nível configurado para o log. Para saber o nível configurado atual de um log, você pode chamar o método <tt>ActiveRecord::Base.logger.level</tt>.</p>
+<p>Os níveis de log disponíveis são: <tt>:debug</tt>, <tt>:info</tt>, <tt>:warn</tt>, <tt>:error</tt> e <tt>:fatal</tt>, correspondendo aos níveis de log dos número de 0 até 4 respectivamente. Para alterar o nível de log, utilize:</p>
+<div class="code_container"><code class="ruby">
+config.log_level = Logger::WARN # Em qualquer inicializador de ambiente, ou
+ActiveRecord::Base.logger.level = 0 # a qualquer momento
+</code></div>
+<p>Isto é útil para quando você deseja depurar algo durante o desenvolvimento ou staging, mas não deseja encher seu log de produção com informações desnecessárias.</p>
+<div class='info'><p>O nível de log padrão do Rails é <tt>info</tt> no modo de produção e <tt>debug</tt> nos modos de desenvolvimento e teste.</p></div>
+<h4 id="enviando-mensagens">2.3 Enviando Mensagens</h4>
+<p>Para escrever no log atual, utilize o método <tt>logger.(debug|info|warn|error|fatal)</tt> dentro de um controller, model ou mailer:</p>
+<div class="code_container"><code class="ruby">
+logger.debug &quot;Hash de atributos de uma pessoa: #{@person.attributes.inspect}&quot;
+logger.info &quot;Processando requisição...&quot;
+logger.fatal &quot;Finalizando aplicação, encontrado erro irrecuperável!!!&quot;
+</code></div>
+<p>Aqui temos um exemplo de um método utilizando opções de log:</p>
+<div class="code_container"><code class="ruby">
+class PostsController &lt; ApplicationController
+  # ...
+
+  def create
+    @post = Post.new(params[:post])
+    logger.debug &quot;Novo post: #{@post.attributes.inspect}&quot;
+    logger.debug &quot;Post deve ser válido: #{@post.valid?}&quot;
+
+    if @post.save
+      flash[:notice] = 'Post criado com sucesso.'
+      logger.debug &quot;O post foi salvo e agora o usuário será redirecionado...&quot;
+      redirect_to(@post)
+    else
+      render :action =&gt; &quot;new&quot;
+    end
+  end
+
+  # ...
+end
+</code></div>
+<p>Aqui temos um exemplo do log gerado por este método:</p>
+<div class="code_container"><code class="html">
+Processing PostsController#create (for 127.0.0.1 at 2008-09-08 11:52:54) [POST]
+  Session ID: BAh7BzoMY3NyZl9pZCIlMDY5MWU1M2I1ZDRjODBlMzkyMWI1OTg2NWQyNzViZjYiCmZsYXNoSUM6J0FjdGl
+vbkNvbnRyb2xsZXI6OkZsYXNoOjpGbGFzaEhhc2h7AAY6CkB1c2VkewA=--b18cd92fba90eacf8137e5f6b3b06c4d724596a4
+  Parameters: {&quot;commit&quot;=&gt;&quot;Create&quot;, &quot;post&quot;=&gt;{&quot;title&quot;=&gt;&quot;Debugging Rails&quot;,
+ &quot;body&quot;=&gt;&quot;I'm learning how to print in logs!!!&quot;, &quot;published&quot;=&gt;&quot;0&quot;},
+ &quot;authenticity_token&quot;=&gt;&quot;2059c1286e93402e389127b1153204e0d1e275dd&quot;, &quot;action&quot;=&gt;&quot;create&quot;, &quot;controller&quot;=&gt;&quot;posts&quot;}
+New post: {&quot;updated_at&quot;=&gt;nil, &quot;title&quot;=&gt;&quot;Debugging Rails&quot;, &quot;body&quot;=&gt;&quot;I'm learning how to print in logs!!!&quot;,
+ &quot;published&quot;=&gt;false, &quot;created_at&quot;=&gt;nil}
+Post should be valid: true
+  Post Create (0.000443)   INSERT INTO &quot;posts&quot; (&quot;updated_at&quot;, &quot;title&quot;, &quot;body&quot;, &quot;published&quot;,
+ &quot;created_at&quot;) VALUES('2008-09-08 14:52:54', 'Debugging Rails',
+ 'I''m learning how to print in logs!!!', 'f', '2008-09-08 14:52:54')
+The post was saved and now is the user is going to be redirected...
+Redirected to #&lt;Post:0x20af760&gt;
+Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/posts]
+</code></div>
+<p>Adicionar informações de logs extras como estas torna mais simples a busca por comportamentos inexperados ou incomuns em seus logs. Se você adicionar informações extras de log, certifique-se de utilizar corretamente os níveis de log, para evitar encher seu log de produção com informações não-úteis.</p>
+<h3 id="depurandocomruby-debug">3 Depurando com ruby-debug</h3>
+<p>Quando o seu código estiver comportando-se de forma diferente do esperado, você pode tentar imprimir mensagem nos logs ou no console para diagnosticar o problema. Infelizmente, pode acontecer de haver situações em que este tipo de análise de erro não ser efetivo para encontrar a raiz de um problema. Quando você precisar analisar mais profundamente seu código durante sua execução, o depurador será seu melhor amigo.</p>
+<p>O depurador também poderá lhe ajudar caso você deseje aprender sobre o código fonte do Rails e não souber por onde começar. Simplesmente depure qualquer requisição em sua aplicação e utilize este guia para aprender como se aprofundar a partir de seu código para o código do Rails.</p>
+<h4 id="configurao">3.1 Configuração</h4>
+<p>O depurador utilizado pelo Rails, <tt>ruby-debug</tt>, vem em forma de uma gem. Para instalá-lo, execute:</p>
+<div class="code_container"><code class="html">
+$ sudo gem install ruby-debug
+</code></div>
+<p>No caso de você precisar baixar uma versão diferente ou o código fonte, você pode acessar <a href="http://rubyforge.org/projects/ruby-debug/">a página do projeto no rubyforge</a>.</p>
+<p>O Rails tem suporte ao ruby-debug desde a versão 2.0. Dentro de qualquer aplicação Rails você pode utilizar o depurador chamando o método <tt>debugger</tt>.</p>
+<p>Aqui temos um exemplo:</p>
+<div class="code_container"><code class="ruby">
+class PeopleController &lt; ApplicationController
+  def new
+    debugger
+    @person = Person.new
+  end
+end
+</code></div>
+<p>Se você receber a seguinte mensagem no console ou nos logs:</p>
+<div class="code_container"><code class="html">
+***** Debugger requested, but was not available: Start server with --debugger to enable *****
+</code></div>
+<p>Certifique-se de iniciar o seu servidor web com a opção <tt>--debugger</tt>:</p>
+<div class="code_container"><code class="html">
+~/PathTo/rails_project$ script/server --debugger
+=&gt; Booting Mongrel (use 'script/server webrick' to force WEBrick)
+=&gt; Rails 2.2.0 application starting on http://0.0.0.0:3000
+=&gt; Debugger enabled
+...
+</code></div>
+<div class='info'><p>No modo de desenvolvimento, você pode dinamicamente utilizar o depurador com <tt>require \'ruby-debug\'</tt> ao invés de ter de reiniciar o servidor, se ele não foi iniciado com a opção <tt>--debugger</tt>.</p></div>
+<p>Para utilizar o depurador do Rails você deverá utilizar o <strong>WEBrick</strong> ou o <strong>Mongrel</strong>. No momento, nenhum servidor alternativo possui suporte a depuração.</p>
+<h4 id="a-interface">3.2 A Interface</h4>
+<p>Assim que sua aplicação invocar o método <tt>debugger</tt>, o depurador será inicializado em uma interface de depuração dentro do terminal de onde você iniciou seu servidor de aplicações, e você poderá interagir com o prompt do ruby-debug <tt>(rdb:n)</tt>. O <em>n</em> é o número da thread. O prompt também lhe mostrará a próxima linha de código que está na espera para ser executada.</p>
+<p>Se o código for chamado a partir de uma requisição de um navegador, a aba do navegador contendo a requisição será paralisada até que o processo de depuração e toda a requisição sejam finalizados.</p>
+<p>Por exemplo:</p>
+<div class="code_container"><code class="html">
+@posts = Post.find(:all)
+(rdb:7)
+</code></div>
+<p>Agora é a hora de explorar a sua aplicação. Uma boa forma de começar é pedir ajuda ao depurador&#8230; então digite: <tt>help</tt> (você não esperava por esta, né?)</p>
+<div class="code_container"><code class="html">
+(rdb:7) help
+ruby-debug help v0.10.2
+Type 'help &lt;command-name&gt;' for help on a specific command
+
+Available commands:
+backtrace  delete   enable  help    next  quit     show    trace
+break      disable  eval    info    p     reload   source  undisplay
+catch      display  exit    irb     pp    restart  step    up
+condition  down     finish  list    ps    save     thread  var
+continue   edit     frame   method  putl  set      tmate   where
+</code></div>
+<div class='info'><p>Para visualizar o menu de ajuda de qualquer comando utilize <tt>help <command-name></tt> durante o modo de depuração. Por exemplo: <em><tt>help var</tt></em></p></div>
+<p>O próximo comando que veremos é um dos mais úteis: <tt>list</tt>. Você também pode abreviar comandos do ruby-debug digitando somente as letras necessárias para distingüir o comando de outros comandos. Desta forma você pode, por exemplo, utilizar o <tt>l</tt> para o comando <tt>list</tt>.</p>
+<p>Este comando mostra onde você está no código imprimindo 10 linhas ao redor da linha atual; neste exemplo, a linha atual é a 6 e está marcada com um <tt>=></tt>.</p>
+<div class="code_container"><code class="html">
+(rdb:7) list
+[1, 10] in /PathToProject/posts_controller.rb
+   1  class PostsController &lt; ApplicationController
+   2    # GET /posts
+   3    # GET /posts.xml
+   4    def index
+   5      debugger
+=&gt; 6      @posts = Post.find(:all)
+   7
+   8      respond_to do |format|
+   9        format.html # index.html.erb
+   10        format.xml  { render :xml =&gt; @posts }
+</code></div>
+<p>Se você repetir o comando <tt>list</tt>, desta vez utilizando somente o <tt>l</tt>, as próximas dez linhas do arquivo serão impressas.</p>
+<div class="code_container"><code class="html">
+(rdb:7) l
+[11, 20] in /PathTo/project/app/controllers/posts_controller.rb
+   11      end
+   12    end
+   13
+   14    # GET /posts/1
+   15    # GET /posts/1.xml
+   16    def show
+   17      @post = Post.find(params[:id])
+   18
+   19      respond_to do |format|
+   20        format.html # show.html.erb
+</code></div>
+<p>E assim por diante, até o fim do arquivo atual. Quando chegar ao final do arquivo, o comando <tt>list</tt> irá continuar do começo do arquivo e seguir novamente até seu final, tratando o arquivo como um buffer cíclico.</p>
+<h4 id="o-contexto">3.3 O Contexto</h4>
+<p>Enquanto você estiver depurando a sua aplicação, você será colocado em diferentes contextos quando passar por diferentes partes da pilha de execução.</p>
+<p>O ruby-debug cria conteúdo quando um ponto de parada é alcançado ou quando um evento ocorre. O contexto possui informações sobre o programa paralisado, o que permite ao depurador obter informações sobre a pilha de execução, verificar valores de variáveis na perspectiva do programa depurado, e contém informações sobre o local onde o programa sendo depurado foi paralisado.</p>
+<p>A qualquer momento você pode chamar o comando <tt>backtrace</tt> (ou o seu atalho <tt>where</tt>) para imprimir o backtrace (rastros) de sua aplicação. Isto pode ser muito útil para descobrir como você chegou onde está agora. Se você em algum momento se perguntou como chegou a algum lugar em seu código, o comando <tt>backtrace</tt> lhe dará a resposta.</p>
+<div class="code_container"><code class="html">
+(rdb:5) where
+    #0 PostsController.index
+       at line /PathTo/project/app/controllers/posts_controller.rb:6
+    #1 Kernel.send
+       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/base.rb:1175
+    #2 ActionController::Base.perform_action_without_filters
+       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/base.rb:1175
+    #3 ActionController::Filters::InstanceMethods.call_filters(chain#ActionController::Fil...,...)
+       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/filters.rb:617
+...
+</code></div>
+<p>Você pode mover-se dentro dos rastros (alterando seu contexto) utilizando o comando <tt>frame _n_</tt>, onde <em>n</em> é o número do frame desejado.</p>
+<div class="code_container"><code class="html">
+(rdb:5) frame 2
+#2 ActionController::Base.perform_action_without_filters
+       at line /PathTo/project/vendor/rails/actionpack/lib/action_controller/base.rb:1175
+</code></div>
+<p>As variáveis disponíveis são as mesmas que você tem ao executar o código linha por linha. Afinal, isto é o que uma depuração significa.</p>
+<p>Movendo-se na pilha: Você pode utilizar os comandos <tt>up [n]</tt> (abreviação <tt>u</tt>) e <tt>down [n]</tt> para alterar o contexto para <em>n</em> frames para cima ou para baixo, respectivamente. O padrão para <em>n</em> é um. Para cima, neste caso, é em direção aos frames de número mais altos, e para baixo é em direção aos de número mais baixos.</p>
+<h4 id="threads">3.4 Threads</h4>
+<p>O depurador pode listar, parar, continuar e alterar entre threads sendo executadas utilizando o comando <tt>thread</tt> (ou sua abreviação <tt>th</tt>). Este comando possui as seguintes opções:</p>
+<ul>
+	<li><tt>thread</tt> mostra a thread atual.</li>
+	<li><tt>thread list</tt> é utilizado para listar todas as threads e seus estados. O caracter mais (+) e o número indicam a thread em execução.</li>
+	<li><tt>thread stop _n_</tt> para a thread <em>n</em>.</li>
+	<li><tt>thread resume _n_</tt> continua a thread <em>n</em>.</li>
+	<li><tt>thread switch _n_</tt> altera o contexto atual para o da thread <em>n</em>.</li>
+</ul>
+<p>Este comando é muito útil, dentre outras situações, para quando você estiver depurando threads concorrentes e você quiser verificar se existem disputas de condições em seu código.</p>
+<h4 id="inspecionando-variveis">3.5 Inspecionando Variáveis</h4>
+<p>Qualquer expressão pode ser avaliada no contexto atual. Para avaliar uma expressão, simplesmente digite-a!</p>
+<p>Este exemplo mostra como você pode imprimir as variáveis de instância (instance_variables) definidas no contexto atual:</p>
+<div class="code_container"><code class="html">
+@posts = Post.find(:all)
+(rdb:11) instance_variables
+[&quot;@_response&quot;, &quot;@action_name&quot;, &quot;@url&quot;, &quot;@_session&quot;, &quot;@_cookies&quot;, &quot;@performed_render&quot;, &quot;@_flash&quot;, &quot;@template&quot;, &quot;@_params&quot;, &quot;@before_filter_chain_aborted&quot;, &quot;@request_origin&quot;, &quot;@_headers&quot;, &quot;@performed_redirect&quot;, &quot;@_request&quot;]
+</code></div>
+<p>Como você pode ver, todas as variáveis acessíveis de um controller são mostradas. Esta lista é atualizada dinamicamente enquanto você executa código. Por exemplo, execute a próxima linha utilizando o comando <tt>next</tt> (você aprenderá mais sobre este comando mais adiante).</p>
+<div class="code_container"><code class="html">
+(rdb:11) next
+Processing PostsController#index (for 127.0.0.1 at 2008-09-04 19:51:34) [GET]
+  Session ID: BAh7BiIKZmxhc2hJQzonQWN0aW9uQ29udHJvbGxlcjo6Rmxhc2g6OkZsYXNoSGFzaHsABjoKQHVzZWR7AA==--b16e91b992453a8cc201694d660147bba8b0fd0e
+  Parameters: {&quot;action&quot;=&gt;&quot;index&quot;, &quot;controller&quot;=&gt;&quot;posts&quot;}
+/PathToProject/posts_controller.rb:8
+respond_to do |format|
+</code></div>
+<p>E então solicite novamente as variáveis de instância:</p>
+<div class="code_container"><code class="html">
+(rdb:11) instance_variables.include? &quot;@posts&quot;
+true
+</code></div>
+<p>Agora <tt>@posts</tt> está incluído nas variáveis de instância, pois a linha que o define foi executada.</p>
+<div class='info'><p>Você também pode entrar no modo <strong>irb</strong> com o comando <tt>irb</tt> (claro!). Assim, uma sessão irb será iniciada a partir do contexto em que você a invocou. Mas atenção: este modo ainda está em fase experimental.</p></div>
+<p>O método <tt>var</tt> é a forma mais conveniente para mostrar variáveis e seus valores:</p>
+<div class="code_container"><code class="html">
+var
+(rdb:1) v[ar] const &lt;object&gt;            mostra constantes de um objeto
+(rdb:1) v[ar] g[lobal]                  mostra variáveis globais
+(rdb:1) v[ar] i[nstance] &lt;object&gt;       mostra variáveis de instância de um objeto
+(rdb:1) v[ar] l[ocal]                   mostra variáveis locais
+</code></div>
+<p>Esta é uma ótima forma de inspecionar valores de variáveis no contexto atual. Por exemplo:</p>
+<div class="code_container"><code class="html">
+(rdb:9) var local
+  __dbg_verbose_save =&gt; false
+</code></div>
+<p>Você também pode inspecionar um método de um objeto desta forma:</p>
+<div class="code_container"><code class="html">
+(rdb:9) var instance Post.new
+@attributes = {&quot;updated_at&quot;=&gt;nil, &quot;body&quot;=&gt;nil, &quot;title&quot;=&gt;nil, &quot;published&quot;=&gt;nil, &quot;created_at&quot;...
+@attributes_cache = {}
+@new_record = true
+</code></div>
+<div class='info'><p>Os comandos <tt>p</tt> (print &#8211; imprimir) e <tt>pp</tt> (pretty print &#8211; melhor impressão) podem ser utilizados para avaliar expressões Ruby e mostrar os valores de variáveis no console.</p></div>
+<p>Você também pode utilizar o comando <tt>display</tt> para observar variáveis. Esta é uma boa forma de avaliar os valores de uma variável enquanto o código é executado.</p>
+<div class="code_container"><code class="html">
+(rdb:1) display @recent_comments
+1: @recent_comments =
+</code></div>
+<p>As variáveis dentro da lista de observações serão impressas com seus valores assim que você avançar na pilha de execução. Para parar a observação de uma variável, utilize <tt>undisplay <em>n</em></tt>, onde <em>n</em> é o número da variável (1 no último exemplo).</p>
+<h4 id="passoa-passo">3.6 Passo a Passo</h4>
+<p>Você já deve se situar na pilha de execução e também deve ser capaz de imprimir os valores de variáveis. Agora, vamos continuar com a execução da aplicação.</p>
+<p>Utilize o comando <tt>step</tt> (abreviação <tt>s</tt>) para continuar a execução de seu programa até o próximo ponto lógico de parada, quando o controle voltará ao ruby-debug.</p>
+<div class='info'><p>Você também pode utilizar <tt>step <em>n</em></tt> e <tt>step- <em>n</em></tt> para andar para frente ou para trás <em>n</em> passos respectivamente.</p></div>
+<p>Você também pode utilizar o comando <tt>next</tt>, que é similar ao comando step, mas chamadas de funções ou métodos dentro da linha são executados sem paradas. Assim como o comando step, você pode utilizar sinais de mais para mover <em>n</em> passos.</p>
+<p>A diferença entre <tt>next</tt> e <tt>step</tt> é que <tt>step</tt> para na próxima linha de código a ser executada, realizando somente um passo simples, enquanto <tt>next</tt> move para a próxima linha sem entrar em métodos.</p>
+<p>Por exemplo, considere este bloco de código com um comando <tt>debugger</tt>:</p>
+<div class="code_container"><code class="ruby">
+class Author &lt; ActiveRecord::Base
+  has_one :editorial
+  has_many :comments
+
+  def find_recent_comments(limit = 10)
+    debugger
+    @recent_comments ||= comments.find(
+      :all,
+      :conditions =&gt; [&quot;created_at &gt; ?&quot;, 1.week.ago],
+      :limit =&gt; limit
+    )
+  end
+end
+</code></div>
+<div class='info'><p>Você pode utilizar o ruby-debug enquanto estiver utilizando o script/console. Lembre-se apenas de fazer um <tt>require "ruby-debug"</tt> antes de chamar o método <tt>debugger</tt>.</p></div>
+<div class="code_container"><code class="html">
+/PathTo/project $ script/console
+Loading development environment (Rails 2.1.0)
+&gt;&gt; require &quot;ruby-debug&quot;
+=&gt; []
+&gt;&gt; author = Author.first
+=&gt; #&lt;Author id: 1, first_name: &quot;Bob&quot;, last_name: &quot;Smith&quot;, created_at: &quot;2008-07-31 12:46:10&quot;, updated_at: &quot;2008-07-31 12:46:10&quot;&gt;
+&gt;&gt; author.find_recent_comments
+/PathTo/project/app/models/author.rb:11
+)
+</code></div>
+<p>Com o código paralisado, dê uma olhada:</p>
+<div class="code_container"><code class="html">
+(rdb:1) list
+[6, 15] in /PathTo/project/app/models/author.rb
+   6      debugger
+   7      @recent_comments ||= comments.find(
+   8        :all,
+   9        :conditions =&gt; [&quot;created_at &gt; ?&quot;, 1.week.ago],
+   10        :limit =&gt; limit
+=&gt; 11      )
+   12    end
+   13  end
+</code></div>
+<p>Você está no fim da linha, mas&#8230; será que esta linha já foi executada? Você pode inspecionar as variáveis de instância.</p>
+<div class="code_container"><code class="html">
+(rdb:1) var instance
+@attributes = {&quot;updated_at&quot;=&gt;&quot;2008-07-31 12:46:10&quot;, &quot;id&quot;=&gt;&quot;1&quot;, &quot;first_name&quot;=&gt;&quot;Bob&quot;, &quot;las...
+@attributes_cache = {}
+</code></div>
+<tt>@recent_comments</tt>ainda não foi definida, então fica claro que esta linha ainda não foi executada. Utilize o comando <tt>next</tt> para avançar no código:
+<div class="code_container"><code class="html">
+(rdb:1) next
+/PathTo/project/app/models/author.rb:12
+@recent_comments
+(rdb:1) var instance
+@attributes = {&quot;updated_at&quot;=&gt;&quot;2008-07-31 12:46:10&quot;, &quot;id&quot;=&gt;&quot;1&quot;, &quot;first_name&quot;=&gt;&quot;Bob&quot;, &quot;las...
+@attributes_cache = {}
+@comments = []
+@recent_comments = []
+</code></div>
+<p>Agora você pode ver que o relacionamento <tt>@comments</tt> foi carregado e @recent_comments foi definido, porque a linha foi executada.</p>
+<p>Se você quiser ir mais a fundo na pilha de execução, você pode avançar com um <tt>step</tt> de cada vez, e aprofundar-se nas chamadas de seus métodos e no código do Rails. Esta é uma das melhores formas de descobrir bugs em seu código, ou no código do próprio Ruby on Rails.</p>
+<h4 id="breakpoints">3.7 Breakpoints</h4>
+<p>Um breakpoint (ponto de parada) faz a sua aplicação parar quando um certo ponto do programa é alcançado. A interface do depurador é invocada a partir desta linha.</p>
+<p>Você pode adicionar breakpoints dinamicamente com o comando <tt>break</tt> (ou somente <tt>b</tt>). Existem 3 formas de adicionar breakpoints manualmente:</p>
+<ul>
+	<li><tt>break line</tt>: coloca um breakpoint na linha de número <em>line</em> do código fonte atual.</li>
+	<li><tt>break file:line [if expression]</tt>: coloca um breakpoint na linha de número <em>line</em> do arquivo <em>file</em>. Se existir uma <em>expressão</em> ela deve se avaliada como <em>true</em> para ativar o depurador.</li>
+	<li><tt>break class(.|\#)method [if expression]</tt>: coloca um breakpoint no método <em>method</em> (. e \# para classes e métodos de instância, respectivamente) definido na classe <em>class</em>. A <em>expressão</em> funciona da mesma forma como em file:line.</li>
+</ul>
+<div class="code_container"><code class="html">
+(rdb:5) break 10
+Breakpoint 1 file /PathTo/project/vendor/rails/actionpack/lib/action_controller/filters.rb, line 10
+</code></div>
+<p>Utilize <tt>info breakpoints _n_</tt> ou <tt>info break _n_</tt> para listar breakpoints. Se você passar um número, ele listará o breakpoint correspondente ao número. Caso contrário, ele listará todos os breakpoints.</p>
+<div class="code_container"><code class="html">
+(rdb:5) info breakpoints
+Num Enb What
+  1 y   at filters.rb:10
+</code></div>
+<p>Para remover breakpoints: utilize o comando <tt>delete _n_</tt> para remover o breakpoint de número <em>n</em>. Se nenhum número for passado, todos os breakpoints ativos serão removidos&#8230;</p>
+<div class="code_container"><code class="html">
+(rdb:5) delete 1
+(rdb:5) info breakpoints
+No breakpoints.
+</code></div>
+<p>Você também pode ativar ou desativar breakpoints:</p>
+<ul>
+	<li><tt>enable breakpoints</tt>: permite que uma lista <em>breakpoints</em>, ou todos eles caso nenhuma lista seja mencionada, pararem o seu programa. Este é o estado inicial de um breakpoint quando você o cria.</li>
+	<li><tt>disable breakpoints</tt>: a lista <em>breakpoints</em> não terá nenhum efeito em seu programa.</li>
+</ul>
+<h4 id="capturando-excees">3.8 Capturando Exceções</h4>
+<p>O comando <tt>catch nome-da-exceção</tt> (ou somente <tt>cat exception-name</tt>) pode ser utilizado para interceptar uma exceção do tipo <em>nome-da-exceção</em> quando não houver tratamento para a exceção.</p>
+<p>Para listar os pontos de captura ativos utilize o comando <tt>catch</tt>.</p>
+<h4 id="continuandoa-execuo">3.9 Continuando a Execução</h4>
+<p>Existem duas formas de continuar a execução de uma aplicação que está parada no depurador:</p>
+<ul>
+	<li><tt>continue</tt> [especificação-da-linha] (ou <tt>c</tt>): continua a execução do programa a partir do local onde o seu script parou; quaisquer outros breakpoints posicionados no local são ignorados. O argumento opcional especificação-da-linha permite a você especificar o número de uma linha para criar um breakpoint temporário que será removido assim que o breakpoint for alcançado.</li>
+	<li><tt>finish</tt> [número-do-frame] (ou <tt>fin</tt>): executa o código até que o frame selecionado retorne. Se nenhum frame for passado, a aplicação executará até que o frame atual retorne. O frame atual é o mais recente ou o 0 se nenhum posicionamento de frame foi feito (com os comandos up, down ou frame, por exemplo). Se um número for passado o código será executado até que o frame retorne.</li>
+</ul>
+<h4 id="editando">3.10 Editando</h4>
+<p>Dois comandos permitem que um código no depurador seja aberto em um editor:</p>
+<ul>
+	<li><tt>edit [arquivo:linha]</tt>: edita <em>arquivo</em> utilizando o editor especificado na variável de ambiente <span class="caps">EDITOR</span>. Uma <em>linha</em> específica pode ser selecionada.</li>
+	<li><tt>tmate _n_</tt> (abreviação <tt>tm</tt>): abre o arquivo atual no TextMate. Utiliza o n-ésimo frame se <em>n</em> for especificado.</li>
+</ul>
+<h4 id="saindo">3.11 Saindo</h4>
+<p>Para sair do depurador, utilize o comando <tt>quit</tt> (abreviação <tt>q</tt>), ou o seu alias <tt>exit</tt>.</p>
+<p>Uma saída simples tentará finalizar todas as threads correntes. Neste caso, seu servidor será finalizado e você deverá inicializá-lo novamente.</p>
+<h4 id="configuraes">3.12 Configurações</h4>
+<p>Existem algumas configurações que podem ajudar na depuração de seu código com o ruby-debug. Aqui estão algumas das opções disponíveis:</p>
+<ul>
+	<li><tt>set reload</tt>: Recarrega o código fonte quando houver alterações.</li>
+	<li><tt>set autolist</tt>: Executa o comando <tt>list</tt> a cada breakpoint.</li>
+	<li><tt>set listsize _n_</tt>: Configura o número de linhas do código fonte a serem mostradas para <em>n</em> linhas.</li>
+	<li><tt>set forcestep</tt>: Verifica se os comandos <tt>next</tt> e <tt>step</tt> sempre movem para uma nova linha.</li>
+</ul>
+<p>Você pode ver a lista completa com o comando <tt>help set</tt>. Utilize <tt>help set _subcomando_</tt> para aprender sobre as opções específicas de um comando.</p>
+<div class='info'><p>Você pode incluir estas configurações dentro de um arquivo <tt>.rdebugrc</tt> no seu diretório <span class="caps">HOME</span>. O ruby-debug irá ler este arquivo sempre que for carregado.</p></div>
+<p>Aqui temos um bom começo para um <tt>.rdebugrc</tt>:</p>
+<pre>
+set autolist
+set forcestep
+set listsize 25
+</pre>
+<h3 id="depurando-estourosde-memria">4 Depurando Estouros de Memória</h3>
+<p>Uma aplicação Ruby (seja ela Rails ou não), pode estourar a memória &#8211; seja no nível de código Ruby ou C.</p>
+<p>Nesta seção, você aprenderá como fazer para encontrar e corrigir estouros utilizando as ferramentas de depuração Bleak House e Valgrind.</p>
+<h4 id="bleak-house">4.1 BleakHouse</h4>
+<p><a href="http://github.com/fauna/bleak_house/tree/master">BleakHouse</a> é uma biblioteca para encontrar estouros de memória.</p>
+<p>Se um objeto Ruby não ficar fora de escopo, o Ruby Garbage Collector não irá limpá-lo já que ele estará sendo referenciado em algum lugar. Estouros deste tipo podem crescer lentamente e sua aplicação irá consumir mais e mais memória, gradualmente afetando a performance geral do sistema. Esta ferramenta irá ajudá-lo a encontrar estouros na heap do Ruby.</p>
+<p>Para instalá-lo, execute:</p>
+<div class="code_container"><code class="html">
+sudo gem install bleak_house
+</code></div>
+<p>Agora você deve configurar sua aplicação para utilizá-lo. E então adicione o seguinte ao final do seu config/environment.rb:</p>
+<div class="code_container"><code class="ruby">
+require 'bleak_house' if ENV['BLEAK_HOUSE']
+</code></div>
+<p>Inicie uma instância do servidor integrado com o BleakHouse:</p>
+<div class="code_container"><code class="html">
+RAILS_ENV=production BLEAK_HOUSE=1 ruby-bleak-house ./script/server
+</code></div>
+<p>Certifique-se de executar algumas centenas de requisições para ter uma amostra melhor de dados, e então digite <tt>CTRL-C</tt>. O servidor será finalizado e o Bleak House irá gerar uma saída em <tt>/tmp</tt>:</p>
+<p>dirty_workaround_for_nontextile_40
+ 
+Para analisá-lo, execute o comando listado. As 20 linhas com maior probabilidade de estouro serão listadas:</p>
+<div class="code_container"><code class="html">
+  191691 total objects
+  Final heap size 191691 filled, 220961 free
+  Displaying top 20 most common line/class pairs
+  89513 __null__:__null__:__node__
+  41438 __null__:__null__:String
+  2348 /opt/local//lib/ruby/site_ruby/1.8/rubygems/specification.rb:557:Array
+  1508 /opt/local//lib/ruby/gems/1.8/specifications/gettext-1.90.0.gemspec:14:String
+  1021 /opt/local//lib/ruby/gems/1.8/specifications/heel-0.2.0.gemspec:14:String
+   951 /opt/local//lib/ruby/site_ruby/1.8/rubygems/version.rb:111:String
+   935 /opt/local//lib/ruby/site_ruby/1.8/rubygems/specification.rb:557:String
+   834 /opt/local//lib/ruby/site_ruby/1.8/rubygems/version.rb:146:Array
+  ...
+</code></div>
+<p>Desta forma você pode descobrir onde a sua aplicação está com maior probabilidade de estourar memória e corrígi-la.</p>
+<p>Se o <a href="http://github.com/fauna/bleak_house/tree/master">BleakHouse</a> não apresentar nenhum crescimento na heap mas ainda assim você tiver aumento no uso de memória, você pode estar com uma extensão C quebrada, ou um estouro real no interpretador. Neste caso, tente utilizar o Valgrind para uma investigação mais a fundo.</p>
+<h4 id="valgrind">4.2 Valgrind</h4>
+<p><a href="http://valgrind.org/">Valgrind</a> é uma aplicação para Linux para detectar estouros de memória e condições de disputa em programas C.</p>
+<p>Existem ferramentas Valgrind que podem detectar automaticamente bugs de gerenciamento de memória e de threads, e detalhar o perfil de seu programa. Por exemplo, uma extensão C no interpretador chama <tt>malloc()</tt> mas não chama <tt>free()</tt>, esta memória não ficará disponível até que a aplicação termine.</p>
+<p>Para mais informações de como instalar o Valgrind e utilizá-lo com Ruby, visite <a href="http://blog.evanweaver.com/articles/2008/02/05/valgrind-and-ruby/">Valgrind e Ruby</a> por Evan Weaver.</p>
+<h3 id="pluginspara-depurao">5 Plugins para Depuração</h3>
+<p>Existem alguns plugins para o Rails que podem auxiliá-lo a encontrar erros e depurar a sua aplicação. Aqui está uma lista de plugins que podem ser úteis para este propósito:</p>
+<ul>
+	<li><a href="http://github.com/drnic/rails-footnotes/tree/master">Footnotes</a>: Cada página no Rails recebe notas de rodapé com informações sobre a requisição e com atalhos para seu código fonte via TextMate.</li>
+	<li><a href="http://github.com/ntalbott/query_trace/tree/master">Query Trace</a>: Adiciona aos logs o local onde consultas são geradas.</li>
+	<li><a href="http://github.com/dan-manges/query_stats/tree/master">Query Stats</a>: Um plugin Rails para seguir suas consultas ao banco dados.</li>
+	<li><a href="http://code.google.com/p/query-reviewer/">Query Reviewer</a>: Este plugin Rails, além de executar o comando &#8220;<span class="caps">EXPLAIN</span>&#8221; antes de cada uma de suas consultas no ambiente de desenvolvimento, também provê uma pequena <span class="caps">DIV</span> renderizada na saída de cada página com um sumário de avisos para cada consulta analisada.</li>
+	<li><a href="http://github.com/rails/exception_notification/tree/master">Exception Notifier</a>: Provê um objeto mailer e um conjunto padrão de templates para enviar notificações por email quando errors ocorrerem em uma aplicação Rails.</li>
+	<li><a href="http://github.com/defunkt/exception_logger/tree/master">Exception Logger</a>: Loga exceções Rails no banco de dados e provê uma interface para gerenciá-las.</li>
+</ul>
+<h3 id="referncias">6 Referências</h3>
+<ul>
+	<li><a href="http://www.datanoise.com/ruby-debug">ruby-debug Homepage</a></li>
+	<li><a href="http://www.sitepoint.com/article/debug-rails-app-ruby-debug/">Article: Debugging a Rails application with ruby-debug</a></li>
+	<li><a href="http://brian.maybeyoureinsane.net/blog/2007/05/07/ruby-debug-basics-screencast/">ruby-debug Basics screencast</a></li>
+	<li><a href="http://railscasts.com/episodes/54-debugging-with-ruby-debug">Ryan Bate&#8217;s ruby-debug screencast</a></li>
+	<li><a href="http://railscasts.com/episodes/24-the-stack-trace">Ryan Bate&#8217;s stack trace screencast</a></li>
+	<li><a href="http://railscasts.com/episodes/56-the-logger">Ryan Bate&#8217;s logger screencast</a></li>
+	<li><a href="http://bashdb.sourceforge.net/ruby-debug.html">Debugging with ruby-debug</a></li>
+	<li><a href="http://cheat.errtheblog.com/s/rdebug/">ruby-debug cheat sheet</a></li>
+	<li><a href="http://wiki.rubyonrails.org/rails/pages/HowtoConfigureLogging">Ruby on Rails Wiki: How to Configure Logging</a></li>
+	<li><a href="http://blog.evanweaver.com/files/doc/fauna/bleak_house/files/README.html">Bleak House Documentation</a></li>
+</ul>
+<h3 id="logde-alteraes">7 Log de Alterações</h3>
+<p><a href="http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/5">Lighthouse ticket</a></p>
+<ul>
+	<li>Março 3, 2008: Revisão da tradução por <a href="translators.html#danielvlopes">Daniel Lopes</a></li>
+	<li>November 3, 2008: Accepted for publication. Added <span class="caps">RJS</span>, memory leaks and plugins chapters by <a href="credits.html#miloops">Emilio Tagua</a></li>
+	<li>October 19, 2008: Copy editing pass by <a href="credits.html#mgunderloy">Mike Gunderloy</a></li>
+	<li>September 16, 2008: initial version by <a href="credits.html#miloops">Emilio Tagua</a></li>
+</ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+  <div id="footer">
+    <div class="wrapper">
+      <p>Autores que contribuíram para guias completos estão listados <a href="credits.html">aqui</a>.<br />
+        Tradutores que contribuíram na tradução dos guias originais para Língua Portuguesa estão listados <a href="translators.html">aqui</a>.<br />
+        Este trabalho está licenciado sob a licença <a href="http://creativecommons.org/licenses/by-sa/3.0">Creative Commons Attribution-Share Alike 3.0</a>.</p>
+      <p>"Rails", "Ruby on Rails", e o logo do Rails são marcas registradas de David Heinemeier Hansson. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</body>
+</html>
