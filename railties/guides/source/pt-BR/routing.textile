@@ -275,19 +275,19 @@ TIP: Dependendo de outros códigos na sua aplicação, você pode optar em adici
 
 h5. Usando :requirements
 
-You an use the +:requirements+ option in a RESTful route to impose a format on the implied +:id+ parameter in the singular routes. For example:
+Você pode usar a opção +:requirements+ em uma rota RESTful para impor um formato implícto sobre o parâmetro +:id+ em rotas singulares. Por exemplo:
 
 <ruby>
 map.resources :photos, :requirements => {:id => /[A-Z][A-Z][0-9]+/}
 </ruby>
 
-This declaration constrains the +:id+ parameter to match the supplied regular expression. So, in this case, +/photos/1+ would no longer be recognized by this route, but +/photos/RR27+ would.
+Esta declaração obriga o paramêtro a casar com a expressão regular fornecida. Então, neste caso, +/photos/1+ não ia ser reconhecida por esta rota, mas +/photos/RR27+ ia.
 
-h5. Using :conditions
+h5. Usando :conditions
 
-Conditions in Rails routing are currently used only to set the HTTP verb for individual routes. Although in theory you can set this for RESTful routes, in practice there is no good reason to do so. (You'll learn more about conditions in the discussion of classic routing later in this guide.)
+Condições no roteamento Rails são usadas atualmente para ajutar o verbo HTTP para rotas individuais. Apesar de na teoria você poder ajustar isto para as rotas RESTful, na prática não são é uma boa razão para fazê-lo. (Você aprenderá mais sobre condições na discussão de roteamento clássico depois neste guia)
 
-h5. Using :as
+h5. Usando :as
 
 The +:as+ option lets you override the normal naming for the actual generated paths. For example:
 
