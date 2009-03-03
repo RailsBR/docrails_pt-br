@@ -361,23 +361,22 @@ Outro ataque popular é fazer com que sua aplicação web, blog ou fórum espalh
 
 Para _(highlight)medidas preventivas contra CSRF em interfaces admninistrativas e aplicações de Intranet, leia a seção de CSRF_.
 
-h3. PAREI AQUI
 
-h4. Additional precautions
+h4. Precaues adicionais
 
-The common admin interface works like this: it's located at www.example.com/admin, may be accessed only if the admin flag is set in the User model, re-displays user input and allows the admin to delete/add/edit whatever data desired. Here are some thoughts about this:
+A interface de administração comum funciona da seguinte maneira: está localizada em www.example.com/admin, pode ser acessada somente se a flag 'admin' estiver definida como 'true' no model User, re-apresenta input do usuário e permite que o administrador apague/adicione/edite quaisquer dados. Aqui vão algumas idéias sobre isso:
 
-* It is very important to _(highlight)think about the worst case_: What if someone really got hold of my cookie or user credentials. You could _(highlight)introduce roles_ for the admin interface to limit the possibilities of the attacker. Or how about _(highlight)special login credentials_ for the admin interface, other than the ones used for the public part of the application. Or a _(highlight)special password for very serious actions_?
+* É muito importante que _(highlight)se pense no pior caso_: O que acontece caso alguém se apodere do meu cookie ou credenciais de usuário? Você pode _(highlight_introduzir perfis_ na interface administrativa para limitar as possibilidades do atacante. Ou que tal _(highlight)credenciais de login especiais_ para a interface administrativa, diferentes das normalmente utilizadas para a parte pública da aplicação? Ou _(highlight)senhas especiais para ações realmente críticas_?
 
-* Does the admin really have to access the interface from everywhere in the world? Think about _(highlight)limiting the login to a bunch of source IP addresses_. Examine request.remote_ip to find out about the user's IP address. This is not bullet-proof, but a great barrier. Remember that there might be a proxy in use, though.
+* Será que o administrador realmente precisa ter acesso a interface de administração a partir de qualquer lugar no mundo? Pense sobre _(highlight)limitar o login à uma lista de endereços de IP de origem_. Examine o <tt>request.remote_ip</tt> para verificar o endereço IP do usuário. Isso não é algo "à prova de balas", mas é uma grande barreira. Lembre-se que o atacante pode estar utilizando um proxy.
 
-* _(highlight)Put the admin interface to a special sub-domain_ such as admin.application.com and make it a separate application with its own user management. This makes stealing an admin cookie from the usual domain, www.application.com, impossible. This is because of the same origin policy in your browser: An injected (XSS) script on www.application.com may not read the cookie for admin.application.com and vice-versa.
+* _(highlight)Coloque a interface administrativa em um sub-domínio especial_, como admin.application.com e faça com que esta seja uma aplicação separada com seu próprio controle de usuários. Isso faz com que seja impossível roubar o cookie do administrador a partir do domínio normal, www.application.com. Isso acontece devido à política de mesma origem no seu browser: um script injetado (XSS) em www.application.com não pode ler o cookie criado por admin.application.com e vice-versa.
 
 h3. Mass assignment
 
--- _Without any precautions Model.new(params[:model]) allows attackers to set any database column's value._
+-- _Sem quaisquer precauções model.new(params[:model]) permite que atacantes definam o valor de qualquer coluna no seu banco de dados._
 
-The mass-assignment feature may become a problem, as it allows an attacker to set any model's attribute by manipulating the hash passed to a model's new() method:
+O recurso de mass assignment (atribuição em massa) pode se tornar um problema, pois permite que um atacante defina qualquer atributo do model, através da manipulação do hash passado para o método <tt>new()</tt> de um model:
 
 <ruby>
 def signup
@@ -386,35 +385,35 @@ def signup
 end
 </ruby>
 
-Mass-assignment saves you much work, because you don't have to set each value individually. Simply pass a hash to the new() method, or assign attributes=(attributes) a hash value, to set the model's attributes to the values in the hash. The problem is that it is often used in conjunction with the parameters (params) hash available in the controller, which may be manipulated by an attacker. He may do so by changing the URL like this:
+O recurso de mass-assignment economiza muito trabalho, pois você não precisa definir cada valor individualmente. Apenas passe um hash com valores para o método <tt>new</tt> ou <tt>attributes=</tt> para definir os atributos do model com os valores deste hash. O problema é que esse recurso é geralmente utilizado em conjunto com o hash de parâmetros (params), disponível no controller, o qual pode ser manipulado por um atacante. Ele pode fazer isso alterando a URL da seguinte forma:
 
 <pre>
 "name":http://www.example.com/user/signup?user=ow3ned&amp;user[admin]=1
 </pre>
 
-This will set the following parameters in the controller:
+Isso irá definir os seguintes parâmetros no controller:
 
 <ruby>
 params[:user] #=> {:name => “ow3ned”, :admin => true}
 </ruby>
 
-So if you create a new user using mass-assignment, it may be too easy to become an administrator.
+Logo, se você criar um novo usuário utilizando mass-assignment, pode ser muito fácil se tornar um administrador.
 
-h4. Countermeasures
+h4. Medidas preventivas
 
-To avoid this, Rails provides two class methods in your ActiveRecord class to control access to your attributes. The attr_protected method takes a list of attributes that will not be accessible for mass-assignment. For example:
+Para evitar que isso ocorra, o Rails fornece dois métodos da classe ActiveRecord para controlar acesso aos seus atributos. O método <tt>attr_protected</tt> recebe uma lista de atributos que não serão acessíveis por mass-assignment. Por exemplo:
 
 <ruby>
 attr_protected :admin
 </ruby>
 
-A much better way, because it follows the whitelist-principle, is the _(highlight)attr_accessible method_. It is the exact opposite of attr_protected, because _(highlight)it takes a list of attributes that will be accessible_. All other attributes will be protected. This way you won't forget to protect attributes when adding new ones in the course of development. Here is an example:
+Uma forma muito melhor, porque segue o princípio de whitelist, é o método _(highlight)<tt>attr_accessible</tt>_. Ele é exatamente o oposto do método <tt>attr_protected</tt>, porque _(highlight)recebe uma lista com os atributos que serão acessíveis_. Todos os demais atributos estarão protegidos. Dessa forma você não irá esquecer de proteger os atributos que você for adicionando durante o desenvolvimento. Aqui está um exemplo:
 
 <ruby>
 attr_accessible :name
 </ruby>
 
-If you want to set a protected attribute, you will to have to assign it individually:
+Se você quiser definir o valor de um atributo protegido, terá que defini-lo de forma individual:
 
 <ruby>
 params[:user] #=> {:name => "ow3ned", :admin => true}
@@ -423,6 +422,8 @@ params[:user] #=> {:name => "ow3ned", :admin => true}
 @user.admin = true
 @user.admin #=> true
 </ruby>
+
+PAREI AQUI
 
 h3. User management
 
