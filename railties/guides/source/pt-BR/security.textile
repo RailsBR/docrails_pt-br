@@ -483,56 +483,56 @@ h4. CAPTCHAs
 
 -- _Um CAPTCHA é um teste do tipo desafio-resposta usado para determinar que a resposta não foi gerada por um computador. É geralmente utilizado para proteger formulários de comentários de bots de spam automáticos, solicitando ao usuário que digite as letras presentes em uma imagem distorcida. A idéia de um CAPTCHA negativo não é pedir que um usuário prove que é humano, mas sim revelar que um robô realmente é um robô.
 
-Mas robôs de spam (bots) não são o único problema, existem também os bots de login automático. Uma APi para CAPTCHA popular é a "reCAPTCHA":http://recaptcha.net/ a qual exibe duas imagens distorcidas de palavras de livros antigos. Também adiciona uma linha inclinada, ao invés de um fundo distorcido e letras deformadas como os primeiros CAPTCHAS fizeram, porque o segundo caso tinha problemas. Como um bonus, utilizar reCAPTCHA ajuda a digitalizar livros antigos. O "ReCAPTCHA":http://ambethia.com/recaptcha/ é também um plugin para o Rails com o mesmo nome da API.
+Mas robôs de spam (bots) não são o único problema, existem também os bots de login automático. Uma API para CAPTCHA popular é a "reCAPTCHA":http://recaptcha.net/ a qual exibe duas imagens distorcidas de palavras de livros antigos. Também adiciona uma linha inclinada, ao invés de um fundo distorcido e letras deformadas como os primeiros CAPTCHAS fizeram, porque o segundo caso tinha problemas. Como um bonus, utilizar reCAPTCHA ajuda a digitalizar livros antigos. O "ReCAPTCHA":http://ambethia.com/recaptcha/ é também um plugin para o Rails com o mesmo nome da API.
 
-PAREI AQUI
+Você vai receber duas chaves da API, uma pública e outra privada, a qual você deve colocar no eu ambiente Rails. Após isso vocë pode utilizar o método +recaptcha_tags+ na sua view e o método +verify_recaptcha+ no controller. +verify_recaptcha+ retornará false caso a validação falhe. 
+O problema com CAPTCHA é que eles sào irritantes. Além disso, alguns usuários com deficiências visuais têm achado certos tipos de CAPTCHAs distorcidos difíceis de ler. A idéia de CAPTCHAs negativos não é pedir ao usuário uma prova de que ele é humano, mas revelar que um robô de spam é um bot.
 
-You will get two keys from the API, a public and a private key, which you have to put into your Rails environment. After that you can use the recaptcha_tags method in the view, and the verify_recaptcha method in the controller. Verify_recaptcha will return false if the validation fails.
-The problem with CAPTCHAs is, they are annoying. Additionally, some visually impaired users have found certain kinds of distorted CAPTCHAs difficult to read. The idea of negative CAPTCHAs is not to ask a user to proof that he is human, but reveal that a spam robot is a bot.
+A maioria dos bots é realmente burra, eles rastreiam a web e colocam spam em cada campo de formulário que eles conseguem encontrar. CAPTCHAs negativos usam isso como vantagem e incluem um campo "honeypot" no formulário que ficará escondido de usuários humanos através de CSS ou JavaScript.
 
-Most bots are really dumb, they crawl the web and put their spam into every form's field they can find. Negative CAPTCHAs take advantage of that and include a "honeypot" field in the form which will be hidden from the human user by CSS or JavaScript.
+Aqui estão algumas idéias de como esconder campos "honeypot" através de JavaScript e/ou CSS:
 
-Here are some ideas how to hide honeypot fields by JavaScript and/or CSS:
+* posicione os campos fora da área visível da página
+* torne os elementos muito pequenos ou dê a eles a mesma cor do background da página
+* exiba os campos, mas diga aos humanos que deixe-os vazios
 
-* position the fields off of the visible area of the page
-* make the elements very small or colour them the same as the background of the page
-* leave the fields displayed, but tell humans to leave them blank
+O CAPTCHA negativo mais simples é um campo "honeypot" escondido. Do lado servidor, você irá verificar o valor do campo: se ele contiver qualquer texto, deve ser um bot. Assim, você pode tanto ignorar o post ou retornar um resultado positivo, mas não salvar o post no banco de dados. Dessa forma o bot ficará satisfeito e seguirá adiante. Você pode fazer isso com usuários que causam problemas também.
 
-The most simple negative CAPTCHA is one hidden honeypot field. On the server side, you will check the value of the field: If it contains any text, it must be a bot. Then, you can either ignore the post or return a positive result, but not saving the post to the database. This way the bot will be satisfied and moves on. You can do this with annoying users, too.
+Você pode encontrar CAPTCHAs negativos mais sofisticados no "post do blog do Ned Batchelder's":http://nedbatchelder.com/text/stopbots.html
 
-You can find more sophisticated negative CAPTCHAs in Ned Batchelder's "blog post":http://nedbatchelder.com/text/stopbots.html:
+* Inclua um campo com o timestamp UTC atual e verifique-o no servidor. Se o valor estiver muito distante no passado, ou se estiver no futuro, o formulário é inválido.
+* Randomize o nome dos campos
+* Inclua mais de um campo "honeypot", de todos os tipos, incluindo botões para submissão dos formulários.
 
-* Include a field with the current UTC time-stamp in it and check it on the server. If it is too far in the past, or if it is in the future, the form is invalid.
-* Randomize the field names
-* Include more than one honeypot field of all types, including submission buttons
-
-Note that this protects you only from automatic bots, targeted tailor-made bots cannot be stopped by this. So negative CAPTCHAs might not be good to protect login forms.
+Note que isso lhe protege apenas de bots automatizados, bots específicos feitos sob encomenda não podem ser parados dessa forma. Logo CAPTCHAs negativos podem não ser bons para proteger formulários de login.
 
 h4. Logging
 
--- _Tell Rails not to put passwords in the log files._
+-- _Diga ao Rails para não colocar passwords nos arquivos de log._
 
-By default, Rails logs all requests being made to the web application. But log files can be a huge security issue, as they may contain login credentials, credit card numbers etcetera. When designing a web application security concept, you should also think about what will happen if an attacker got (full) access to the web server. Encrypting secrets and passwords in the database will be quite useless, if the log files list them in clear text. You can _(highlight)filter certain request parameters from your log files_ by the filter_parameter_logging method in a controller. These parameters will be marked [FILTERED] in the log.
+Por padrão, o Rails loga todos os requests feitos para a aplicação web. Porém, arquivos de log podem ser um grande problema de segurança, uma vez que podem conter credenciais de login, números de cartão de crédito, etc. Quando estiver modelando os conceitos de segurança de uma aplicação web, você deve pensar também sobre o que acontece caso um atacante consiga acesso (total) ao servidor web. Criptografar segredos e passwords no banco de dados será praticamente inútil se os arquivos de log listá-los em claro. Você pode _(highlight)filtrar certos parâmetros do request para que nào sejam gravados nos seus arquivos de log_ utilizando o método +filter_parameter_logging+ em um controller. Estes parâmetros seram marcados como [FILTERED] no log.
 
 <ruby>
 filter_parameter_logging :password
 </ruby>
 
-h4. Good passwords
+h4. Bons passwords
 
--- _Do you find it hard to remember all your passwords? Don't write them down, but use the initial letters of each word in an easy to remember sentence._
+-- _Você acha difícil lembrar de todos os seus passwords? Ao invés de escrevê-los em um papel, utilize as letra inicial de cada palavra em uma frase fácil de lembrar._
 
-Bruce Schneier, a security technologist, "has analysed":http://www.schneier.com/blog/archives/2006/12/realworld_passw.html 34,000 real-world user names and passwords from the MySpace phishing attack mentioned earlier. It turns out that most of the passwords are quite easy to crack. The 20 most common passwords are:
+Bruce Schneier, um especialista em segurança, "analisou":http://www.schneier.com/blog/archives/2006/12/realworld_passw.html 34.000 nomes de usuários e passwords reais do ataque de phishing ao MySpace mencionado anteriormente. Ele descobriu que a maioria dos passwords são relativamente fáceis de quebrar. Os 20 passwords mais comuns são:
 
 password1, abc123, myspace1, password, blink182, qwerty1, ****you, 123abc, baseball1, football1, 123456, soccer, monkey1, liverpool1, princess1, jordan23, slipknot1, superman1, iloveyou1 and monkey.
 
-It is interesting that only 4% of these passwords were dictionary words and the great majority is actually alphanumeric. However, password cracker dictionaries contain a large number of today's passwords, and they try out all kinds of (alphanumerical) combinations. If an attacker knows your user name and you use a weak password, your account will be easily cracked.
+É interessante que apenas 4% destes passwords são palavras encontradas em dicionários e a grande maioria é alfa-numérica. Entretanto, dicionários para quebra de passwords contêm boa parte dos passwords atualmente utilizados e eles tentam todos os tipos de combinações. Se um atacante souber seu nome de usuário e você usar um password fraco, sua conta será facilmente roubada.
 
-A good password is a long alphanumeric combination of mixed cases. As this is quite hard to remember, it is advisable to enter only the _(highlight)first letters of a sentence that you can easily remember_. For example "The quick brown fox jumps over the lazy dog" will be "Tqbfjotld". Note that this is just an example, you should not use well known phrases like these, as they might appear in cracker dictionaries, too.
+Um bom password é uma longa combinação alfa-numérica de caracteres maiúsculos e minúsculos. Uma vez que passwords deste tipo são bem difíceis de lembrar, é aconselhável informar apenas _(highlight)as primeiras letras de uma frase fácil de lembrar_. Por exemplo "Mais vale um pássaro na mão do que dois voando" seria "Mvupnmdqdv". Perceba que este é apenas um exemplo, você não deve utilizar frases tão conhecidas quanto essa, uma vez que essas frases também podem estar presentes em um dicionário para quebra de passwords.
 
-h4. Regular expressions
+h4. Expressões regulares
 
--- _A common pitfall in Ruby's regular expressions is to match the string's beginning and end by ^ and $, instead of \A and \z._
+-- _Um problema comum em expressões regulares no Ruby é casar o início e o fim de uma string com ^ e $, ao invés de \A e \z._
+
+PAREI AQUI
 
 Ruby uses a slightly different approach than many other languages to match the end and the beginning of a string. That is why even many Ruby and Rails books make this wrong. So how is this a security threat? Imagine you have a File model and you validate the file name by a regular expression like this:
 
