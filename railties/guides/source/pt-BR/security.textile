@@ -423,68 +423,69 @@ params[:user] #=> {:name => "ow3ned", :admin => true}
 @user.admin #=> true
 </ruby>
 
-PAREI AQUI
 
-h3. User management
+h3. Gerenciamento de usuários
 
--- _Almost every web application has to deal with authorization and authentication. Instead of rolling your own, it is advisable to use common plug-ins. But keep them up-to-date, too. A few additional precautions can make your application even more secure._
+-- _Quase todas as aplicações web têm que lidar com autorização e autenticação. Ao invés de criar as suas próprias soluções, é aconselhável utilizar plugins já conhecidos. Mas mantenha-os atualizados também. Algumas precauções adicionais podem tornar sua aplicação ainda mais segura._
 
-There are some authorization and authentication plug-ins for Rails available. A good one saves only encrypted passwords, not plain-text passwords. The most popular plug-in is _(highlight)restful_authentication_ which protects from session fixation, too. However, earlier versions allowed you to login without user name and password in certain circumstances.
+Existem alguns plugins para autorização e autenticação disponíveis para o Rails. Um que seja bom deverá salvar apenas passwords encriptados, não passwords em claro. O plugin mais popular é o _(highlight)restful_authentication_, o qual também possui proteção contra fixação de sessão. Entretanto, versões mais antigas permitiam que você se logassse sem um nome de usuário ou password em algumas circunstâncias.
 
-Every new user gets an activation code to activate his account when he gets an e-mail with a link in it. After activating the account, the activation_code columns will be set to NULL in the database. If someone requested an URL like these, he would be logged in as the first activated user found in the database (and chances are that this is the administrator):
+Cada novo usuário ganha um código de ativação para ativar sua conta quando recebe um email contendo um link. Após ativar a conta, a coluna com o código de ativação terá seu valor atualizado para NULL no banco de dados. Every new user gets an activation code to activate his account when he gets an e-mail with a link in it. After activating the account, the activation_code columns will be set to NULL in the database. If someone requested an URL like these, he would be logged in as the first activated user found in the database (and chances are that this is the administrator):
 
 <pre>
 http://localhost:3006/user/activate
 http://localhost:3006/user/activate?id=
 </pre>
 
-This is possible because on some servers, this way the parameter id, as in params[:id], would be nil. However, here is the finder from the activation action:
+Isso é possível porque em alguns servidores, caso o parâmetro id seja informado dessa forma, ele será <tt>nil</tt> quando acessado através de +params[:id]+. Entretanto, aqui está o finder utilizado na action de ativação:
 
 <ruby>
 User.find_by_activation_code(params[:id])
 </ruby>
 
-If the parameter was nil, the resulting SQL query will be
+Se o parâmetro for +nil+, o SQL resultante seria
 
 <pre>
 SELECT * FROM users WHERE (users.+activation_code+ IS NULL) LIMIT 1
 </pre>
 
-And thus it found the first user in the database, returned it and logged him in. You can find out more about it in "my blog post":http://www.rorsecurity.info/2007/10/28/restful_authentication-login-security/. _(highlight)It is advisable to update your plug-ins from time to time_. Moreover, you can review your application to find more flaws like this.
+encontrando assim o primeiro usuário no banco de dados, retornando-o e logando-o. Você pode encontrar mais informações sobre isso "no post do meu blog":http://www.rorsecurity.info/2007/10/28/restful_authentication-login-security/. _(highlight)É aconselhável atualizar seus plugins frequentemente_. Além disso, você pode revisar sua aplicação para encontrar mais falhas como esta.
 
-h4. Brute-forcing accounts
+h4. Ataques de força bruta contra contas
 
--- _Brute-force attacks on accounts are trial and error attacks on the login credentials. Fend them off with more generic error messages and possibly require to enter a CAPTCHA._
+-- _Ataques de fora bruta sobre contas são ataques de tentativa e erro contra as credenciais de loging. Defenda-se destes ataques utilizando mensagens de erro mais genéricas e possivelmente solicitando que seja informado um CAPTCHA._
 
-A list of user names for your web application may be misused to brute-force the corresponding passwords, because most people don't use sophisticated passwords. Most passwords are a combination of dictionary words and possibly numbers. So armed with a list of user name's and a dictionary, an automatic program may find the correct password in a matter of minutes.
+Uma lista com os nomes de usuário da sua aplicação pode ser mal utilizada, usando-se força bruta para tentar descobrir os respectivos passwords, porque a maioria das pessoas não utiliza passwords sofisticados. A maioria dos passwords são uma combinação de palavras do dicionário e possivelmente números. Assim, de posse de uma lista com os nomes de usuários e um dicionário, um programa automático pode encontrar o password correto em questão de minutos.
 
-Because of this, most web applications will display a generic error message “user name or password not correct”, if one of these are not correct. If it said “the user name you entered has not been found”, an attacker could automatically compile a list of user names.
+Devido a este fato, a maioria das aplicações web exibirão uma mensagem de erro genérica "nome de usuário ou password incorretos", caso um destes esteja incorreto. Se fosse exibida uma mensagem dizendo "o nome de usuário que você forneceu não foi encontrado", um atacante poderia automaticamente criar uma lista de nomes de usuários.
 
-However, what most web application designers neglect, are the forgot-password pages. These pages often admit that the entered user name or e-mail address has (not) been found. This allows an attacker to compile a list of user names and brute-force the accounts.
+Entretanto, o que a maioria dos projetistas de aplicações web negligenciam, são as páginas para passwords esquecidos. estas páginas comumente admitem que o nome de usuário ou endereço de email fornecido (não) foi encontrado. Isso permite que o atacante crie uma lista de nomes de usuários e utilize força bruta contra as respectivas contas.
 
-In order to mitigate such attacks, _(highlight)display a generic error message on forgot-password pages, too_. Moreover, you can _(highlight)require to enter a CAPTCHA after a number of failed logins from a certain IP address_. Note, however, that this is not a bullet-proof solution against automatic programs, because these programs may change their IP address exactly as often. However, it raises the barrier of an attack.
+Para atenuar tais ataques, _(highlight)exiba uma mensagem de erro genérica também nas páginas para passwords esquecidos_. Além disso, você pode _(highlight)solicitar que seja informado um CAPTCHA após um certo número de falhas de autenticação vindas de um determinado endereço IP_. Note, entretanto, que esta não é uma solução à prova de balas contra programas automáticos, porque estes programas podem alterar seus endereços de IP exatamente na mesma frequência. De qualquer forma, isso dificulta os ataques.
 
-h4. Account hijacking
+h4. Sequestro de conta
 
--- _Many web applications make it easy to hijack user accounts. Why not be different and make it more difficult?_
+-- _Muitas aplicações web tornam fácil sequestrar contas de usuários. Porque não ser diferente e tornar isso mais difícil?_
 
 h5. Passwords
 
-Think of a situation where an attacker has stolen a user's session cookie and thus may co-use the application. If it is easy to change the password, the attacker will hijack the account with a few clicks. Or if the change-password form is vulnerable to CSRF, the attacker will be able to change the victim's password by luring him to a web page where there is a crafted IMG-tag which does the CSRF. As a countermeasure, _(highlight)make change-password forms safe against CSRF_, of course. And _(highlight)require the user to enter the old password when changing it_.
+Pense em uma situação onde um atacante roubou o cookie de sessão de um usuário e dessa forma pode compartilhar a utilização da aplicação. Se alterar o password for algo simples, o atacante irá sequestrar a conta com apenas alguns cliques. Ou se o formulário para alteração do password for vulnerável a CSRF, o atacante será capaz de alterar o password da vítima ludibriando-a até uma página web com uma tag IMG manipulada, a qual executa o CSRF. Como medida preventiva, _(highlight)faça com que o formulário para troca de password seja protegido contra CSRF_, óbvio. E _(highlight)exija que o usuário informe o password antigo quando for mudá-lo_.
 
 h5. E-Mail
 
-However, the attacker may also take over the account by changing the e-mail address. After he changed it, he will go to the forgotten-password page and the (possibly new) password will be mailed to the attacker's e-mail address. As a countermeasure _(highlight)require the user to enter the password when changing the e-mail address, too_.
+Entretanto, o atacante também pode roubar a conta alterando o endereço de email. Após alterá-lo, ele irá para a página de password esquecido e o (possivelmente novo) password será enviado para o endereço de email do atacante. Como medida preventiva _(highlight)solicite que o usuário também informe seu password quando for alterar seu endereço de email_.
 
-h5. Other
+h5. Outros 
 
-Depending on your web application, there may be more ways to hijack the user's account. In many cases CSRF and XSS will help to do so. For example, as in a CSRF vulnerability in "Google Mail":http://www.gnucitizen.org/blog/google-gmail-e-mail-hijack-technique/. In this proof-of-concept attack, the victim would have been lured to a web site controlled by the attacker. On that site is a crafted IMG-tag which results in a HTTP GET request that changes the filter settings of Google Mail. If the victim was logged in to Google Mail, the attacker would change the filters to forward all e-mails to his e-mail address. This is nearly as harmful as hijacking the entire account. As a countermeasure, _(highlight)review your application logic and eliminate all XSS and CSRF vulnerabilities_.
+Dependendo da sua aplicação web, podem haver mais formas de sequestrar a conta de um usuário. Em muitos casos XSS e CSRF ajudarão nisto. Por exemplo, como uma vulnerabilidade no "Google Mail":http://www.gnucitizen.org/blog/google-gmail-e-mail-hijack-technique/. Neste ataque de prova de conceito, a vítima seria levada a um web site controlado pelo atacante. Neste site existe uma tag IMG preparada que resultada em um request HTTP GET que altera as configurações de filtros do Google Main. Se a vítima estiver logada no Google Mail, o atacante poderia alterar os filtros para redirecionar todos os emails para o seu endereço de email. Isso é praticamente tão danoso quanto capturar toda a conta. Como uma medidaa preventiva, _(highlight)reveja a lógica da sua aplicação e elimine todas as vulnerábilidades de XSS e CSRF_.
 
 h4. CAPTCHAs
 
--- _A CAPTCHA is a challenge-response test to determine that the response is not generated by a computer. It is often used to protect comment forms from automatic spam bots by asking the user to type the letters of a distorted image. The idea of a negative CAPTCHA is not to ask a user to proof that he is human, but reveal that a robot is a robot._
+-- _Um CAPTCHA é um teste do tipo desafio-resposta usado para determinar que a resposta não foi gerada por um computador. É geralmente utilizado para proteger formulários de comentários de bots de spam automáticos, solicitando ao usuário que digite as letras presentes em uma imagem distorcida. A idéia de um CAPTCHA negativo não é pedir que um usuário prove que é humano, mas sim revelar que um robô realmente é um robô.
 
-But not only spam robots (bots) are a problem, but also automatic login bots. A popular CAPTCHA API is "reCAPTCHA":http://recaptcha.net/ which displays two distorted images of words from old books. It also adds an angled line, rather than a distorted background and high levels of warping on the text as earlier CAPTCHAs did, because the latter were broken. As a bonus, using reCAPTCHA helps to digitize old books. "ReCAPTCHA":http://ambethia.com/recaptcha/ is also a Rails plug-in with the same name as the API.
+Mas robôs de spam (bots) não são o único problema, existem também os bots de login automático. Uma APi para CAPTCHA popular é a "reCAPTCHA":http://recaptcha.net/ a qual exibe duas imagens distorcidas de palavras de livros antigos. Também adiciona uma linha inclinada, ao invés de um fundo distorcido e letras deformadas como os primeiros CAPTCHAS fizeram, porque o segundo caso tinha problemas. Como um bonus, utilizar reCAPTCHA ajuda a digitalizar livros antigos. O "ReCAPTCHA":http://ambethia.com/recaptcha/ é também um plugin para o Rails com o mesmo nome da API.
+
+PAREI AQUI
 
 You will get two keys from the API, a public and a private key, which you have to put into your Rails environment. After that you can use the recaptcha_tags method in the view, and the verify_recaptcha method in the controller. Verify_recaptcha will return false if the validation fails.
 The problem with CAPTCHAs is, they are annoying. Additionally, some visually impaired users have found certain kinds of distorted CAPTCHAs difficult to read. The idea of negative CAPTCHAs is not to ask a user to proof that he is human, but reveal that a spam robot is a bot.
