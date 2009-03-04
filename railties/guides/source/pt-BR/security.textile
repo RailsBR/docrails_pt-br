@@ -518,7 +518,7 @@ filter_parameter_logging :password
 
 h4. Bons passwords
 
--- _Você acha difícil lembrar de todos os seus passwords? Ao invés de escrevê-los em um papel, utilize as letra inicial de cada palavra em uma frase fácil de lembrar._
+-- _Você acha difícil lembrar de todos os seus passwords? Ao invés de escrevê-los em um papel, utilize a letra inicial de cada palavra em uma frase fácil de lembrar._
 
 Bruce Schneier, um especialista em segurança, "analisou":http://www.schneier.com/blog/archives/2006/12/realworld_passw.html 34.000 nomes de usuários e passwords reais do ataque de phishing ao MySpace mencionado anteriormente. Ele descobriu que a maioria dos passwords são relativamente fáceis de quebrar. Os 20 passwords mais comuns são:
 
