@@ -2,15 +2,15 @@ h2. O Guia de Associações do Active Record
 
 Este guia aborda as características de associação do ActiveRecord. Ao estudar este guia, você será capaz de:
 
-* Declarar associações entre os Models do ActiveRecord.
-* Compreender os diferentes tipos de associações do ActiveRecord.
-* Utilizar os métodos adicionados aos seus modelos através das associações criadas.
+* Declarar associações entre models do ActiveRecord
+* Compreender os diferentes tipos de associações do ActiveRecord
+* Utilizar os métodos adicionados aos seus models ao criar associações
 
 endprologue.
 
-h3. Associações, Por quê?
+h3. Associações, por quê?
 
-Por que precisamos de associações entre os modelos? Porque tornam mais fácil e mais simples operações comuns no código. Considere, por exemplo, uma simples aplicação Rails que inclui um modelo para os clientes e um modelo para as encomendas. Cada cliente pode ter muitas encomendas. Sem as associações, os modelos de declarações seriam mais ou menos assim:
+Por que precisamos de associações entre models? Porque elas tornam mais fácil e mais simples operações comuns no código. Considere, por exemplo, uma simples aplicação Rails que inclui um model para clientes (Customer) e um model para encomendas (Order). Cada cliente pode ter muitas encomendas. Sem as associações, a declaração dos models seria parecida com isto:
 
 <ruby>
 class Customer < ActiveRecord::Base
@@ -20,13 +20,13 @@ class Order < ActiveRecord::Base
 end
 </ruby>
 
-Agora, suponha se quisesse acrescentar uma nova encomenda de um cliente existente. Gostaríamos de fazer algo parecido com isto:
+Agora, suponha que quiséssemos acrescentar uma nova encomenda a um cliente existente. Precisaríamos fazer algo parecido com isto:
 
 <ruby>
 @order = Order.create(:order_date => Time.now, :customer_id => @customer.id)
 </ruby>
 
-Ou apagar um cliente, e garantindo que todas as suas encomendas fossem excluídas também:
+Ou quiséssemos apagar um cliente, e garantir que todas as suas encomendas fossem excluídas também:
 
 <ruby>
 @orders = Order.find_by_customer_id(@customer.id)
@@ -36,7 +36,7 @@ end
 @customer.destroy
 </ruby>
 
-Com as associações do ActiveRecord, podemos simplificar - e outras - operações por declarações dizendo que existe uma conexão entre os dois modelos. Veja abaixo o código revisado para a criação de clientes e encomendas:
+Com as associações do ActiveRecord, podemos simplificar estas - e outras - operações dizendo declarativamente ao Rails que existe uma conexão entre os dois models. Veja abaixo o código revisado para a declaração de clientes e encomendas:
 
 <ruby>
 class Customer < ActiveRecord::Base
@@ -48,30 +48,30 @@ class Order < ActiveRecord::Base
 end
 </ruby>
 
-Com essa mudança, criando uma nova ordem para um determinado cliente é mais fácil:
+Com esta mudança, criar uma nova encomenda para um cliente é mais fácil:
 
 <ruby>
 @order = @customer.orders.create(:order_date => Time.now)
 </ruby>
 
-Excluindo um cliente e todas as suas encomendas é _muito_ mais fácil:
+Remover um cliente e todas as suas encomendas é _muito_ mais fácil:
 
 <ruby>
 @customer.destroy
 </ruby>
 
-Para saber mais sobre os diferentes tipos de associações, leia a próxima seção deste Guia. Seguido por alguns truques e dicas para trabalhar com as associações e, em seguida, por uma referência completa para os métodos e opções para as associações em Rails.
+Para saber mais sobre os diferentes tipos de associações, leia a próxima seção deste Guia. Ela contém também alguns truques e dicas para trabalhar com as associações, e ao seu final se encontra uma referência completa para os métodos e opções para associações em Rails.
 
 h3. Os tipos de associações
 
-Em Rails, uma _associação_ é uma conexão entre os dois modelos do ActiveRecord. As associações são implementadas usando macro de chamadas, de modo que você pode adicionar funcionalidades nos seus modelos. Por exemplo, declarando que um modelo possui +belongs_to+ com outro, você instrui o Rails a manter as informações de Chave Primária entre instâncias dos dois modelos, e você também receberá um número métodos úteis adicionado ao seu modelo. Rails suporta seis tipos de associação:
+Em Rails, uma _associação_ é uma conexão entre os dois models do ActiveRecord. Associações são implementadas usando macros de chamadas, de modo que você pode adicionar declarativamente funcionalidades aos seus models. Por exemplo, declarando que um model +belongs_to+ (pertence a) outro, você instrui o Rails a manter informações de Chave Primária - Chave Estrangeira entre instâncias dos dois models, além de receber alguns métodos úteis em seu model. O Rails suporta seis tipos de associação:
 
-* +belongs_to+
-* +has_one+
-* +has_many+
-* +has_many :through+
-* +has_one :through+
-* +has_and_belongs_to_many+
+* +belongs_to+ (pertence a)
+* +has_one+ (possui um)
+* +has_many+ (possui muitos)
+* +has_many :through+ (possui muitos através de)
+* +has_one :through+ (possui um através de)
+* +has_and_belongs_to_many+ (possui e pertence a muitos)
 
 No restante deste guia, você aprenderá a declarar e utilizar as diversas formas de associações. Mas, primeiro, uma introdução rápida a situações em que cada tipo de associação é adequado.
 
