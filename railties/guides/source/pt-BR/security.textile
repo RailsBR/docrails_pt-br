@@ -532,9 +532,8 @@ h4. Expressões regulares
 
 -- _Um problema comum em expressões regulares no Ruby é casar o início e o fim de uma string com ^ e $, ao invés de \A e \z._
 
-PAREI AQUI
 
-Ruby uses a slightly different approach than many other languages to match the end and the beginning of a string. That is why even many Ruby and Rails books make this wrong. So how is this a security threat? Imagine you have a File model and you validate the file name by a regular expression like this:
+O Ruby utiliza uma abordagem um pouco diferente de várias outras linguagens para casar o início e o fim de uma string. É por isso que até mesmo vários livros sobre Ruby e Rails explicam isso de forma errada. Mas como isso pode ser uma ameaça de segurança? Imagine que você tenha um model +File+ e você valide o nome do arquivo usando uma expressão regular como esta:
 
 <ruby>
 class File < ActiveRecord::Base
@@ -542,43 +541,46 @@ class File < ActiveRecord::Base
 end
 </ruby>
 
-This means, upon saving, the model will validate the file name to consist only of alphanumeric characters, dots, + and -. And the programmer added \^ and $ so that file name will contain these characters from the beginning to the end of the string. However, _(highlight)in Ruby ^ and $ matches the *line* beginning and line end_. And thus a file name like this passes the filter without problems:
+Isso siginifica que, ao salvar, o model irá validar que o nome do arquivo consiste apenas de caracteres alfa-numéricos, pontos, + e -. O programador adicionou \^ e $ de forma que o nome do arquivo contenha estes caracteres do início ao fim da string. Entretanto, _(highlight)em ruby ^ e $ casam o início e fim da *linha*_. Dessa forma, um nome de arquivo como o seguinte passa pela validação sem problemas:
 
 <pre>
 file.txt%0A<script>alert('hello')</script>
 </pre>
 
-Whereas %0A is a line feed in URL encoding, so Rails automatically converts it to "file.txt\n&lt;script&gt;alert('hello')&lt;/script&gt;". This file name passes the filter because the regular expression matches – up to the line end, the rest does not matter. The correct expression should read:
+Onde %0A é uma nova linha em codificação de URL, logo o Rails irá converter isso automaticamente para "file.txt\n&lt;script&gt;alert('hello')&lt;/script&gt;". Este nome de arquivo passa pelo filtro porque a expressão regular casa com a string - até o final da linha, e o resto não importa. A expressão correta seria:
 
 <ruby>
 /\A[\w\.\-\+]+\z/
 </ruby>
 
-h4. Privilege escalation
+h4. Aumento de privilégios
 
--- _Changing a single parameter may give the user unauthorized access. Remember that every parameter may be changed, no matter how much you hide or obfuscate it._
+-- _Alterar um único parâmetro pode permitir acesso não autorizado ao usuário. Lembre-se de que todo parâmetro pode ser alterado, não importa o quanto você o esconda ou obfusque._
 
-The most common parameter that a user might tamper with, is the id parameter, as in +":id":http://www.domain.com/project/1+, whereas 1 is the id. It will be available in params in the controller. There, you will most likely do something like this:
+O parâmetro mais comum que o usuário pode alterar é o parâmetro id, como em +":id":http://www.domain.com/project/1+, onde 1 é o id. Esse parâmetro estará disponível no +params+ no seu controller. Lá, você provavelmente fará algo como isso:
 
 <ruby>
 @project = Project.find(params[:id])
 </ruby>
 
-This is alright for some web applications, but certainly not if the user is not authorized to view all projects. If the user changes the id to 42, and he is not allowed to see that information, he will have access to it anyway. Instead, _(highlight)query the user's access rights, too_:
+Isso está correto para algumas aplicações web, mas provavelmente não está certo se o usuário não estiver autorizado a visualizar todos os projetos. Se o usuário alterar o id para 42, e ele não estiver autorizado a visualizar essas informações, ele terá acesso a isso de qualquer forma. Ao invés disso, _(highlight)pesquise também as permissões de acesso do usuário_:
 
 <ruby>
 @project = @current_user.projects.find(params[:id])
 </ruby>
 
-Depending on your web application, there will be many more parameters the user can tamper with. As a rule of thumb, _(highlight)no user input data is secure, until proven otherwise, and every parameter from the user is potentially manipulated_.
+Dependendo da sua aplicação web, podem existir muitos outros parâmetros que o usuário pode alterar. Como regra, _(highlight)nenhuma informação fornecida pelo usuário é segura, até prova contrária, e todo parâmetro vindo do usuário foi possivelmente manipulado_.
 
-Don‘t be fooled by security by obfuscation and JavaScript security. The Web Developer Toolbar for Mozilla Firefox lets you review and change every form's hidden fields. _(highlight)JavaScript can be used to validate user input data, but certainly not to prevent attackers from sending malicious requests with unexpected values_. The Live Http Headers plugin for Mozilla Firefox logs every request and may repeat and change them. That is an easy way to bypass any JavaScript validations. And there are even client-side proxies that allow you to intercept any request and response from and to the Internet.
+Não se engaane com segurança através de obfuscação e JavaScript. O plugin Web Developer Toolbar para o Mozilla Firefox permite que você altere todos os campos escondidos de um formulário. _(highlight)JavaScript pode ser utilizado para validar os dados fornecidos por usuários, mas certamente não impedem que atacantes enviem requests inesperados com valores maliciosos_. O Live Http Headers para o Mozilla Firefox faz log de cada request e é capaz de repeti-los e alterá-los. Essa é uma forma fácil de burlar validações de JavaScript. Existem até mesmo proxies para o lado cliente que permitem que você intercepte qualquer request e response provenientes da Internet ou sendo enviados para ela.
 
-h3. Injection
+h3. Injeção 
 
--- _Injection is a class of attacks that introduce malicious code or parameters into a web application in order to run it within its security context. Prominent examples of injection are cross-site scripting (XSS) and SQL injection._
+-- _Injeção é uma categoria de ataques que introduzem código malicioso ou parâmetros em uma aplicação web de forma a executar estes códigos dentro do contexto de segurança da aplicação. Os exemplos mais proeminentes de injeção são o cross-site scriptintg (XSS) e o SQL injection.
+
+PAREI AQUI
 
 Injection is very tricky, because the same code or parameter can be malicious in one context, but totally harmless in another. A context can be a scripting, query or programming language, the shell or a Ruby/Rails method. The following sections will cover all important contexts where injection attacks may happen. The first section, however, covers an architectural decision in connection with Injection.
+
 
 h4. Whitelists versus Blacklists
 
