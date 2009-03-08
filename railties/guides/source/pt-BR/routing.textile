@@ -247,7 +247,7 @@ Se você usa o namespaces do controlador, você precisa ter cuidado com a sutile
 
 TIP: Se você quiser garantir que o link vá para um controlador de nível superior, use uma barra precedendo a âncora para o nome do controlador: +<%= link_to "show", {:controller => "/photos", :action => "show"} %>+
 
-Vcê pode especifícar o namespace do controlador com a opção +:namespace+ ao invés do caminho:
+Você pode especifícar o namespace do controlador com a opção +:namespace+ ao invés do caminho:
 
 <ruby>
 map.resources :adminphotos, :namespace => "admin", :controller => "photos"
@@ -289,70 +289,70 @@ Condições no roteamento Rails são usadas atualmente para ajutar o verbo HTTP 
 
 h5. Usando :as
 
-The +:as+ option lets you override the normal naming for the actual generated paths. For example:
+A opção +:as+ permite que você sobrescreva o nomeamento normal para os paths gerados atualmente. Por exemplo:
 
 <ruby>
 map.resources :photos, :as => "images"
 </ruby>
 
-will recognize incoming URLs containing +image+ but route the requests to the Photos controller: 
+reconhecerá URLS recebidas contendo +image+ mas a rota requisita o controlador Photos:
 
 |_.HTTP verb  |_.URL             |_.controller  |_.action   |_.used for|
-|GET        |/images         |Photos      |index    |display a list of all photos|
-|GET        |/images/new     |Photos      |new      |return an HTML form for creating a new photo|
-|POST       |/images         |Photos      |create   |create a new photo|
-|GET        |/images/1       |Photos      |show     |display a specific photo|
-|GET        |/images/1/edit  |Photos      |edit     |return an HTML form for editing a photo|
-|PUT        |/images/1       |Photos      |update   |update a specific photo|
-|DELETE     |/images/1       |Photos      |destroy  |delete a specific photo|
+|GET        |/images         |Photos      |index    |mostra a lista de todas as fotoso|
+|GET        |/images/new     |Photos      |new      |retorna um formulário HTML para criação de uma novo foto|
+|POST       |/images         |Photos      |create   |cria uma nova foto|
+|GET        |/images/1       |Photos      |show     |mostra uma foto específica|
+|GET        |/images/1/edit  |Photos      |edit     |retorna um formulário HTML para edição de uma foto|
+|PUT        |/images/1       |Photos      |update   |atualiza uma foto específica|
+|DELETE     |/images/1       |Photos      |destroy  |apaga uma foto específica|
 
-NOTE: The helpers will be generated with the name of the resource, not the path name. So in this case, you'd still get +photos_path+, +new_photo_path+, and so on.
+NOTE: Os helpers irão ser gerados com o mesmo nome do recurso, não o nome path. Então neste caso, você ainda obterá +photos_path+, +new_photo_path+, e assim por diante.
 
-h5. Using :path_names
+h5. Usando :path_names
 
-The +:path_names+ option lets you override the automatically-generated "new" and "edit" segments in URLs:
+A opção +:path_names+ permite que você sobrescreva os segmentos "new" e "edit" gerados automaticamentes nas URLs:
 
 <ruby>
 map.resources :photos, :path_names => { :new => 'make', :edit => 'change' }
 </ruby>
 
-This would cause the routing to recognize URLs such as
+Isto causaria o roteamento para URLs reconhecidas como
 
 <pre>
 /photos/make
 /photos/1/change
 </pre>
 
-NOTE: The actual action names aren't changed by this option; the two URLs show would still route to the new and edit actions.
+NOTE: Os nomes das ações atuais não serão alterados por esta opção; as duas URLs que mostram as rotas para as ações new e edit continuam funcionando.
 
-TIP: If you find yourself wanting to change this option uniformly for all of your routes, you can set a default in your environment:
+TIP: Se você está querendo mudar esta opção de modo uniforme para todas as suas rotas, você pode definir um padrão em seu environment:
 
 <ruby>
 config.action_controller.resources_path_names = { :new => 'make', :edit => 'change' }
 </ruby>
 
-h5. Using :path_prefix
+h5. Usando :path_prefix
 
-The +:path_prefix+ option lets you add additional parameters that will be prefixed to the recognized paths. For example, suppose each photo in your application belongs to a particular photographer. In that case, you might declare this route:
+A opção +:path_prefix+ permite que você adicione paramêtros adicionais que serão prefixadas para as rotas reconhecidas. Por exemplo, suponha que cada foto na sua aplicação possua a um fotografo em particular. No caso, você deve declarar esta rota:
 
 <ruby>
 map.resources :photos, :path_prefix => '/photographers/:photographer_id'
 </ruby>
 
-Routes recognized by this entry would include:
+Rotas reconhecidas por esta entrada incluem:
 
 <pre>
 /photographers/1/photos/2
 /photographers/1/photos
 </pre>
 
-NOTE: In most cases, it's simpler to recognize URLs of this sort by creating nested resources, as discussed in the next section.
+NOTE: Na maioria dos casos, é mais simples de reconhecer URLs deste tipo, criando recursos aninhados, como discutido na próxima seção
 
-NOTE: You can also use +:path_prefix+ with non-RESTful routes.
+NOTE: Você também pode usar +:path_prefix+ com rotas não RESTful.
 
-h5. Using :name_prefix
+h5. Usando :name_prefix
 
-You can use the :name_prefix option to avoid collisions between routes. This is most useful when you have two resources with the same name that use +:path_prefix+ to map differently. For example:
+Você pode usar a opção :name_prefix para evitar colisões entre rotas. Isto é mais usando quando você tem dois recursos com o mesmo nome que usam +:path_prefix+ para mapear diferentemente. Por exemplo:
 
 <ruby>
 map.resources :photos, :path_prefix => '/photographers/:photographer_id', :name_prefix => 'photographer_'
