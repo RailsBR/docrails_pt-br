@@ -1,0 +1,410 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  
+<title>Noções Básicas da Criação de Plugins para Rails</title>
+
+<link rel="stylesheet" type="text/css" href="files/stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/syntax.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/print.css" media="print" />
+
+<script type="text/javascript" src="files/javascripts/guides.js"></script>
+<script type="text/javascript" src="files/javascripts/code_highlighter.js"></script>
+<script type="text/javascript" src="files/javascripts/highlighters.js"></script>
+
+</head>
+<body class="guide">
+  <div id="topNav">
+    <div class="wrapper">
+      <strong>Mais em <a href="http://www.rubyonrails.pro.br/">rubyonrails.pro.br:</a> </strong>
+      <a href="http://www.rubyonrails.pro.br/">Geral</a> |
+      <a href="http://rubyonrails.pro.br/down">Download</a> |
+      <a href="http://rubyonrails.pro.br/deploy">Deploy</a> |
+      <a href="http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/overview">C&oacute;digo</a> |
+      <a href="http://www.rubyonrails.pro.br/apresentacoes">Apresentações</a> |
+      <a href="http://www.rubyonrails.pro.br/documentacao">Documentação</a> |
+      <a href="http://www.rubyonrails.pro.br/ecossistema">Ecossistema</a> |
+      <a href="http://www.rubyonrails.pro.br/comunidade">Comunidade</a> |
+      <a href="http://podcast.rubyonrails.pro.br">Podcasts</a> |
+      <a href="http://www.rubyonrails.pro.br/planeta/">Blogs</a>
+    </div>
+  </div>
+  <div id="header">
+    <div class="wrapper clearfix">
+      <h1><a href="index.html" title="Retorne para a página princípal">Guides.rubyonrails.org</a></h1>
+      <p class="hide"><a href="#mainCol">Pule a navegação</a>.</p>
+      <ul class="nav">
+        <li><a href="index.html">Início</a></li>
+        <li class="index"><a href="#" onclick="guideMenu();" id="guidesMenu">Índice dos Guias</a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+              <dt>Start Here</dt>
+              <dd><a href="getting_started.html">Começando com Rails</a></dd>
+              <dt>Models</dt>
+              <dd><a href="migrations.html">Rails Database Migrations</a></dd>
+              <dd><a href="activerecord_validations_callbacks.html">Validações e Callbacks do Active Record</a></dd>
+              <dd><a href="association_basics.html">Associações do Active Record</a></dd>
+              <dd><a href="active_record_querying.html">Interface de Queries do Active Record</a></dd>
+              <dt>Views</dt>
+              <dd><a href="layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
+              <dd><a href="form_helpers.html">Form Helpers do Action View</a></dd>
+              <dt>Controllers</dt>
+              <dd><a href="action_controller_overview.html">Visão Geral do Action Controller</a></dd>
+              <dd><a href="routing.html">Roteamento Rails de Fora para Dentro</a></dd>
+            </dl>
+            <dl class="R">
+              <dt>Aprofundando</dt>
+              <dd><a href="i18n.html">API de Internacionalização do Rails</a></dd>
+              <dd><a href="action_mailer_basics.html">Conceitos Básicos do Action Mailer</a></dd>
+              <dd><a href="testing.html">Testando Aplicações Rails</a></dd>
+              <dd><a href="security.html">Segurança em Aplicações Rails</a></dd>
+              <dd><a href="debugging_rails_applications.html">Depurando Aplicações Rails</a></dd>
+              <dd><a href="performance_testing.html">Testando Performance em Aplicações Rails</a></dd>
+              <dd><a href="plugins.html">O Básico da Criação de Plugins</a></dd>
+              <dd><a href="configuring.html">Configurando Aplicações Rails</a></dd>
+            </dl>
+          </div>
+        </li>
+        <li><a href="contribute.html">Contribua</a></li>
+        <li><a href="credits.html">Créditos</a></li>
+      </ul>     
+    </div>
+  </div>
+  <hr class="hide" />
+  
+  <div id="feature">
+    <div class="wrapper">
+      <h2>Noções Básicas da Criação de Plugins para Rails</h2>
+<p>Um plugin do Rails é uma extensão ou uma modificação do framework. Os plugins possibilitam:</p>
+<ul>
+	<li>uma maneira dos desenvolvedores compartilharem e testarem novas idéias sem prejudicar a base do código, já estável</li>
+	<li>uma arquitetura separada que permite que unidades de código possam ser corrigidas ou atualizadas segundo seu próprio cronograma de releases</li>
+	<li>uma justificativa para os desenvolvedores do framework básico não precisarem incluir nele toda e qualquer nova funcionalidade que apareça</li>
+</ul>
+<p>Depois de ler este guia você estará apto a:</p>
+<ul>
+	<li>Criar um plugin a partir do zero</li>
+	<li>Escrever e executar testes para o plugin</li>
+	<li>Armazenar models, views, controllers, helpers e até mesmo outros plugins nos seus plugins</li>
+	<li>Criar generators</li>
+	<li>Criar tasks do Rake customizadas no seu plugin</li>
+	<li>Gerar documentação do RDoc para seu plugin</li>
+	<li>Evitar erros comuns no &#8216;init.rb&#8217;</li>
+</ul>
+<p>Este guia mostra como construir um plugin baseado em testes que irá:
+This guide describes how to build a test-driven plugin that will:</p>
+<ul>
+	<li>Extender classes básicas do ruby, como Hash e String</li>
+	<li>Adicionar métodos ao ActiveRecord::Base, na tradição dos plugins &#8216;acts_as&#8217;</li>
+	<li>Adicionar um helper para view que pode ser usado em templates erb</li>
+	<li>Adicionar um novo generator que irá gerar uma migration</li>
+	<li>Adicionar um comando generator customizado</li>
+	<li>Um método route customizado que pode ser utilizado no routes.rb</li>
+</ul>
+<p>Para os propósitos deste guia, imagine por um momento que você é um ávido observador de pássaros. Seu pássaro favorito é o Yaffle (uma espécie de pica-pau), e você quer criar um plugin que permite a outros desenvolvedores compartilhar as maravilhas do Yaffle. Primeiramente, você precisa de uma preparação para começar o desenvolvimento.</p>
+
+            <div id="subCol">
+        <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
+        <ol class="chapters">
+<li><a href="#preparao">Preparação</a><ul><li><a href="#criandoaaplicaobsica">Criando a aplicação básica</a></li><li><a href="#gerandooesqueletodoplugin">Gerando o esqueleto do plugin</a></li><li><a href="#preparandoopluginparaostestes">Preparando o plugin para os testes</a></li><li><a href="#executarostestesdoplugin">Executar os testes do plugin</a></li></ul></li><li><a href="#estendendoasclassesbsicas">Estendendo as classes básicas</a><ul><li><a href="#criandoostestes">Criando os testes</a></li><li><a href="#organizeseusarquivos">Organize seus arquivos</a></li><li><a href="#usandooinitrb">Usando o init.rb</a></li></ul></li></ol></div>
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <h3 id="preparao">1 Preparação</h3>
+<h4 id="criandoaaplicaobsica">1.1 Criando a aplicação básica</h4>
+<p>Os exemplos deste guia requerem que você tenha uma aplicação rails funcional. Para criar uma aplicação rails simples execute:</p>
+<pre>
+gem install rails
+rails yaffle_guide
+cd yaffle_guide
+script/generate scaffold bird name:string
+rake db:migrate
+script/server
+</pre>
+<p>Abra o endereço http://localhost:3000/birds no seu browser. Tenha certeza que a aplicação rails está funcionando antes de continuar.</p>
+<p>.Nota do editor:
+<div class='note'><p>Estas instruções irão funcionar para o sqlite3.  Para instruções mais detalhadas sobre como criar uma aplicação rails que utiliza outro banco de dados veja a documentação da <span class="caps">API</span>.</p></div></p>
+<h4 id="gerandooesqueletodoplugin">1.2 Gerando o esqueleto do plugin</h4>
+<p>O Rails vem com um gerador de plugin que cria um esqueleto básico de plugin. Informe o nome do plugin, em &#8216;CamelCase&#8217; ou
+&#8216;under_scored&#8217;, como argumento. Passe <tt>\--with-generator</tt> para também adicionar um gerador de exemplo.</p>
+<p>Um plugin será criado em &#8216;vendor/plugins&#8217;, incluindo um &#8216;init.rb&#8217; e &#8216;<span class="caps">README</span>&#8217;, assim como diretórios &#8216;lib&#8217;, &#8216;task&#8217;, e &#8216;test&#8217; padrões.</p>
+<p>Exemplos:
+<pre>
+./script/generate plugin yaffle
+./script/generate plugin yaffle &#8212;with-generator
+</pre></p>
+<p>Para uma ajuda mais detalhada sobre o gerador de plugins, use o comando <tt>./script/generate plugin</tt>.</p>
+<p>Mais tarde iremos mostrar como trabalhar com os geradores automáticos, então vá em frente e gere seu plugin com
+a opção <tt>\--with-generator</tt> agora:</p>
+<pre>
+./script/generate plugin yaffle --with-generator
+</pre>
+<p>Você deverá obter o seguinte resultado:</p>
+<pre>
+create  vendor/plugins/yaffle/lib
+create  vendor/plugins/yaffle/tasks
+create  vendor/plugins/yaffle/test
+create  vendor/plugins/yaffle/README
+create  vendor/plugins/yaffle/MIT-LICENSE
+create  vendor/plugins/yaffle/Rakefile
+create  vendor/plugins/yaffle/init.rb
+create  vendor/plugins/yaffle/install.rb
+create  vendor/plugins/yaffle/uninstall.rb
+create  vendor/plugins/yaffle/lib/yaffle.rb
+create  vendor/plugins/yaffle/tasks/yaffle_tasks.rake
+create  vendor/plugins/yaffle/test/core_ext_test.rb
+create  vendor/plugins/yaffle/generators
+create  vendor/plugins/yaffle/generators/yaffle
+create  vendor/plugins/yaffle/generators/yaffle/templates
+create  vendor/plugins/yaffle/generators/yaffle/yaffle_generator.rb
+create  vendor/plugins/yaffle/generators/yaffle/USAGE
+</pre>
+<h4 id="preparandoopluginparaostestes">1.3 Preparando o plugin para os testes</h4>
+<p>Neste guia você irá aprender como testar seu plugin com vários adaptadores diferentes usando o Active Record.
+Este guia não irá cobrir o uso de fixtures nos testes do plugin.</p>
+<p>Para preparar seu plugin para permitir que os testes sejam executados facilmente você precisa adicionar 3 arquivos:</p>
+* Um arquivo &#8216;database.yml&#8217; com todas as suas strings de conexão.
+* Um arquivo &#8216;schema.rb&#8217; com todas as definições de suas tabelas.
+* Um helper para teste que prepara o banco de dados antes de executar os testes.
+<p><strong>vendor/plugins/yaffle/test/database.yml:</strong></p>
+<pre>
+sqlite:
+  :adapter: sqlite
+  :dbfile: yaffle_plugin.sqlite.db
+
+sqlite3:
+  :adapter: sqlite3
+  :dbfile: yaffle_plugin.sqlite3.db
+
+postgresql:
+  :adapter: postgresql
+  :username: postgres
+  :password: postgres
+  :database: yaffle_plugin_test
+  :min_messages: ERROR
+
+mysql:
+  :adapter: mysql
+  :host: localhost
+  :username: rails
+  :password:
+  :database: yaffle_plugin_test
+</pre>
+<p>Para este guia você irá precisar de 2 tabelas/models, Hickwalls and Wickwalls, então adicione o seguinte:</p>
+<p><strong>vendor/plugins/yaffle/test/schema.rb:</strong></p>
+<div class="code_container"><code class="ruby">
+ActiveRecord::Schema.define(:version =&gt; 0) do
+  create_table :hickwalls, :force =&gt; true do |t|
+    t.string :name
+    t.string :last_squawk
+    t.datetime :last_squawked_at
+  end
+  create_table :wickwalls, :force =&gt; true do |t|
+    t.string :name
+    t.string :last_tweet
+    t.datetime :last_tweeted_at
+  end
+end
+</code></div>
+<p><strong>vendor/plugins/yaffle/test/test_helper.rb:</strong></p>
+<div class="code_container"><code class="ruby">
+ENV['RAILS_ENV'] = 'test'
+ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/../../../..'
+
+require 'test/unit'
+require File.expand_path(File.join(ENV['RAILS_ROOT'], 'config/environment.rb'))
+
+config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
+ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + &quot;/debug.log&quot;)
+
+db_adapter = ENV['DB']
+
+db_adapter ||=
+  begin
+    require 'rubygems'
+    require 'sqlite'
+    'sqlite'
+  rescue MissingSourceFile
+    begin
+      require 'sqlite3'
+      'sqlite3'
+    rescue MissingSourceFile
+    end
+  end
+
+if db_adapter.nil?
+  raise &quot;No DB Adapter selected. Pass the DB= option to pick one, or install Sqlite or Sqlite3.&quot;
+end
+
+ActiveRecord::Base.establish_connection(config[db_adapter])
+
+load(File.dirname(__FILE__) + &quot;/schema.rb&quot;)
+
+require File.dirname(__FILE__) + '/../init.rb'
+</code></div>
+<h4 id="executarostestesdoplugin">1.4 Executar os testes do plugin</h4>
+<p>Depois de ter preparado estes arquivos, você pode escrever seu primeiro teste para ter certeza que seu setup de testes
+para os plugins estão corretos. Por default, o rails gera um arquivo em &#8216;vendor/plugins/yaffle/test/yaffle_test.rb&#8217;
+com um teste simples. Mude o conteúdo deste arquivo para:</p>
+<p><strong>vendor/plugins/yaffle/test/yaffle_test.rb:</strong></p>
+<div class="code_container"><code class="ruby">
+require File.dirname(__FILE__) + '/test_helper.rb'
+
+class YaffleTest &lt; Test::Unit::TestCase
+
+  class Hickwall &lt; ActiveRecord::Base
+  end
+
+  class Wickwall &lt; ActiveRecord::Base
+  end
+
+  def test_schema_has_loaded_correctly
+    assert_equal [], Hickwall.all
+    assert_equal [], Wickwall.all
+  end
+
+end
+</code></div>
+<p>Para executar o teste, vá para o diretório do plugin e rode o <tt>rake</tt>:</p>
+<pre>
+cd vendor/plugins/yaffle
+rake
+</pre>
+<p>Você deverá ver uma saída do tipo:</p>
+<pre>
+/opt/local/bin/ruby -Ilib:lib "/opt/local/lib/ruby/gems/1.8/gems/rake-0.8.3/lib/rake/rake_test_loader.rb" "test/yaffle_test.rb"
+
+create_table(:hickwalls, {:force=&gt;true})
+   -&gt; 0.0220s
+-- create_table(:wickwalls, {:force=&gt;true})
+   -&gt; 0.0077s
+-- initialize_schema_migrations_table()
+   -&gt; 0.0007s
+-- assume_migrated_upto_version(0)
+   -&gt; 0.0007s
+Loaded suite /opt/local/lib/ruby/gems/1.8/gems/rake-0.8.3/lib/rake/rake_test_loader
+Started
+.
+Finished in 0.002236 seconds.
+
+1 test, 1 assertion, 0 failures, 0 errors
+</pre>
+<p>Por default o setup acima executa seus testes usando o sqlite ou sqlite3. Para executar os testes usando outra string de conexão especificada no database.yml, informe a variável DB para o rake:</p>
+<pre>
+rake DB=sqlite
+rake DB=sqlite3
+rake DB=mysql
+rake DB=postgresql
+</pre>
+<p>Agora você está pronto para testar seu plugin!</p>
+<h3 id="estendendoasclassesbsicas">2 Estendendo as classes básicas</h3>
+<p>Esta seção irá explicar como adicionar um método na classe String que estará disponível em qualquer local
+da sua aplicação rails. Para isto iremos:</p>
+<ul>
+	<li>Escrever testes para o comportamento desejado</li>
+	<li>Criar e adicionar os arquivos corretos</li>
+</ul>
+<h4 id="criandoostestes">2.1 Criando os testes</h4>
+<p>Neste exemplo você irá adicionar um método à classe String chamado <tt>to_squawk</tt>. Para começar, crie um novo arquivo de teste
+com algumas assertions:</p>
+<p><strong>vendor/plugins/yaffle/test/core_ext_test.rb</strong></p>
+<div class="code_container"><code class="ruby">
+require File.dirname(__FILE__) + '/test_helper.rb'
+
+class CoreExtTest &lt; Test::Unit::TestCase
+  def test_to_squawk_prepends_the_word_squawk
+    assert_equal &quot;squawk! Hello World&quot;, &quot;Hello World&quot;.to_squawk
+  end
+end
+</code></div>
+<p>Entre no diretório do plugin e execute <tt>rake test</tt>:</p>
+<pre>
+cd vendor/plugins/yaffle
+rake test
+</pre>
+<p>O teste acima deve falhar com a mensagem:</p>
+<pre>
+ 1) Error:
+test_to_squawk_prepends_the_word_squawk(CoreExtTest):
+NoMethodError: undefined method `to_squawk' for "Hello World":String
+    ./test/core_ext_test.rb:5:in `test_to_squawk_prepends_the_word_squawk'
+</pre>
+<p>Ótimo &#8211; agora você está pronto para começar o desenvolvimento.</p>
+<h4 id="organizeseusarquivos">2.2 Organize seus arquivos</h4>
+<p>Um padrão comum para plugins do rails é preparar a estrutura de arquivos dessa maneira:</p>
+<pre>
+|-- init.rb
+|-- lib
+|   |-- yaffle
+|   |   `-- core_ext.rb
+|   `-- yaffle.rb
+</pre>
+<p>A primeira coisa que precisamos é adicionar um require para nosso arquivo &#8216;lib/yaffle.rb&#8217; no &#8216;init.rb&#8217;:</p>
+<p><strong>vendor/plugins/yaffle/init.rb</strong></p>
+<div class="code_container"><code class="ruby">
+require 'yaffle'
+</code></div>
+<p>Depois, no &#8216;lib/yaffle.rb&#8217; adicionamos um require para &#8216;lib/core_ext.rb&#8217;:</p>
+<p><strong>vendor/plugins/yaffle/lib/yaffle.rb</strong></p>
+<div class="code_container"><code class="ruby">
+require &quot;yaffle/core_ext&quot;
+</code></div>
+<p>Por fim, criar o arquivo &#8216;core_ext.rb&#8217; e adicionar o método &#8216;to_squawk&#8217;:</p>
+<p><strong>vendor/plugins/yaffle/lib/yaffle/core_ext.rb</strong></p>
+<div class="code_container"><code class="ruby">
+String.class_eval do
+  def to_squawk
+    &quot;squawk! #{self}&quot;.strip
+  end
+end
+</code></div>
+<p>Para testar que seu método faz o que ele diz que faz, execute os testes unitários com <tt>rake</tt> a partir do diretório do
+seu plugin. Para ver isto em ação, abra o console e execute o método:</p>
+<pre>
+$ ./script/console
+&gt;&gt; "Hello World".to_squawk
+=&gt; "squawk! Hello World"
+</pre>
+<h4 id="usandooinitrb">2.3 Usando o init.rb</h4>
+<p>Quando o rails lê os plugins ele procura pelo arquivo init.rb. Entretanto, quando o plugin é inicializado, &#8216;init.br&#8217; é
+chamado via <tt>eval</tt> (e não <tt>require</tt>), tendo então um comportamento diferente.</p>
+<p>Sobre certas cinscunstâncias se você reabrir classes ou módulos no <tt>init.rb</tt> você pode inadvertidamente criar uma nova
+classe, ao invés de reabrir uma classe existente. Uma alternativa melhor é reabrir a classe em um arquivo diferente, e
+usar um <tt>require</tt> para este arquivo no <tt>init.rb</tt>, como mostrado acima.</p>
+<p>Se você precisar reabrir uma classe no <tt>init.rb</tt> você pode usar <tt>module_eval</tt> ou <tt>class_eval</tt> para evitar estes problemas:</p>
+<p><strong>vendor/plugins/yaffle/init.rb</strong></p>
+<div class="code_container"><code class="ruby">
+Hash.class_eval do
+  def is_a_special_hash?
+    true
+  end
+end
+</code></div>
+<p>Outra maneira é definir explicitamente o top-level module space para todos os módulos e classes, como <tt>::Hash</tt>:</p>
+<p><strong>vendor/plugins/yaffle/init.rb</strong></p>
+<div class="code_container"><code class="ruby">
+class ::Hash
+  def is_a_special_hash?
+    true
+  end
+end
+</code></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+  <div id="footer">
+    <div class="wrapper">
+      <p>Autores que contribuíram para guias completos estão listados <a href="credits.html">aqui</a>.<br />
+        Tradutores que contribuíram na tradução dos guias originais para Língua Portuguesa estão listados <a href="translators.html">aqui</a>.<br />
+        Este trabalho está licenciado sob a licença <a href="http://creativecommons.org/licenses/by-sa/3.0">Creative Commons Attribution-Share Alike 3.0</a>.</p>
+      <p>"Rails", "Ruby on Rails", e o logo do Rails são marcas registradas de David Heinemeier Hansson. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -40,7 +40,7 @@ Com as associações do ActiveRecord, podemos simplificar estas - e outras - ope
 
 <ruby>
 class Customer < ActiveRecord::Base
-  has_many :orders
+  has_many :orders, :dependent => :destroy
 end
 
 class Order < ActiveRecord::Base
@@ -827,6 +827,7 @@ end
 A associação +has_one+ suporta essas opções:
 
 * +:as+
+* +:autosave+
 * +:class_name+
 * +:conditions+
 * +:dependent+
@@ -843,7 +844,11 @@ A associação +has_one+ suporta essas opções:
 
 h6. :as
 
-Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas serão discutidas mais adiante neste guia.
+Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas "já foram discutidas em detalhes neste guia":#associaespolimrficas.
+
+h6. +:autosave+
+
+Se você definir a opção +:autosave+ para +true+, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
 
 h6. :class_name
 
@@ -883,7 +888,11 @@ TIP: Em nenhum caso, Rails irá criar a coluna da chave estrangeira para você. 
 
 h6. :include
 
+<<<<<<< HEAD:railties/guides/source/pt-BR/association_basics.textile
 Você pode usar a opção :include para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os models abaixo:
+=======
+Você pode usar a opção +:include+ para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os modelos abaixo:
+>>>>>>> 4e297b239acf7230e13df250e35bdf88dd2c94c9:railties/guides/source/pt-BR/association_basics.textile
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -939,7 +948,7 @@ A opção +:source_type+ específica o tipo da fonte para a associação +has_on
 
 h6. :through
 
-A opção +:through+ específica um model para a junção (join) para executar a query. Associações +has_one :through+ serão discutidas em detalhes mais adiante.
+A opção +:through+ específica um model para a junção (join) para executar a query. "Associações +has_one :through+ já foram discutidas em detalhes":#a-associaohas-onethrough.
 
 h6. :validate
 
@@ -1031,7 +1040,7 @@ WARNING: Os objetos associados serão destruídos, se existir +:dependent => :de
 
 h6. <em>collection</em>=objects
 
-O método <tt><em>collection</em></tt>= faz com que a coleção contenha apenas os objetos passados, adicionando ou removendo o que não interessa.
+O método <tt><em>collection</em>=</tt> faz com que a coleção contenha apenas os objetos passados, adicionando ou removendo o que não interessa.
 
 h6. <em>collection_singular</em>_ids
 
@@ -1109,6 +1118,7 @@ end
 Uma associação +has_many+ suporta estas opções:
 
 * +:as+
+* +:autosave+
 * +:class_name+
 * +:conditions+
 * +:counter_sql+
@@ -1132,7 +1142,11 @@ Uma associação +has_many+ suporta estas opções:
 
 h6. :as
 
-Definindo a opção +:as+ indica que essa será uma associação polimórfica, como discutido previamente neste guia.
+Definindo a opção +:as+ indica que essa será uma associação polimórfica, "como já discutido previamente neste guia":#associaespolimrficas.
+
+h6. +:autosave+
+
+Se você definir a opção +:autosave+ para +true+, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
 
 h6. :class_name
 
@@ -1208,7 +1222,7 @@ end
 
 h6. :include
 
-Você pode usar a opção :include para especificar associações de segunda ordem que devem ser carregadas previamente ( eager-loaded ) quando a associação for usada. Por exemplo, considere os models abaixo:
+Você pode usar a opção +:include+ para especificar associações de segunda ordem que devem ser carregadas previamente ( eager-loaded ) quando a associação for usada. Por exemplo, considere os models abaixo:
 
 <ruby>
 class Customer < ActiveRecord::Base
@@ -1286,7 +1300,7 @@ A opção +:source_type+ especifica o tipo da associação de origem para uma as
 
 h6. :through
 
-A opção +:through+ especifica um model para uma junção. Associações +has_many :through+ criam uma forma de implementar uma associação many-to-many (muitos para muitos), como discutido anteriormente neste guia.
+A opção +:through+ especifica um model para uma junção. Associações +has_many :through+ criam uma forma de implementar uma associação many-to-many (muitos para muitos), "como discutido anteriormente neste guia":#a-associaohas-manythrough.
 
 h6. :uniq
 
@@ -1328,7 +1342,7 @@ Quando você declara uma associação +has_and_belongs_to_many+, a classe que de
 * <tt><em>collection</em>.build(attributes = {})</tt>
 * <tt><em>collection</em>.create(attributes = {})</tt>
 
-Em todos estes métodos, <tt><em>collection</em></tt> é substituído pelo símbolo passado como primeiro argumento do +has_many+, e <tt><em>collection_singular</em></tt> é substituído pela versão no singular do símbolo. Por exemplo, a declaração abaixo:
+Em todos estes métodos, <tt><em>collection</em></tt> é substituído pelo símbolo passado como primeiro argumento do +has_and_belongs_to_many+, e <tt><em>collection_singular</em></tt> é substituído pela versão no singular do símbolo. Por exemplo, a declaração abaixo:
 
 <ruby>
 class Part < ActiveRecord::Base
@@ -1404,7 +1418,7 @@ O método <tt><em>collection_singular</em>_ids=</tt> faz com que a coleção con
 
 h6. <em>collection</em>.clear
 
-O método <tt><em>collection</em>.clear</tt> remove cada objeto da coleção através da exclusão das linhas na tabela de junção. Isso não destrói os objetos associados.
+O método <tt><em>collection</em>.clear</tt> remove cada objeto da coleção através da exclusão das linhas na tabela. Isso não destrói os objetos associados.
 
 h6. <em>collection</em>.empty?
 
@@ -1465,6 +1479,7 @@ end
 Associação +has_and_belongs_to_many+ suporta essas opções:
 
 * +:association_foreign_key+
+* +:autosave+
 * +:class_name+
 * +:conditions+
 * +:counter_sql+
@@ -1496,6 +1511,10 @@ class User < ActiveRecord::Base
     :foreign_key => "this_user_id", :association_foreign_key => "other_user_id"
 end
 </ruby>
+
+h6. +:autosave+
+
+Se você definir a opção +:autosave+ para +true+, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
 
 h6. :class_name
 
@@ -1539,7 +1558,7 @@ Normalmente Rails gera automaticamente o SQL apropriado para remover as ligaçõ
 
 h6. :extend
 
-A opção +:extend+ especifica um módulo para estender o proxy de associação. Extensão de associações serão discutidas com mais detalhes neste guia.
+A opção +:extend+ especifica um módulo para estender o proxy de associação. Extensão de associações "serão discutidas com mais detalhes neste guia":#extensesde-associao.
 
 h6. :finder_sql
 
@@ -1568,7 +1587,7 @@ end
 
 h6. :include
 
-Você pode usar a opção :include para especificar uma associação de segunda ordem que deve ser previamente carregada quando a associação for utilizada.
+Você pode usar a opção +:include+ para especificar uma associação de segunda ordem que deve ser previamente carregada quando a associação for utilizada.
 
 h6. :insert_sql
 
@@ -1584,7 +1603,8 @@ A opção +:limit+ permite a você restringir o número total de objeto que ser�
 
 <ruby>
 class Parts < ActiveRecord::Base
-  has_and_belongs_to_many :assemblies, :order => "created_at DESC", :limit => 50
+  has_and_belongs_to_many :assemblies, :order => "created_at DESC",
+    :limit => 50
 end
 </ruby>
 
@@ -1721,6 +1741,8 @@ h3. Changelog
 
 "Ticket no Lighthouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/11
 
+* February  28, 2009: Atualização da tradução com a opção +:autosave+ "Daniel Lopes":translators.html#danielvlopes
+* Fevereiro 1, 2009: Adicionado a opção +:autosave+ "Mike Gunderloy":credits.html#mgunderloy
 * Janeiro   18, 2009: Primeira versão da tradução para português por "Daniel Lopes":translators.html#danielvlopes
 * Setembro  28, 2008: Corrigido o diagrama +has_many :through+, adicionado o diagrama para associações polimórficas, por "Mike Gunderloy":credits.html#mgunderloy. First release version.
 * Setembro  22, 2008: Adicionado diagramas, coisas diversas. por "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)

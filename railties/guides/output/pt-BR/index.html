@@ -1,0 +1,183 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Ruby on Rails guides</title>
+<link rel="stylesheet" type="text/css" href="files/stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/syntax.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/print.css" media="print" />
+<script type="text/javascript" src="files/javascripts/guides.js"></script><script type="text/javascript" src="files/javascripts/code_highlighter.js"></script><script type="text/javascript" src="files/javascripts/highlighters.js"></script></head>
+<body class="guide">
+<div id="topNav">
+<div class="wrapper">
+<strong>Mais em <a href="http://www.rubyonrails.pro.br/">rubyonrails.pro.br:</a> </strong>
+<a href="http://www.rubyonrails.pro.br/">Geral</a> |
+<a href="http://rubyonrails.pro.br/down">Download</a> |
+<a href="http://rubyonrails.pro.br/deploy">Deploy</a> |
+<a href="http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/overview">C&oacute;digo</a> |
+<a href="http://www.rubyonrails.pro.br/apresentacoes">Apresentações</a> |
+<a href="http://www.rubyonrails.pro.br/documentacao">Documentação</a> |
+<a href="http://www.rubyonrails.pro.br/ecossistema">Ecossistema</a> |
+<a href="http://www.rubyonrails.pro.br/comunidade">Comunidade</a> |
+<a href="http://podcast.rubyonrails.pro.br">Podcasts</a> |
+<a href="http://www.rubyonrails.pro.br/planeta/">Blogs</a>
+</div>
+</div>
+<div id="header">
+<div class="wrapper clearfix">
+      <h1><a href="index.html" title="Retorne para a página princípal">Guides.rubyonrails.org</a></h1>
+      <p class="hide"><a href="#mainCol">Pule a navegação</a>.</p>
+<ul class="nav">
+        <li><a href="index.html">Início</a></li>
+        <li class="index"><a href="#" onclick="guideMenu();" id="guidesMenu">Índice dos Guias</a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+              <dt>Start Here</dt>
+              <dd><a href="getting_started.html">Começando com Rails</a></dd>
+              <dt>Models</dt>
+              <dd><a href="migrations.html">Rails Database Migrations</a></dd>
+              <dd><a href="activerecord_validations_callbacks.html">Validações e Callbacks do Active Record</a></dd>
+              <dd><a href="association_basics.html">Associações do Active Record</a></dd>
+              <dd><a href="active_record_querying.html">Interface de Queries do Active Record</a></dd>
+              <dt>Views</dt>
+              <dd><a href="layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
+              <dd><a href="form_helpers.html">Form Helpers do Action View</a></dd>
+              <dt>Controllers</dt>
+              <dd><a href="action_controller_overview.html">Visão Geral do Action Controller</a></dd>
+              <dd><a href="routing.html">Roteamento Rails de Fora para Dentro</a></dd>
+</dl>
+<dl class="R">
+              <dt>Aprofundando</dt>
+              <dd><a href="i18n.html"><span class="caps">API</span> de Internacionalização do Rails</a></dd>
+              <dd><a href="action_mailer_basics.html">Conceitos Básicos do Action Mailer</a></dd>
+              <dd><a href="testing.html">Testando Aplicações Rails</a></dd>
+              <dd><a href="security.html">Segurança em Aplicações Rails</a></dd>
+              <dd><a href="debugging_rails_applications.html">Depurando Aplicações Rails</a></dd>
+              <dd><a href="performance_testing.html">Testando Performance em Aplicações Rails</a></dd>
+              <dd><a href="plugins.html">O Básico da Criação de Plugins</a></dd>
+              <dd><a href="configuring.html">Configurando Aplicações Rails</a></dd>
+</dl>
+</div>
+</li>
+        <li><a href="contribute.html">Contribua</a></li>
+        <li><a href="credits.html">Créditos</a></li>
+</ul>
+</div>
+</div>
+<hr class="hide" />
+
+<div id="feature">
+<div class="wrapper">
+
+<h2>Ruby on Rails guides</h2>
+<p>Estes guias são desenvolvidos para trazer produtividade imediata com Rails, e ajuda-lo a entender como todas as peças funcionam juntas. Existem duas versões diferentes deste site Guia, e você deve certificar-se de estar lendo a que atenda melhor a sua situação:</p>
+<ul>
+	<li><a href="http://guides.rubyonrails.org/">Versão Atual</a> &#8211; baseado no Rails 2.3</li>
+	<li><a href="http://guides.rails.info">Versão para o Edge Rails</a></li>
+</ul>
+
+<div id="subCol">
+<dl>
+    <dd class="warning">Esta página é resultado de <a href="http://hackfest.rubyonrails.org/guide">Rails Guides Hackfest</a> e continua em desenvolvimento.</dd>
+    <dd class="ticket">Guias marcados com ícones estão atualmente sendo desenvolvidos. Embora possa ainda ser útil para você, eles podem conter informações incompletas e até mesmo erros. Você pode ajudar através de revisão e postando comentários e correções nos respectivos tickets no Lighthouse.</dd>
+</dl>
+</div>
+</div>
+</div>
+<div id="container">
+<div class="wrapper">
+<div id="mainCol">
+
+<h3>Comece aqui</h3>
+<dl>
+<dt><a href="getting_started.html">Começando com Rails</a></dt><dd>
+Tudo que você precisa saber para instalar o Rails e criar sua primeira aplicação.
+</dd>
+</dl>
+<h3>Models</h3>
+<dl>
+<dt><a href="migrations.html">Migrations para bancos de dados no Rails</a></dt><dd>
+Este guia cobre como você pode usar as migrações do Active Record para alterar seu banco de dados de uma forma organizada e estruturada.
+</dd>
+<dt><a href="activerecord_validations_callbacks.html">Validações e Callbacks do Active Record</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/26">Lighthouse Ticket</a></dd><dd>
+Este guia explica como você pode utilizar as validações e callbacks do Active Record.
+</dd>
+<dt><a href="association_basics.html">Associações do Active Record</a></dt><dd>
+Este guia cobre todas as associações fornecidas pelo Active Record.
+</dd>
+<dt><a href="active_record_querying.html">Interface para Queries do Active Record</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/16">Lighthouse Ticket</a></dd><dd>
+Este guia cobre como o Active Record trabalha com querys no banco de dados.
+</dd>
+</dl>
+<h3>Views</h3>
+<dl>
+<dt><a href="layouts_and_rendering.html">Layouts e Renderização no Rails</a></dt><dd>
+Este guia cobre o básico dos recursos de layout do Action Controller e Action View, incluindo renderização e redirecionamento, usando blocos <tt>content_for</tt>, e trabalhando com partials.
+</dd>
+<dt><a href="form_helpers.html">Form Helpers do Action View</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/1">Lighthouse Ticket</a></dd><dd>
+<p>Guia para utilização dos Form helpers do Rails.</p>
+</dd>
+</dl>
+<h3>Controllers</h3>
+<dl>
+<dt><a href="action_controller_overview.html">Visão Geral do Action Controller</a></dt><dd>
+Este guia explica como os controllers trabalham e como eles se encaixam no ciclo de requisição de sua aplicação. Ele inclue sessões, filtros, cookies, streaming de dados, como trabalhar com exceções levantadas por um request, entre outros tópicos.
+</dd>
+<dt><a href="routing.html">Roteamento Rails de Fora para Dentro</a></dt><dd>
+<p>Este guia cobre as maravilhas do sistema de roteamento do Rails. Se você quer entender como usar as rotas em suas aplicações Rails, comece por aqui.</p>
+</dd>
+</dl>
+<h3>Aprofundando-se</h3>
+<dl>
+	<dt><a href="i18n.html">Rails Internationalization <span class="caps">API</span></a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/23">Lighthouse Ticket</a></dd><dd>
+<p>Este guia cobre como adicionar internacionalização em sua aplicação. Sua aplicação irá ser capaz de traduzir conteúdo para diferentes idiomas, alterar regras de pluralização, usar formatação correta de datas para cada país e muito mais.</p>
+</dd>
+	<dt><a href="action_mailer_basics.html">Action Mailer Basics</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/25">Lighthouse Ticket</a></dd><dd>
+<p>Este guia descreve como utilizar o Action Mailer para enviar e receber emails.</p>
+</dd>
+	<dt><a href="testing.html">Testing Rails Applications</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/8">Lighthouse Ticket</a></dd><dd>
+<p>Este é um guia para a compreenção da prática de testes unitários e funcionais no Rails. Ele cobre tudo desde “O que são testes?” até a as APIs de testes. Aproveite.</p>
+</dd>
+	<dt><a href="security.html">Securing Rails Applications</a></dt><dd>
+<p>Este guia descreve problemas de segurança comuns em aplicações web e como evita-los com Rails.</p>
+</dd>
+	<dt><a href="debugging_rails_applications.html">Debugging Rails Applications</a></dt><dd>
+<p>Este guia descreve como depurar aplicações Rails. Ele cobre diferentes formas de faze-lo e como entender o que está acontecendo “nos bastidores” do seu código.</p>
+</dd>
+	<dt><a href="performance_testing.html">Performance Testing Rails Applications</a></dt><dd>
+<p>Este guia ensina maneiras de analizar e otimizar a execução do seu código no Rails.</p>
+</dd>
+	<dt><a href="plugins.html">The Basics of Creating Rails Plugins</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/32">Lighthouse Ticket</a></dd><dd>
+<p>Este guia cobre como criar plugins para estender as funcionalidades do Rails.</p>
+</dd>
+	<dt><a href="configuring.html">Configuring Rails Applications</a></dt><dd>
+<p>Este guia cobre as opções básicas de configuração para uma aplicação Rails.</p>
+</dd>
+	<dt><a href="rails_on_rack.html">Rails on Rack</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/58">Lighthouse Ticket</a></dd><dd>
+Este guia cobre a integração do Rails com Rack e sua interface com componentes Rack.
+</dd>
+	<dt><a href="command_line.html">Rails Command Line Tools and Rake tasks</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/29">Lighthouse Ticket</a></dd><dd>
+<p>Este guia cobre as ferramentas de linha de comando e tarefas rake disponibilizadas pelo Rails.</p>
+</dd>
+	<dt><a href="caching_with_rails.html">Caching with Rails</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/10">Lighthouse Ticket</a></dd><dd>
+<p>Varia técnicas de caching disponibilizadas pelo Rails.</p>
+</dd>
+	<dt><a href="contributing.html">Contributing to Rails</a></dt><dd class="ticket"><a href="http://rails.lighthouseapp.com/projects/16213/tickets/64">Lighthouse Ticket</a></dd><dd>
+<p>Rails não é um &#8220;framework de outra pessoa&#8221;. Este guia cobre as várias formas que você possui para se involver no contínuo processo de desenvolvimento do Rails.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<hr class="hide" />
+<div id="footer">
+<div class="wrapper">
+      <p>Autores que contribuíram para guias completos estão listados <a href="credits.html">aqui</a>.<br />
+        Tradutores que contribuíram na tradução dos guias originais para Língua Portuguesa estão listados <a href="translators.html">aqui</a>.<br />
+        Este trabalho está licenciado sob a licença <a href="http://creativecommons.org/licenses/by-sa/3.0">Creative Commons Attribution-Share Alike 3.0</a>.</p>
+      <p>&#8220;Rails&#8221;, &#8220;Ruby on Rails&#8221;, e o logo do Rails são marcas registradas de David Heinemeier Hansson. Todos os direitos reservados.</p>
+</div>
+</div>
+</body>
+</html>

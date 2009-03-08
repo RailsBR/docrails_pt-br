@@ -30,3 +30,7 @@ Tem disponibilizado parte de seu tempo livre para estudos sobre a linguagem Ruby
 <% author('Cássio Marques', 'cassiomarques') do %>
 Cássio Marques é um desenvolvedor que trabalha com diversas linguagens de programação, entre elas Ruby, Java e C. Atualmente tem realizado a maioria dos seus trabalhos desenvolvendo aplicações web utilizando Ruby on Rails. É formado em Computação Científica pela Universidade de Taubaté. Você pode acompanhá-lo pelo "twitter":http://www.twitter.com/cassiomarques ou lendo seu "blog":http://cassiomarques.wordpress.com. 
 <% end %>
+
+<% author('Rafael Rosa', 'rafaelrosafu') do %>
+Rafael Rosa é formado em administração de empresas pela Faculdade de Administração, Economia e Contabilidade da Universidade de São Paulo, e trabalha com desenvolvimento de sistemas há mais de 13 anos. Já trabalhou com Delphi, .NET e atualmente trabalha com Ruby on Rails. Além de participar da comunidade Ruby/Rails ele também acompanha a comunidade ALT.NET. Atualmente é um dos colaboradores do "Ruby Inside Brasil":http://www.rubyinside.com.br e mantém um "blog sobre Ruby, Rails, ALT.NET e cinema":http://www.rafaelrosafu.com. Ele dedica 90% de suas horas vagas ao cinema e os outros 10% aprendendo francês. Você pode acompanhá-lo no "Twitter":http://www.twitter.com/rafaelrosafu.
+<% end %>
