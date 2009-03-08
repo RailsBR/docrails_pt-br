@@ -378,7 +378,11 @@ Você não é livre para usar qualquer nome para suas associações. Como ao cri
 
 h4. Atualizando o schema
 
-Associações são extremamente úteis, mas não são mágicas. Você é responsável por manter seu esquema do banco de dados sincronizado com suas associações. Na prática, isto significa duas coisas. Primeiro, você deve criar as chaves estrangeiras apropriadas:
+Associações são extremamente úteis, mas não são mágicas. Você é responsável por manter seu esquema do banco de dados sincronizado com suas associações. Na prática, isto significa duas coisas, dependendo do tipo de associação que você está criando. Para associações belongs_to você precisará criar as chaves estrangeiras, e para associações has_and_belongs_to_many você deverá criar a tabela de junção.
+
+h5. Criando chaves estrangeiras para associações belongs_to
+
+Quando você declara um associação belongs_to, você deve criar as chaves estrangeiras apropriadas. Por exemplo, considere este model:
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -386,15 +390,15 @@ class Order < ActiveRecord::Base
 end
 </ruby>
 
-Esta declaração precisar ser suportada pela devida declaração de chave estrangeira na tabela orders:
+Esta declaração deve ser feita em conjunto com a declaração da chave estrangeira na tabela orders:
 
 <ruby>
 class CreateOrders < ActiveRecord::Migration
   def self.up
     create_table :orders do |t|
-      t.order_date   :datetime
-      t.order_number :string
-      t.customer_id  :integer
+      t.datetime   :order_date
+      t.string     :order_number
+      t.integer    :customer_id
     end
   end
 
@@ -404,13 +408,15 @@ class CreateOrders < ActiveRecord::Migration
 end
 </ruby>
 
-Se você criar alguma associação depois que você tiver construído o respectivo model, você precisa se lembrar de criar um migradtion +add_column+ para prover a chave estrangeira adequada.
+Se você criar uma associação depois de um tempo da criação do model, você deve lembrar-se de criar uma migration com  um add_column para criar a chave estrangeira necessária.
 
-Segundo, se você criar uma associação +has_and_belongs_to_many+ , você precisa explicitamente criar uma tabela para o join. A menos que o nome da tabela para o join seja explicitamente especificada usando a opção +:join_table+ , Active Record cria o nome usando uma ordem léxica de acordo com os nomes das classes. Então uma associação entre os models customer e order irá gerar uma tabela para a junção com o nome "customers_orders" porque o "c" é superior ao "o" no ordenamento léxico.
+h5. Criando tabelas de junção para associações has_and_belongs_to_many
 
-WARNING: A precedência entre nomes de models é calculada usando o operado +<+ para +String+. O que significa que as strings são de tamanhos diferentes, e a string é menor quando comparada com outra com tamanho menor, então a string maior será considerada com maior precedência léxica que a menor. Por exemplo, seria de se esperar que as tabelas "paper_boxes" e "papers" iriam gerar uma tabela de associação com o "papers_paper_boxes" por causa do tamanho de "paper_boxes", mas de fato o nome da tabela de associação será "paper_boxes_papers".
+Se você criar uma associação has_and_belongs_to_many, você deverá explicitamente criar uma tabela de junção. A não ser que o nome da tabela de junção esteja explicitamente especificado na opção :join_table, o ActiveRecord cria o nome a partir da ordem alfabética dos nomes das classes. Então, uma junção entre os models customer e order irá criar o nome de junção padrão "customers_orders", porque "c" vem antes de "o" na ordem alfabética.
 
-Independente do nome, você deve gerar manualmente a tabela de associação com uma migration apropriada. Por exemplo, considere esta associação:
+WARNING: A precedência entre nomes de models é calculada utilizando o operador +<+ da classe +String+. Isto significa que se as strings são de tamanhos diferentes, e as strings são iguais quando comparadas com a menor parte, então a string maior é considerada de maior precedência na ordem alfabética. Por exemplo, você poderia pensar que as tabelas "paper_boxes" e "papers" gerariam uma tabela de junção chamada "papers_paper_boxes" por causa do tamanho do nome "paper_boxes", mas na verdade o nome gerado será "paper_boxes_papers" (porque o sublinhado '_' é alfabéticamente _menor_ do que o 's' nas codificações comuns).
+
+Seja qual for o nome, você deve manualmente criar uma tabela de junção com uma migration apropriada. Por exemplo, considere esta associação:
 
 <ruby>
 class Assembly < ActiveRecord::Base
@@ -422,7 +428,7 @@ class Part < ActiveRecord::Base
 end
 </ruby>
 
-Este código precisa ser contemplado por uma migration para criar a tabela +assemblies_parts+ . Esta tabela deve ser criada sem uma primary key (chave primária)
+Ela precisa de uma migration que crie a tabela +assemblies_parts+. Esta tabela deve ser criada sem uma chave primária:
 
 <ruby>
 class CreateAssemblyPartJoinTable < ActiveRecord::Migration
@@ -441,7 +447,7 @@ end
 
 h4. Controlando o escopo das associações
 
-Por padrão, associações enxergam objetos apenas no módulo atual. Isto pode ser importante quando você declara models Active Record dentro de um módulo. Por exemplo:
+Por padrão, associações procuram por objetos apenas no escopo do módulo atual. Isto pode ser importante quando você declara models Active Record dentro de um módulo. Por exemplo:
 
 <ruby>
 module MyApplication
@@ -457,7 +463,7 @@ module MyApplication
 end
 </ruby>
 
-Isto irá funcionar, porque tanto a classe +Supplier+ quanto a classe +Account+ são definidas com o mesmo escopo. Mas o código abaixo não funcionará, porque +Supplier+ e +Account+ são definidos em escopos diferentes:
+Isto irá funcionar, porque tanto a classe +Supplier+ quanto a classe +Account+ estão definidas no mesmo escopo. Mas o código abaixo não funcionará, porque +Supplier+ e +Account+ estão definidos em escopos diferentes:
 
 <ruby>
 module MyApplication
@@ -475,7 +481,7 @@ module MyApplication
 end
 </ruby>
 
-Para associar um model com um outro model em um escopo diferente, você precisa especificar o nome completo da classe na declaração de sua associação:
+Para associar um model a outro model em um escopo diferente, você precisa especificar o nome completo da classe na declaração de sua associação:
 
 <ruby>
 module MyApplication
@@ -497,17 +503,16 @@ h3. Referência Detalhada sobre Associações
 
 As seções seguintes detalham cada tipo de associação, incluindo métodos que elas adicionam e as opções que você pode usar quando estiver declarando uma associação.
 
-h4. A associação belongs_to
+h4. Referência da associação +belongs_to+
 
-Associação +belongs_to+ (pertence á) cria um dependência de um-para-um com outro model. Em termos de banco de dados, esta associação diz que esta classe onde belongs_to for chamado irá conter a chave estrangeira. Mas se a outra classe contém a chave estrangeira então você deve usar +has_one+ ao invés de +belongs_to+.
+A associação +belongs_to+ (pertence a) cria uma dependência de um-para-um com outro model. Em termos de banco de dados, esta associação diz que esta classe contém a chave estrangeira. Se a outra classe contiver a chave estrangeira, você deverá usar +has_one+ ao invés de +belongs_to+.
 
-h5. Métodos Adicionados pelo +belongs_to+
+h5. Métodos adicionados pelo +belongs_to+
 
-Quando você declara uma associação +belongs_to+, a classe que declara automaticamente ganha cinco métodos relacionados a associação:
+Quando você declara uma associação +belongs_to+, a classe declarada automaticamente ganha quatro métodos relacionados a associação:
 
 * <tt><em>association</em>(force_reload = false)</tt>
 * <tt><em>association</em>=(associate)</tt>
-* <tt><em>association</em>.nil?</tt>
 * <tt>build_<em>association</em>(attributes = {})</tt>
 * <tt>create_<em>association</em>(attributes = {})</tt>
 
@@ -524,7 +529,6 @@ Cada instância do model order vai ter estes métodos:
 <ruby>
 customer
 customer=
-customer.nil?
 build_customer
 create_customer
 </ruby>
@@ -537,29 +541,19 @@ O método +<tt><em>association</em></tt>+ returna o objeto associado, se existir
 @customer = @order.customer
 </ruby>
 
-Se o objeto associado já tiver sido buscado no banco de dados para este objeto, a versão cacheda será retornada. Para substituir esse comportamento (e force o banco de dados a ler), passe +true+ para o argumento +force_reload+ .
+Se o objeto associado já tiver sido buscado no banco de dados para este objeto, o valor em cache será retornada. Para substituir esse comportamento (e forçar o banco de dados a reler), passe +true+ no argumento +force_reload+ .
 
 h6. _association_=(associate)+
 
-O método +<tt><em>association</em></tt>=+ atribui um objeto associado para este objeto. Nos bastidores, isto significa buscar a chave primária do objeto associado e definir esta, como chave estrangeira para o mesmo valor.
+O método +<tt><em>association</em></tt>=+ atribui um objeto associado para este objeto. Nos bastidores, isto significa buscar a chave primária do objeto associado e definir a chave estrangeira deste objeto para o mesmo valor.
 
 <ruby>
 @order.customer = @customer
 </ruby>
 
-h6. _association_.nil?
-
-O método +<tt><em>association</em></tt>.nil?+ retorna +true+ se não existir nenhum objeto associado.
-
-<ruby>
-if @order.customer.nil?
-  @msg = "No customer found for this order"
-end
-</ruby>
-
 h6. build_<em>association</em>(attributes = {})
 
-O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, e linkando este objeto, uma chave estrangeira será definida, mas o objeto associado ainda não será salvo.
+O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, a associação a este objeto através da chave estrangeira será definida, mas o objeto associado ainda não será salvo.
 
 <ruby>
 @customer = @order.build_customer({:customer_number => 123, :customer_name => "John Doe"})
@@ -567,7 +561,7 @@ O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo ass
 
 h6. create_<em>association</em>(attributes = {})
 
-O método <tt>create_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, e linkando este objeto, uma chave estrangeira será definida. Porém, o objeto associado será salvo (assumindo que passe pelas validações).
+O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, a associação a este objeto através da chave estrangeira será definida. Adicionalmente,  o objeto associado será salvo (assumindo que passe pelas validações).
 
 <ruby>
 @customer = @order.create_customer({:customer_number => 123, :customer_name => "John Doe"})
@@ -575,7 +569,7 @@ O método <tt>create_<em>association</em></tt> retorna um novo objeto do tipo as
 
 h5. Opções para belongs_to
 
-Em muitas situações, você pode usar o comportamento padrão do +belongs_to+ sem nenhuma customização. Mas apesar da ênfase que o Rails faz em convenção sobre customização, você poder alterar este comportamento de várias formas. Esta sessão cobre as opções que você pode passar quando criar uma associação +belongs_to+ . Por exemplo, uma associação com várias opções pode parecer com isto:
+Em muitas situações, você pode usar o comportamento padrão do +belongs_to+ sem nenhuma customização. Mas apesar da ênfase do Rails em convenção sobre customização, você poder alterar este comportamento de várias formas. Esta sessão cobre as opções que você pode passar quando criar uma associação +belongs_to+. Por exemplo, uma associação com várias opções pode parecer com isto:
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -603,7 +597,7 @@ Se você definir a opção +:autosave+ como +true+, o Rails irá salvar quaisque
 
 h6. :class_name
 
-Se o nome do outro model não puder ser derivado do nome da associação, você pode usar a opção +:class_name+ para informar o nome do model. Por exemplo, se uma "order" pertence á um "customer", mas o nome atual do model que contém "customer" é +Patron+, você precisa definir desta forma:
+Se o nome do outro model não puder ser derivado do nome da associação, você pode usar a opção +:class_name+ para informar o nome do model. Por exemplo, se uma "order" pertence a um "customer", mas o nome atual do model que contém "customer" é +Patron+, você deve definir desta forma:
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -613,7 +607,7 @@ end
 
 h6. :conditions
 
-Opção +:conditions+ deixa você especificar as condições que o objeto associado precisa cumprir ( na sintaxe usada por uma cláusula SQL +WHERE+ ).
+A opção +:conditions+ permite que você especifique as condições que o objeto associado precisa cumprir (na sintaxe usada por uma cláusula SQL +WHERE+ ).
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -623,7 +617,7 @@ end
 
 h6. :counter_cache
 
-A opção +:counter_cache+ pode ser usada para fazer a busca do número de objetos associados, mais eficiente. Considere estes models:
+A opção +:counter_cache+ pode ser usada para fazer a busca do número de objetos associados mais eficiente. Considere estes models:
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -634,7 +628,7 @@ class Customer < ActiveRecord::Base
 end
 </ruby>
 
-Com esta declaração, perguntando pelo valor de +@customer.orders.size+ requer uma chamada para o banco de dados para executar uma query +COUNT(*)+ . Para evitar esta chamada, você pode adicionar um contra cache ao model pertencente:
+Com estas declarações, pedindo o valor +@customer.orders.size+ requer uma chamada para o banco de dados para executar uma query +COUNT(*)+ . Para evitar esta chamada, você pode adicionar um contador em cache ao model pertencente:
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -645,9 +639,9 @@ class Customer < ActiveRecord::Base
 end
 </ruby>
 
-Com estas declarações, Rails vai manter o valor do cache atualizado, e então retornar o valor como resposta ao método +.size+ .
+Com estas declarações, o Rails vai manter o valor no cache atualizado, e então retornar o valor como resposta ao método +size+ .
 
-Apesar da opção +:counter_cache+ ser especificada no model que inclui a declaração +belongs_to+, a coluna atual precisa ser adicionada ao model _associado_ . No caso acima, você deveria adicionar uma coluna +orders_count+ ao model +Customer+ . Você pode sobrescrever a nome padrão da coluna se você precisar:
+Apesar da opção +:counter_cache+ ser especificada no model que inclui a declaração +belongs_to+, uma coluna precisa ser adicionada ao model _associado_ . No caso acima, você deveria adicionar uma coluna +orders_count+ ao model +Customer+. Você pode sobrescrever o nome padrão da coluna se você precisar:
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -658,18 +652,17 @@ class Customer < ActiveRecord::Base
 end
 </ruby>
 
-Colunas de counter cache são adicionadas ao model que as contém como atributos read-only através do +attr_readonly+.
+Colunas de contador em cache são adicionadas ao model que as contém como atributos somente leitura através de +attr_readonly+.
 
 h6. :dependent
 
-Se você definir a opção +:dependent+ para +:destroy+, então excluindo este objeto será chamado o método destroy no objeto associado para destruir este objeto. Se você definir a opção +:dependent+ para +:delete+, então excluindo este objeto irá excluir 
-o objeto associado _sem_ chamar o método +destroy+ method.
+Se você definir a opção +:dependent+ para +:destroy+, então excluindo este objeto será chamado o método destroy no objeto associado para destruir o objeto. Se você definir a opção +:dependent+ para +:delete+, então excluindo este objeto irá excluir o objeto associado _sem_ chamar o método +destroy+.
 
-WARNING: Você não deve especificar esta opção em uma associação +belong_to+ que esteja conectada com uma associação +has_many+. Se o fizer, resultará em registros orfãos em seu banco de dados.
+WARNING: Você não deve especificar esta opção em uma associação +belong_to+ que esteja conectada com uma associação +has_many+ na outra classe. Fazer isto pode resultar em registros orfãos em seu banco de dados.
 
 h6. :foreign_key
 
-Por convenção, Rails adivinha que a coluna que será usada para guardar a chave estrangeira neste model será o nome da associação com o sufixo +_id+ . A opção +:foreign_key+ permite você definir o nome da chave estrangeira diretamente:
+Por convenção, o Rails adivinha que a coluna que será usada para guardar a chave estrangeira neste model será o nome da associação com o sufixo +_id+. A opção +:foreign_key+ permite que você defina o nome da chave estrangeira diretamente:
 
 <ruby>
 class Order < ActiveRecord::Base
@@ -677,11 +670,11 @@ class Order < ActiveRecord::Base
 end
 </ruby>
 
-TIP: Em caso algum, Rails irá criar as colunas de chave estrangeira para você. Você precisa explicitamente defini-las como parte de suas migrations.
+TIP: Em nenhum caso o Rails irá criar as colunas de chave estrangeira para você. Você precisa explicitamente definí-las como parte de suas migrations.
 
 h6. :include
 
-Você pode usar a opção :include para especificar as associações de segunda ordem que devem ser eager-loaded (pré-carregada) quando esta associação for utilizada. Por exemplo:
+Você pode usar a opção :include para especificar as associações de segunda ordem que devem ser pré-carregadas quando esta associação for utilizada. Por exemplo:
 
 <ruby>
 class LineItem < ActiveRecord::Base
@@ -696,7 +689,7 @@ class Customer < ActiveRecord::Base
 end
 </ruby>
 
-Se você frequentemente returnar customers diretamente de line items (+@line_item.order.customer+), então você pode fazer seu código um pouco mais eficiente incluindo customers na associação de line items para orders:
+Se você frequentemente recupera customers diretamente de line items (+@line_item.order.customer+), então você pode fazer seu código um pouco mais eficiente incluindo customers na associação de line items para orders:
 
 <ruby>
 class LineItem < ActiveRecord::Base
@@ -711,29 +704,39 @@ class Customer < ActiveRecord::Base
 end
 </ruby>
 
-NOTE: Não há necessidade de usar +:include+ para associações imediatas - significa que, se você tiver +Order belongs_to :customer+, então customer é eager-loaded (pré-carregado) automaticamente quando ele for necessário.
+NOTE: Não há necessidade de usar +:include+ para associações imediatas - isto significa que, se você tiver +Order belongs_to :customer+, então customer é pré-carregado automaticamente quando for necessário.
 
 h6. :polymorphic
 
-Passando +true+ para a opção +:polymorphic+ indica que isso será uma associação polymorphic. Associações polimórficas serão discutidas em detalhes neste guia.
+Passando +true+ para a opção +:polymorphic+ indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes <a href="#polymorphic-associations">anteriormente neste guia</a>.
 
 h6. :readonly
 
-Se você definir a opção +:readonly+ para +true+, então o objeto associado será de apenas leitura quando for retornado pela associação.
+Se você definir a opção +:readonly+ para +true+, então o objeto associado terá acesso somente leitura quando for retornado pela associação.
 
 h6. :select
 
-A opção +:select+ permite que você sobrescreva a cláusula SQL +SELECT+ que é usada para retornar dados sobre o objeto associado. Por padrão, Rails retorna todas as colunas.
+A opção +:select+ permite que você sobrescreva a cláusula SQL +SELECT+ que é usada para retornar dados sobre o objeto associado. Por padrão, o Rails retorna todas as colunas.
 
-TIP: Se você definir a opção +:select+ em uma associação +belongs_to+ , você também deve definir a +foreign_key+ para garantir resultados corretos.
+TIP: Se você definir a opção +:select+ em uma associação +belongs_to+ , você também deve definir a opção +foreign_key+ para garantir resultados corretos.
 
 h6. :validate
 
-Se você definir a opção +:validate+ para +true+, então os objetos associados serão validados quando você salvar este objeto. Por padrão, esta opção é +false+:, objetos associados não serão validados quando este objeto for gravado.
+Se você definir a opção +:validate+ para +true+, então os objetos associados serão validados sempre que você salvar este objeto. Por padrão, esta opção é +false+: objetos associados não serão validados quando este objeto for gravado.
 
-h5. Quando Objetos são Gravados?
+h5. Como saber se existe um objeto associado?
 
-Atribuir um objeto a uma associação +belongs_to+ _não_ o grava automaticamente. Isto não grava cada objeto associado. 
+Para saber se existe um objeto associado, simplesmente verifique a associação com association.nil?:
+
+<ruby>
+if @order.customer.nil? 
+  @msg = "No customer found for this order" 
+end 
+</ruby>
+
+h5. Quando objetos são gravados?
+
+Atribuir um objeto a uma associação +belongs_to+ _não_ o grava automaticamente. Também não grava o objeto associado. 
 
 h4. Associação has_one
 
