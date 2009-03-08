@@ -577,104 +577,106 @@ h3. Injeção
 
 -- _Injeção é uma categoria de ataques que introduzem código malicioso ou parâmetros em uma aplicação web de forma a executar estes códigos dentro do contexto de segurança da aplicação. Os exemplos mais proeminentes de injeção são o cross-site scriptintg (XSS) e o SQL injection.
 
-PAREI AQUI
-
-Injection is very tricky, because the same code or parameter can be malicious in one context, but totally harmless in another. A context can be a scripting, query or programming language, the shell or a Ruby/Rails method. The following sections will cover all important contexts where injection attacks may happen. The first section, however, covers an architectural decision in connection with Injection.
+Injeção é algo complicado, porque um mesmo código ou parâmetro pode ser malicioso em um contexto e completamente inofensivo em outro. Um contexto pode ser um script, uma query ou linguagem de programação, o shell ou um método do Ruby/Rails. As seções a seguir cobrem contextos importantes onde ataques por injeção podem ocorrer. A primeira seção, entretanto, cobre uma decisão arquitetural relacionada à injeção.
 
 
 h4. Whitelists versus Blacklists
 
--- _When sanitizing, protecting or verifying something, whitelists over blacklists._
+-- _Quando estiver sanitizando, protegendo ou verificando algo, use whitelists ao invés de blacklists._
 
-A blacklist can be a list of bad e-mail addresses, non-public actions or bad HTML tags. This is opposed to a whitelist which lists the good e-mail addresses, public actions, good HTML tags and so on. Although, sometimes it is not possible to create a whitelist (in a SPAM filter, for example), _(highlight)prefer to use whitelist approaches_:
+Uma blacklist pode ser uma lista com endereços de e-mail inválidos, ações não públicas ou tags HTML ruins. Este é o oposto de uma whitelist, a qual lista os endereços de e-mail válidos, ações públicas, tags HTML permitidas e assim por diante. Apesar de fato de que em alguns casos não é possível criar whitelists (um filtro para SPAM, por exemplo), _(highlight)dê preferência a utilizar uma abordagem por whitelists_:
 
-* Use before_filter :only => [...] instead of :except => [...]. This way you don't forget to turn it off for newly added actions.
-* Use attr_accessible instead of attr_protected. See the mass-assignment section for details
-* Allow &lt;strong&gt; instead of removing &lt;script&gt; against Cross-Site Scripting (XSS). See below for details.
-* Don't try to correct user input by blacklists:
-** This will make the attack work: "&lt;sc&lt;script&gt;ript&gt;".gsub("&lt;script&gt;", "")
-** But reject malformed input
+* Utilize +before_filter :only => [...]+ ao invés de +except => [...]+. Desta forma você não se esquece de desligar o filtro para actions recém-adicionadas.
+* Utilize +attr_accessible+ ao invés de +attr_protected+. Veja a seção sobre mass-assignment para mais detalhes.
+* Permita &lt;strong&gt; ao invés de remover &lt;script&gt; contra Cross-Site Scripting (XSS). Veja os detalhes abaixo.
+* Não tente corrigir input dos usuários através de blacklists:
+** Isso fará com que o ataque funcione: "&lt;sc&lt;script&gt;ript&gt;".gsub("&lt;script&gt;", "")
+** Mas recuse input mal formatado.
 
-Whitelists are also a good approach against the human factor of forgetting something in the blacklist.
+Whitelists também são uma boa abordagem contra o fator humanos de esquecer algo na blacklist.
 
-h4. SQL Injection
+h4. Injection de SQL
 
--- _Thanks to clever methods, this is hardly a problem in most Rails applications. However, this is a very devastating and common attack in web applications, so it is important to understand the problem._
+-- _Graças a métodos espertos, isso raramente é um problema em aplicações Rails. Entretanto, este é um ataque comum e bastante devastador em aplicações web, logo é importante entender o problema._
 
-h5. Introduction
+h5. Introdução
 
-SQL injection attacks aim at influencing database queries by manipulating web application parameters. A popular goal of SQL injection attacks is to bypass authorization. Another goal is to carry out data manipulation or reading arbitrary data. Here is an example of how not to use user input data in a query:
+Ataques por injeção de SQL procuram influenciar consultas ao banco de dados através da manipulação de parâmetros da aplicação web. Um objetivo popular de ataques de injeção de SQL é burlar autorização. Outro objetivo é realizar manipulação de dados ou ler dados arbitrários. Aqui está um exemplo de como não utilizar dados de entrada em uma query:
 
 <ruby>
 Project.find(:all, :conditions => "name = '#{params[:name]}'")
 </ruby>
 
-This could be in a search action and the user may enter a project's name that he wants to find. If a malicious user enters ' OR 1=1', the resulting SQL query will be:
+Esta poderia ser uma action para buscar e o usuário poderia informar o nome do projeto que ele deseja encontrar. Se um usuário informasse ' OR 1=1', a query SQL resultante seria:
 
 <pre>
 SELECT * FROM projects WHERE name = '' OR 1 --'
 </pre>
 
-The two dashes start a comment ignoring everything after it. So the query returns all records from the projects table including those blind to the user. This is because the condition is true for all records.
+Os dois traços iniciam um comentário ignorando tudo o que vem a seguir. Assim a query retorna todos os rgistros da tabela projects incluindo aqueles que deveria ficar escondidos do usuário. Isso acontece porque a condição é verdadeira para todos os registros.
 
-h5. Bypassing authorization
 
-Usually a web application includes access control. The user enters his login credentials, the web applications tries to find the matching record in the users table. The application grants access when it finds a record. However, an attacker may possibly bypass this check with SQL injection. The following shows a typical database query in Rails to find the first record in the users table which matches the login credentials parameters supplied by the user.
+h5. Burlando autorização
+
+Geralmente uma aplicação web inclui controle de acesso. O usuário informa suas credenciais para login, a aplicação web tenta encontrar o respectivo registro na tabela de usuários. A aplicação permite acesso quando encontra um registro. Entretanto, um atacante possivelmente poderia burlar esta verificação com injeção de SQL. O exemplo a seguir exibe uma query SQL típica em uma aplicação Rails, utilizada para encontrar o primeiro registro na tabela users que case os parâmetros com credenciais de login fornecidos pelo usuário.
 
 <ruby>
 User.find(:first, "login = '#{params[:name]}' AND password = '#{params[:password]}'")
 </ruby>
 
-If an attacker enters ' OR '1'='1 as the name, and ' OR '2'>'1 as the password, the resulting SQL query will be:
+Se um atacante entrar ' OR '1'='1 como o nome, e ' OR '2'>'1 como o password, a query SQL resultante seria:
 
 <pre>
 SELECT * FROM users WHERE login = '' OR '1'='1' AND password = '' OR '2'&gt;'1' LIMIT 1
 </pre>
 
-This will simply find the first record in the database, and grants access to this user.
+Isso irá simplesmente retornar o primeiro registro no banco de dados e dará acesso ao usuário.
 
-h5. Unauthorized reading
 
-The UNION statement connects two SQL queries and returns the data in one set. An attacker can use it to read arbitrary data from the database. Let's take the example from above:
+h5. Leitura não permitida
+
+A declaração UNION conecta duas queries SQL e retorna os dados em um único conjunto. Um atacante pode usar isso para ler dados arbitrários do banco de dados. Vamos usar o exemplo já visto acima:
 
 <ruby>
 Project.find(:all, :conditions => "name = '#{params[:name]}'")
 </ruby>
 
-And now let's inject another query using the UNION statement:
+E agora vamos injetar outra query utilizando a declaração UNION
 
 <pre>
 ') UNION SELECT id,login AS name,password AS description,1,1,1 FROM users --
 </pre>
 
-This will result in the following SQL query:
+Isso irá resultar na seguinte query SQL:
 
 <pre>
 SELECT * FROM projects WHERE (name = '') UNION 
   SELECT id,login AS name,password AS description,1,1,1 FROM users --')
 </pre>
 
-The result won't be a list of projects (because there is no project with an empty name), but a list of user names and their password. So hopefully you encrypted the passwords in the database! The only problem for the attacker is, that the number of columns has to be the same in both queries. That's why the second query includes a list of ones (1), which will be always the value 1, in order to match the number of columns in the first query.
+O resultado não será uma lista de projetos (porque não existe projeto com um nome vazio), mas uma lista com os nomes dos usuários e seus passwords. Espera-se que você tenha criptografado os passwords no banco de dados! O único problema para o atacante é que o número de colunas deve ser o mesmo em ambas as queries. É por isso que a segunda query inclue uma lista de uns (1), o qual será sempre o valor 1, de forma a casar o número de colunas na primeira query.
 
-Also, the second query renames some columns with the AS statement so that the web application displays the values from the user table. Be sure to update your Rails "to at least 2.1.1":http://www.rorsecurity.info/2008/09/08/sql-injection-issue-in-limit-and-offset-parameter/.
+Além disso, a segunda query renomeia algumas colunas com a declaração AS de forma a fazer com que a aplicação web exiba os valores da coluna da tabela users. Certifique-se de atualizar o seu Rails "para ao menos a versão 2.1.1":http://www.rorsecurity.info/2008/09/08/sql-injection-issue-in-limit-and-offset-parameter/.
 
-h5. Countermeasures
+h5. Medidas preventivas
 
-Ruby on Rails has a built in filter for special SQL characters, which will escape ' , " , NULL character and line breaks. _(highlight)Using Model.find(id) or Model.find_by_some thing(something) automatically applies this countermeasure_. But in SQL fragments, especially _(highlight)in conditions fragments (:conditions => "..."), the connection.execute() or Model.find_by_sql() methods, it has to be applied manually_.
+O Ruby on Rails tem um filtro nativo para caracteres SQL especiais, o qual irá escapar ' , " , o caracter NULL e quebras de linhas. _(highlight)Utilizar Model.find(id) ou Model.find_by_something(something) automaticamente aplica esta medida preventiva_. Mas em fragmentos de SQL, especialmente _(highlight)em fragmentos com condições (:conditions => "..."), o método +connection.execute()+ ou +Model.find_by_sql()+, essas medidas devem ser aplicadas manualmente.
 
-Instead of passing a string to the conditions option, you can pass an array to sanitize tainted strings like this:
+Ao invés de passar uma string para a opção de condições, você pode passar um array para sanitizar suas strings:
 
 <ruby>
 Model.find(:first, :conditions => ["login = ? AND password = ?", entered_user_name, entered_password])
 </ruby>
 
-As you can see, the first part of the array is an SQL fragment with question marks. The sanitized versions of the variables in the second part of the array replace the question marks. Or you can pass a hash for the same result:
+Como você pode ver, a primeira parte do array é um fragmento SQL com pontos de interrogação. As versões sanitizadas das variáveis na segunda parte do array subsituem as interrogações. Ou você pode fornecer um, hash para o mesmo resultado:
 
 <ruby>
 Model.find(:first, :conditions => {:login => entered_user_name, :password => entered_password})
 </ruby>
 
-The array or hash form is only available in model instances. You can try +sanitize_sql()+ elsewhere. _(highlight)Make it a habit to think about the security consequences when using an external string in SQL_.
+A forma de array ou hash estão disponíveis apenas em instâncias de models. Você pode utilizar +sanitize_sql()+ nos demais locais. _(highlight)Torne um hábito pensar sobre as consequências com segurança quando estiver utilizando um string externa no SQL_.
+
+PAREI AQUI
 
 h4. Cross-Site Scripting (XSS)
 
