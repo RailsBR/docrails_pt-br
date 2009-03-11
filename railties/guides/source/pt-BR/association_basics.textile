@@ -738,21 +738,20 @@ h5. Quando objetos são gravados?
 
 Atribuir um objeto a uma associação +belongs_to+ _não_ o grava automaticamente. Também não grava o objeto associado. 
 
-h4. Associação has_one
+h4. Referência da associação +has_one+
 
-A associação +has_one+ cria uma relação um-para-um com outro model. Se tratando de banco de dados, esta associação diz que a outra classe terá a chave estrangeira. Se esta class possuir a chave estrangeira, então você deve usar um +belongs_to+ ao invés.
+A associação +has_one+ cria uma relação um-para-um com outro model. Em termos de banco de dados, esta associação diz que a outra classe terá a chave estrangeira. Se esta classe possuir a chave estrangeira, então você deve usar um +belongs_to+.
 
 h5. Métodos Adicionados pelo +has_one+
 
-Quando você declara a associação +has_one+, a classe declarante automaticamente ganha cinco métodos relacionados a associação:
+Quando você declara a associação +has_one+, a classe declarante automaticamente ganha quatro métodos relacionados a associação:
 
 * <tt><em>association</em>(force_reload = false)</tt>
 * <tt><em>association</em>=(associate)</tt>
-* <tt><em>association</em>.nil?</tt>
 * <tt>build_<em>association</em>(attributes = {})</tt>
 * <tt>create_<em>association</em>(attributes = {})</tt>
 
-Em todos estes métodos, <tt><em>association</em></tt> são substituídos pelo símbolo passado como o primeiro argumento do método +has_one+ . Por exemplo,  a declaração abaixo:
+Em todos estes métodos, <tt><em>association</em></tt> é substituído pelo símbolo passado como o primeiro argumento do método +has_one+ . Por exemplo,  na declaração abaixo:
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -765,7 +764,6 @@ Cada instância do model +Supplier+ irá conter os seguintes métodos:
 <ruby>
 account
 account=
-account.nil?
 build_account
 create_account
 </ruby>
@@ -778,29 +776,19 @@ O método <tt><em>association</em></tt> retorna o objeto associado, se houver al
 @account = @supplier.account
 </ruby>
 
-Se o objeto associado já tiver sido buscado do banco de dados para este objeto (@supplier), a versão cacheada será retornada. Para sobrescrever este comportamento ( e força a leitura do banco de dados), passe +true+ para o argumento +force_reload+ . 
+Se o objeto associado já tiver sido buscado do banco de dados para este objeto (@supplier), a versão cacheada será retornada. Para sobrescrever este comportamento ( e forçar a leitura no banco de dados), passe +true+ para o argumento +force_reload+ . 
 
 h6. <em>association</em>=(associate)
 
-O método <tt><em>association</em></tt>= atribui um objeto associado a esta associação. Por trás dos panos, isto significa extrair a chave primária do objeto e definir a chave estrangeira do objeto associado ao mesmo valor.
+O método <tt><em>association</em></tt>= atribui um objeto associado a este objeto. Por trás dos panos, isto significa extrair a chave primária do objeto e definir a chave estrangeira do objeto associado ao mesmo valor.
 
 <ruby>
 @suppler.account = @account
 </ruby>
 
-h6. <em>association</em>.nil?
-
-O método <tt><em>association</em></tt>.nil? retorna +true+ se não houver nenhum objeto associado.
-
-<ruby>
-if @supplier.account.nil?
-  @msg = "No account found for this supplier"
-end
-</ruby>
-
 h6. build_<em>association</em>(attributes = {})
 
-O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira, mas o objeto associado não será gravado.
+O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira, mas o objeto associado não será gravado ainda.
 
 <ruby>
 @account = @supplier.build_account({:terms => "Net 30"})
@@ -808,7 +796,7 @@ O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo ass
 
 h6. create_<em>association</em>(attributes = {})
 
-O método <tt>create_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira. Porém, o objeto associado _será_ gravado ( assumindo que ele passe por todas as validações).
+O método <tt>create_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira. Adicionalmente, o objeto associado _será_ gravado ( assumindo que ele passe por todas as validações).
 
 <ruby>
 @account = @supplier.create_account({:terms => "Net 30"})
@@ -844,15 +832,15 @@ A associação +has_one+ suporta essas opções:
 
 h6. :as
 
-Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas "já foram discutidas em detalhes neste guia":#associaespolimrficas.
+Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes <a href="#polymorphic-associations">anteriormente neste guia</a>.
 
 h6. +:autosave+
 
-Se você definir a opção +:autosave+ para +true+, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
+Se você definir a opção +:autosave+ para +true+, o Rails irá salvar qualquer membro carregado e destruir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.
 
 h6. :class_name
 
-Se o nome do outro model não puder ser adivinhado a partir do nome da associação, você pode usar a opção +:class_name+ para fornecer o nome da classe. Por exemplo, se fornecedor(supplier) possui uma conta(account), mas o nome do model atual que contém as contas (accounts) é Billing, você precisa definir as coisas como abaixo:
+Se o nome do outro model não puder ser adivinhado a partir do nome da associação, você pode usar a opção +:class_name+ para fornecer o nome do model. Por exemplo, se fornecedor (supplier) possui uma conta (account), mas o nome do model atual que contém as contas (accounts) é Billing, você precisará definí-los assim:
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -862,7 +850,7 @@ end
 
 h6. :conditions
 
-A opção +:conditions+ permite que você especifique as condições que o objeto associado deve satisfazer ( a sintaxe é usada por uma cláusula SQL +WHERE+ ).
+A opção +:conditions+ permite que você especifique as condições que o objeto associado deve satisfazer (a sintaxe é usada por uma cláusula SQL +WHERE+).
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -876,7 +864,7 @@ Se você definir a opção +:dependent+ para +:destroy+, ao apagar este objeto i
 
 h6. :foreign_key
 
-Por convenção, Rails adivinha que a coluna usada para guardar a chave estrangeira no outro model é o nome do model com o sufixo +_id+ adicionada. A opção  +:foreign_key+ permite que você defina o nome da chave estrangeira diretamente:
+Por convenção, o Rails adivinha que a coluna usada para guardar a chave estrangeira no outro model é o nome do model com o sufixo +_id+ adicionado. A opção  +:foreign_key+ permite que você defina o nome da chave estrangeira diretamente:
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -884,15 +872,11 @@ class Supplier < ActiveRecord::Base
 end
 </ruby>
 
-TIP: Em nenhum caso, Rails irá criar a coluna da chave estrangeira para você. Você precisa defini-la como parte de suas migrations.
+TIP: O Rails nunca irá criar a coluna da chave estrangeira para você. Você precisa defini-la explicitamente como parte de suas migrations.
 
 h6. :include
 
-<<<<<<< HEAD:railties/guides/source/pt-BR/association_basics.textile
-Você pode usar a opção :include para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os models abaixo:
-=======
-Você pode usar a opção +:include+ para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os modelos abaixo:
->>>>>>> 4e297b239acf7230e13df250e35bdf88dd2c94c9:railties/guides/source/pt-BR/association_basics.textile
+Você pode usar a opção +:include+ para especificar uma associação de segunda ordem que deve ser pré carregada quando a associação for utilizada. Por exemplo, considere os models abaixo:
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -907,7 +891,7 @@ class Representative < ActiveRecord::Base
 end
 </ruby>
 
-Se você freqüentemente buscar representantes( representatives ) a partir de fornecedores( suppliers, ex.: +@supplier.account.representative+ ), então você pode fazer seu código se tornar mais eficiente, incluindo representantes (representatives) na associação de fornecedores ( suppliers ) para contas ( accounts ):
+Se você freqüentemente buscar representantes (representatives) a partir de fornecedores (suppliers, ex.: +@supplier.account.representative+), então você pode tornar seu código mais eficiente incluindo representantes (representatives) na associação de fornecedores (suppliers) para contas (accounts):
 
 <ruby>
 class Supplier < ActiveRecord::Base
@@ -924,11 +908,11 @@ end
 
 h6. :order
 
-A opção +:order+ dita a ordem em que os objetos associados deverão ser retornados (em uma sintaxe usada por uma cláusula SQL +ORDER BY+). Mas como é uma associação +has_one+ vai retornar apenas um objeto, esta opção não é necessária.
+A opção +:order+ dita a ordem em que os objetos associados deverão ser retornados (em uma sintaxe usada por uma cláusula SQL +ORDER BY+). Como a associação +has_one+ vai retornar apenas um objeto, esta opção não deve ser necessária.
 
 h6. :primary_key
 
-Por convenção, Rails adivinha que a coluna que irá armazenar a chave primária será deste model é +id+. Você pode sobrescrever isto e especificar a chave primária com a opção +:primary_key+ .
+Por convenção, o Rails adivinha que a coluna que irá armazenar a chave primária será +id+. Você pode sobrescrever isto e especificar a chave primária com a opção +:primary_key+ .
 
 h6. :readonly
 
@@ -936,31 +920,41 @@ Se você definir a opção +:readonly+ para +true+, o objeto associado será exc
 
 h6. :select
 
-A opção +:select+ permite que você altere a cláusula SQL +SELECT+ que é usada para retornar os do objeto associado. Por padrão, Rails retorna todas as colunas.
+A opção +:select+ permite que você altere a cláusula SQL +SELECT+ que é usada para retornar os atributos do objeto associado. Por padrão, o Rails retorna todas as colunas.
 
 h6. :source
 
-A opção +:source+  específica o nome para fonte para uma associação +has_one :through+ .
+A opção +:source+  específica o nome da fonte para uma associação +has_one :through+ .
 
 h6. :source_type
 
-A opção +:source_type+ específica o tipo da fonte para a associação +has_one :through+ em uma associação polimórfica.
+A opção +:source_type+ específica o tipo da fonte para uma associação +has_one :through+ em uma associação polimórfica.
 
 h6. :through
 
-A opção +:through+ específica um model para a junção (join) para executar a query. "Associações +has_one :through+ já foram discutidas em detalhes":#a-associaohas-onethrough.
+A opção +:through+ específica um model para a junção para executar a query. "Associações +has_one :through+ já foram discutidas em detalhes":#a-associaohas-onethrough.
 
 h6. :validate
 
 Se você definir a opção +:validate+ para +true+, os objetos associados serão validados sempre que você salvar este objeto. Por padrão, ele é +false+: objetos associados não serão validados quando este objeto for salvo.
 
-h5. Quando Objetos São Salvos?
+h5. Como saber se existe um objeto associado?
 
-Quando você atribuir um objeto a uma associação +has_one+, este objeto é automaticamente salvo(para atualizar a chave estrangeira). Além disso, qualquer objeto que estiver sendo substituído também é salvo automaticamente, porque sua chave estrangeira também será alterada.
+Para saber se existe um objeto associado, simplesmente cheque +association.nil?+:
+
+<ruby>
+if @supplier.account.nil? 
+  @msg = "No account found for this supplier" 
+end 
+</ruby>
+
+h5. Quando objetos são salvos?
+
+Quando você atribuir um objeto a uma associação +has_one+, este objeto é automaticamente salvo (para atualizar a chave estrangeira). Além disso, qualquer objeto que estiver sendo substituído também é salvo automaticamente, porque sua chave estrangeira também será alterada.
 
 Se qualquer uma dessas gravações falhar devido a erros de validação, então a atribuição retornará +false+ e a própria atribuição é cancelada.
 
-Se o objeto pai (o que estiver declarando a associação +has_one+) não é salvo (isso é, +new_record?+ retorna +true+) então os objeto filhos não serão salvos.
+Se o objeto pai (o que estiver declarando a associação +has_one+) não é salvo (isto é, +new_record?+ retorna +true+) então os objeto filhos não serão salvos. Eles serão automaticamente salvos quando o pai for.
 
 Se você quiser atribuir um objeto para uma associação +has_one+ sem salvar o objeto, use o método +association.build+ .
 
