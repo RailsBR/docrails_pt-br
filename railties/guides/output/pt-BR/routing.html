@@ -161,7 +161,8 @@ map.connect ':controller/:action/:id.:format'
 	<li>Transferindo represetações de statos entre recursos e componentes do sistema.</li>
 </ul>
 <p>Por exemplo, para uma requisição em uma aplicação Rails como esta:</p>
-<tt>DELETE /photos/17</tt><p>seria entendido como uma referencia a um recurso foto com o ID 17, e indicaria a ação desejada &#8211; deletar este recurso. <span class="caps">REST</span> é um estilo natural para a arquitetura de aplicações web, e Rails faz isso de uma forma mais natural usando convenções para protejer você de algumas complexidades do RESTful.</p>
+<p><tt><span class="caps">DELETE</span> /photos/17</tt>
+seria entendido como uma referencia a um recurso foto com o ID 17, e indicaria a ação desejada &#8211; deletar este recurso. <span class="caps">REST</span> é um estilo natural para a arquitetura de aplicações web, e Rails faz isso de uma forma mais natural usando convenções para protejer você de algumas complexidades do RESTful.</p>
 <h4 id="cru-dverboseaes">3.2 <span class="caps">CRUD</span>, verbos e ações</h4>
 <p>No Rails, uma rota RESTful fornece o mapeamento entre verbos <span class="caps">HTTP</span>, ações de controladores, e (implicitamente) a operações <span class="caps">CRUD</span> no banco de dados. Uma entrada unica no arquivo de roteamento, como essa</p>
 <div class="code_container"><code class="ruby">

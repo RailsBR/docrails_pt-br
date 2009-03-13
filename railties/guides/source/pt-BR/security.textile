@@ -14,7 +14,7 @@ endprologue.
 
 h3. Introdução
 
-Frameworks para aplicações web existem para ajudar os desenvolvedores a construir aplicações web. Alguns deles também lhe ajudam com a segurança de aplicações web. Na verdade um framework não é mais seguro que outro: Se você fizer corretamente, você poderá construir aplicações seguras com diversos frameworks. Ruby on Rails possui alguns métodos auxiliares bastante espertos, por exemplo contra injeção de SQL, logo isso dificilmente será um problema. É bom ver que todas as aplicações feitas com Rails que eu auditei possuem um bom nível de segurança.
+Frameworks para aplicações web existem para ajudar os desenvolvedores a construir aplicações web. Alguns deles também lhe ajudam com a segurança de aplicações web. Na verdade um framework não é mais seguro que outro: se você utiliza-los corretamente, poderá construir aplicações seguras com diversos frameworks. Ruby on Rails possui alguns métodos auxiliares bem "espertos", por exemplo contra injeção de SQL, logo isso dificilmente será um problema. É bom ver que todas as aplicações Rails que eu auditei possuem um bom nível de segurança.
 
 De forma geral, não há nada parecido com 'segurança plug-n-play'. Segurança depende das pessoas que estão usando o framework, e algumas vezes do método de desenvolvimento. Depende também de todas as camadas do ambiente de uma aplicação web: O sistema de armazenamento de dados, o servidor web e a aplicação web em si (e possivelmente outras camadas ou aplicações).
 
@@ -26,7 +26,7 @@ Para desenvolver aplicações web seguras você deve se manter atualizado em tod
 
 h3. Sessões
 
-Um bom lugar para começar a dar uma olhada na segurança é nas sessõs, as quais podem ser vulneráveis a alguns ataques em particular.
+Um bom lugar para começar a dar uma olhada na segurança são as sessões(sessions), as quais podem ser vulneráveis a alguns ataques em particular.
 
 h4. O que são sessões?
 
@@ -60,7 +60,7 @@ Desta forma, o cookie funciona como uma autenticação temporária para a aplica
 
 * A maioria das pessoas não limpa seus cookies após trabalhar em um terminal público. Assim, se o último usuário não desfizer seu login na aplicação web, você poderá usar a aplicação como se fosse este usuário. Forneça ao usuário um botão _(highlight)Sair_ e torne-o _(highlight)visível_.
 
-* Vários ataques de cross-site scripting (XSS) focam-se em obter o cookie do usuário. Você lê-rá mais sobre XSS mais à frente neste guia.
+* Vários ataques de cross-site scripting (XSS) focam-se em obter o cookie do usuário. Você lê-rá "mais sobre XSS":#cross-site-scripting-xss mais à frente neste guia.
 
 * Ao invés de roubar um cookie desconhecido do atacante, ele fixa o identificador de sessão de um usuário conhecido (no cookie). Leia mais sobre esta forma de fixação de sessão mais à frente.
 
@@ -121,11 +121,11 @@ h4. Fixação de sessão
 
 Este ataque foca em fixar o id de sessão de um usuário conhecido do atacante e forçar o navegador do usuário a utilizar este id. Dessa forma não é necessário que o atacante roube o id de sessão. Aqui está como este ataque funciona:
 
-* O atacante cria um id de sessão válido: Ele carrega a página de login da aplicação web para a qual ele quer fixar a sessão e pega o id de sessão do cookie que vier na resposta (veja os números 1 e 2 na imagem).
+# O atacante cria um id de sessão válido: Ele carrega a página de login da aplicação web para a qual ele quer fixar a sessão e pega o id de sessão do cookie que vier na resposta (veja os números 1 e 2 na imagem).
 
-* Ele possivelmente mantém a sessão. Sessões que expiram, por exemplo a cada 20 minutos, reduzem em muito o intervalo de tempo que pode ser utilizado para o ataque. Dessa forma ele precisa acessar a aplicação web de tempo em tempo para manter a sessão ativa.
+# Ele possivelmente mantém a sessão. Sessões que expiram, por exemplo a cada 20 minutos, reduzem em muito o intervalo de tempo que pode ser utilizado para o ataque. Dessa forma ele precisa acessar a aplicação web de tempo em tempo para manter a sessão ativa.
 
-* Agora o atacante forçará o navegador do usuário a utilizar este id de sessão (veja o número 3 na imagem). Como você não pode alterar um cookie de outro domínio (devido a política de mesma origem), o atacante deve executar um código JavaScript proveniente do domínio da aplicação web alvo. Injetar o código JavaScript na aplicação através de XSS torna este ataque possível. Aqui está um exemplo: 
+# Agora o atacante forçará o navegador do usuário a utilizar este id de sessão (veja o número 3 na imagem). Como você não pode alterar um cookie de outro domínio (devido a política de mesma origem), o atacante deve executar um código JavaScript proveniente do domínio da aplicação web alvo. Injetar o código JavaScript na aplicação através de XSS torna este ataque possível. Aqui está um exemplo: 
 
 <html>
 <script> document.cookie="_session_id=16d5b78abb28e3d6206b60f22a03c8d9"; </script>
@@ -133,11 +133,11 @@ Este ataque foca em fixar o id de sessão de um usuário conhecido do atacante e
 
 Leia mais sobre XSS e injeção mais à frente.
 
-* O atacante atrai a vítima até a página infectada com o código JavaScript. Por ter acessado a página, o navegador do usuário irá alterar o id da sessão para o id fixado pelo atacante.
+# O atacante atrai a vítima até a página infectada com o código JavaScript. Por ter acessado a página, o navegador do usuário irá alterar o id da sessão para o id fixado pelo atacante.
 
-* Como a sessão fixada não foi utilizada, a aplicação web solicitará que o usuário se autentique.
+# Como a sessão fixada não foi utilizada, a aplicação web solicitará que o usuário se autentique.
 
-* De agora em diante, a vítima e o atacante utilizarão a aplicação web com a mesma sessão: A sessão tornou-se válida e a vítima não notou o ataque.
+# De agora em diante, a vítima e o atacante utilizarão a aplicação web com a mesma sessão: A sessão tornou-se válida e a vítima não notou o ataque.
 
 h4. Fixação de sessão - Medidas preventivas
 
@@ -151,7 +151,7 @@ reset_session
 
 Se você utiliza o popular plugin RestfulAuthentication para manutenção de usuários, adicione +reset_session+ à action SessionsController#create. Note que isso remove qualquer valor da sessão, _(highlight)você precisa transferi-los para a nova sessão_.
 
-Outra medida preventiva é _(highlight)salvar propriedades específicas do usuário na sessão_, verificá-las a cada novo request, e negar acesso se a informação não bater.Tais propriedades poderiam ser o endereço de IP remoto ou o nome do agente (o nome do navegador), apesar do último ser menos específico do usuário. ao salvar o endereço IP, você deve ter em mente que existem provedores de serviços de Internet ou grandes organizações que colocam seus usuário atrás de proxies. _(highlight)Estes proxies podem mudar durante a duração de uma sessão_, logo estes usuários não serão capazes de utilizar sua aplicação, ou apenas poderão usá-la de forma limitada.
+Outra medida preventiva é _(highlight)salvar propriedades específicas do usuário na sessão_, verificá-las a cada novo request, e negar acesso se a informação não bater.Tais propriedades poderiam ser o endereço de IP remoto ou o nome do agente (o nome do navegador), apesar do último ser menos específico do usuário. Ao salvar o endereço IP, você deve ter em mente que existem provedores de serviços de Internet ou grandes organizações que colocam seus usuário atrás de proxies. _(highlight)Estes proxies podem mudar durante a duração de uma sessão_, logo estes usuários não serão capazes de utilizar sua aplicação, ou apenas poderão usá-la de forma limitada.
 
 h4. Validade da sessão
 
@@ -173,14 +173,16 @@ class Session < ActiveRecord::Base
  end
 </ruby>
 
-A seção sobre fixação dee sessão introduziu o problema de manutenção de sessões. Um atacante mantendo uma sessão a cada cinco minutos pode manter a sessão ativa para sempre, apesar de você estar expirando as sessões. Uma solução simples para isso seria adicionar uma coluna +created_at+ à tabela de sessões. Agora você pode apagar sessões que foram criadas há muito tempo atrás. Use essa linha no método +sweep+ acima:
+A seção sobre fixação de sessão introduziu o problema de manutenção de sessões. Um atacante mantendo uma sessão a cada cinco minutos pode manter a sessão ativa para sempre, apesar de você estar expirando as sessões. Uma solução simples para isso seria adicionar uma coluna +created_at+ à tabela de sessões. Agora você pode apagar sessões que foram criadas há muito tempo atrás. Use esta linha no método +sweep+ acima:
 
 <ruby>
-self.delete_all "updated_at < '#{time.to_s(:db)}' OR created_at < '#{2.days.ago.to_s(:db)}'"
+self.delete_all "updated_at < '#{time.to_s(:db)}' OR
+  created_at < '#{2.days.ago.to_s(:db)}'"
 </ruby>
 
 h3. Cross-Site Reference Forgery (CSRF)
--- _Este método de ataque funciona incluindo código malicioso ou um link em uma página que acessa uma aplicação web na qual acredita-se que o usuário tenha se autenticado. Se a sessão para essa aplicação web não tiver expirado, um atacante pode executar comandos não autorizados._
+
+-- _Este método de ataque funciona incluindo código malicioso ou um link em uma página que acessa uma aplicação web na qual acredita-se que o usuário tenha se autenticado. Se a sessão para esta aplicação web não tiver expirado, um atacante pode executar comandos não autorizados._
 
 !images/csrf.png(CSRF)!
 
@@ -215,7 +217,7 @@ O protocólo HTTP fornece basicamente duas formas princípais de requisiçãi - 
 
 Se a sua aplicação web for RESTful, você deve estar acostumado com os verbos HTTP adicionais, como PUT e DELETE. A maioria dos navegadores atuais, entretanto, não sabem como tratar tais verbos - apenas GET e POST. O Rails utiliza um campo oculto +_method+ para tratar esta limitação.
 
-_(highlight)O método +verify+ em um controller pode certificar que actions específicas não possam ser utilizas através de GET_. Aqui está um exemplo para verificar o uso da action +transfer+ através de POST. Se a ação vier utilizando qualquer outro verbo, haverã um redirecionamento para a action +list+.
+_(highlight)O método +verify+ em um controller pode certificar que actions específicas não possam ser utilizas através de GET_. Aqui está um exemplo para verificar o uso da action +transfer+ através de POST. Se a ação vier utilizando qualquer outro verbo, haverá um redirecionamento para a action +list+.
 
 <pre>
 verify :method => :post, :only => [:transfer], :redirect_to => {:action => :list}
@@ -225,7 +227,7 @@ Com a adoção do padrão RESTful no Rails 2, a simples utilização de um mapea
 
 Com essas precauções, o ataque citado acima não funcionará, porque o browser enviará uma requisição GET para imagens, a qual não será aceita pela aplicação web.
 
-Mas este foi apenas o primeiro passo, porque _(highlight)requests POST podem ser enviados automaticamente também_. Aqui está um exemplo de um link que exibe www.harmless.com como destino na barra de status do navegador. Na verdade esse cria um novo form dinamicamente que envia um request POST. 
+Mas este foi apenas o primeiro passo, porque _(highlight)requests POST podem ser enviados automaticamente também_. Aqui está um exemplo de um link que exibe www.harmless.com como destino na barra de status do navegador. Na verdade ele cria um novo form dinamicamente que envia um request POST. 
 
 <html>
 <a href="http://www.harmless.com/" onclick="
@@ -260,7 +262,7 @@ Outra forma de vulnerabilidade de segurança envolve o uso de redirecionamento e
 
 h4. Redirecionamento
 
--- _Redirecionamento em um aplicação web é uma ferramenta craker subestimada: O atacante pode não apenas enviar o usuário para um website falso mas também criar um ataque auto contido._
+-- _Redirecionamento em uma aplicação web é uma ferramenta craker subestimada: O atacante pode não apenas enviar o usuário para um website falso mas também criar um ataque auto contido._
 
 Sempre que for possível que o usuário forneça (partes) da URL para redirecionamento, essa será uma possível vulnerabilidade. O ataque mais óbvio seria redirecionar usuários para uma aplicação web falsa que se pareça exatamente com a original. Esse pseudo ataque de phishing funciona enviando um link por email para os usuários, injetando o link por XSS na aplicação web ou colocando o link em um site externo. Isso não levanta suspeitas, porque o link começa com a URL da aplicação web e a URL do site malicioso está escondida no parâmetro de redirecionamento: http://www.example.com/site/redirect?to= www.attacker.com. Aqui está um exemplo de uma action 'legacy':
 
@@ -270,7 +272,7 @@ def legacy
 end
 </ruby>
 
-Isso irá redirecionat o usuário para a action 'main' se ele tentar acessar a action 'legacy'. A intenção foi preservar os parãmetros da URL para a action 'legacy' e passá-los para a action 'main'. Entretanto, isso pode ser explorado por um atacante caso ele inclua uma chave 'host' na URL
+Isto irá redirecionar o usuário para a action 'main' se ele tentar acessar a action 'legacy'. A intenção foi preservar os parãmetros da URL para a action 'legacy' e passá-los para a action 'main'. Entretanto, isso pode ser explorado por um atacante caso ele inclua uma chave 'host' na URL
 
 +http://www.example.com/site/legacy?param1=xy&param2=23&host=www.attacker.com+
 
@@ -278,7 +280,7 @@ Se este parâmetro estiver no final da URL ele dificilmente será percebido e fa
 
 h5. XSS Auto-contido
 
-Outro ataque de redirecionamento e XSS auto-contido funciona no Firefox e no Opera, utilizando o protocolo de dados. Este protocolo exibe seu conteúdo diretamente no navegador e pode ser qualquer coisa, de HTML ou JavaScript a imagens:
+Outro ataque de redirecionamento e XSS auto-contido funciona no Firefox e no Opera, utilizando o protocolo de dados. Este protocolo exibe seu conteúdo diretamente no navegador e pode ser qualquer coisa, de HTML e JavaScript a imagens inteiras:
 
 +data:text/html;base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4K+
 
@@ -286,11 +288,13 @@ Este exemplo é um JavaScript codificado em Base64 que exibe uma simples caixa d
 
 h4. Uploads de Arquivos
 
--- _Certifique-se de que uploads de arquivos não sobrescrevem arquivos importantes e processe arquivos de media de forma assíncrona._
+-- _Certifique-se de que uploads de arquivos não sobrescrevem arquivos importantes e processe arquivos de mídia de forma assíncrona._
 
 Muitas aplicações web permitem que usuários façam upload de arquivos. _(highlight)Nomes de arquivos que o usuário possa (parcialmente) escolher, devem sempre ser filtrados_, uma vez que um atacante pode utilizar um nome de arquivo malicioso para sobrescrever qualquer arquivo no servidor. Se você armazenar os arquivos em /var/www/uploads, e o usuário fornecer um nome como "../../../etc/passwd", isso pode sobrescrever um arquivo importante. Óbviamente o interpretador Ruby precisaria das permissões necessárias para fazer isso - uma razão a mais para executar web servers, servidores de bancos de dados e outros programas como um usuário Unix menos privilegiado.
 
-Quando estiver filtrando os nomes de arquivo fornecidos pelos usuários, _(highlight)não tente remover as partes maliciosas_. Pense em uma situação onde a aplicação web remove todos os '../' de um nome de arquivo e um usuário utilize uma string como '....//' - o resultado seria não tente remover as partes maliciosas_. Pense em uma situação onde a aplicação web remove todos os '../' de um nome de arquivo e um usuário utilize uma string como '....//' - o resultado seria não tente remover as partes maliciosas#. Pense em uma situação onde a aplicação web remove todos os '../' de um nome de arquivo e um usuário utilize uma string como '....//' - o resultado seria '../'. É melhor utilizar uma tática de whitelist que tente remover caracteres não permitidos. Caso este não seja um nome de arquivo válido, rejeite-o (ou substitua caracteres não permitidos), mas não remova-os. Este é o sanitizador de nomes de arquivos do "plugin attachment_fu":http://github.com/technoweenie/attachment_fu/tree/master:
+When filtering user input file names, _(highlight)don't try to remove malicious parts_. Think of a situation where the web application removes all “../” in a file name and an attacker uses a string such as “....//” - the result will be “../”. It is best to use a whitelist approach, which _(highlight)checks for the validity of a file name with a set of accepted characters_. This is opposed to a blacklist approach which attempts to remove not allowed characters. In case it isn't a valid file name, reject it (or replace not accepted characters), but don't remove them. Here is the file name sanitizer from the "attachment_fu plugin":http://github.com/technoweenie/attachment_fu/tree/master:
+
+Quando estiver filtrando o nome de arquivos enviado por usuários, _(highlight)não tente remover os trechos maliciósos_. Pensei na situação onde a aplicação remove todos os “../” do nome do arquivo e o atacante usa uma string como “....//” - o resultado será “../”. É melhor usar uma abordagem whitelist, que _(highlight)verifique a validate do nome do arquivo com uma lista de carácteres aceitos_. Isto é o oposto de uma abordagem blacklist que tem remover o carácteres não aceitos. No caso de não ser um nome válido, rejeite-o(ou substitua os carácteres não aceitos), mas não remova-os. Aqui está o sanitizador de nome do "plugin attachment_fu":http://github.com/technoweenie/attachment_fu/tree/master:
 
 <ruby>
 def sanitize_filename(filename)
@@ -307,11 +311,11 @@ end
 
 Uma desvantagem significativa de processar uploads de arquivos de forma síncrona (como o plugin attachment_fu pode fazer com imagens) _(highlight)é sua vulnerabilidade para ataques de denial-of-service_. Um atacante pode iniciar, de forma síncrona, uploads de arquivos a partir de vários computadores, o que aumentaria a carga no servidor e poderia eventualmente travá-lo. 
 
-A solução para isso é _(highlight)processar arquivos de media de forma assíncrona_: Salve o arquivo e agende um request para processamento no banco de dados. Um segundo processo cuidará do processamento do arquivo em background.
+A solução para isso é _(highlight)processar arquivos de mídia de forma assíncrona_: Salve o arquivo e agende um request para processamento no banco de dados. Um segundo processo cuidará do processamento do arquivo em background.
 
 h4. Código executável em uploads de arquivos
 
--- _Arquivos fonte em uploads de arquivos podem ser executados quando colocados em diretórios específicos. Não coloque file uploads na pasta '/public' da sua aplicação Rails se este for o diretório 'home' do Apache._
+-- _Arquivos fonte em uploads de arquivos podem ser executados quando colocados em diretórios específicos. Não coloque o resultado de uploads na pasta '/public' da sua aplicação Rails se este for o diretório 'home' do Apache._
 
 O popular servidor web Apache possui uma opção chamada DocumentRoot. Este é o diretório 'home' do web site, tudo nesta árvore de diretórios será servido pelo servidor web. Caso existam arquivos com uma certa extensão, o código que estiver ali dentro será executado quando solicitado. Exemplos disso são arquivos PHP e CGI. Agora pense em uma situação onde um atacante envia um arquivo file.cgi com código dentro, o qual será executado quando alguém fizer download deste arquivo.
 
@@ -338,6 +342,8 @@ send_file filename, :disposition => 'inline'
 </ruby>
 
 Outra estratégia (adicional) é armazenar o nome dos arquivos no banco de dados e nomear os arquivos em disco a partir dos ids dos registros. Esta também é uma boa estratégia para evitar que seja executado qualquer código existente nos arquivos enviados. O plugin attachment_fu faz isso de forma similar.
+
+PAREI AQUI
 
 h3. Segurança Administrativa e em Intranets
 
