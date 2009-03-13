@@ -98,13 +98,13 @@
     <div class="wrapper">
       <div id="mainCol">
         <h3 id="introduo">1 Introdução</h3>
-<p>Frameworks para aplicações web existem para ajudar os desenvolvedores a construir aplicações web. Alguns deles também lhe ajudam com a segurança de aplicações web. Na verdade um framework não é mais seguro que outro: Se você fizer corretamente, você poderá construir aplicações seguras com diversos frameworks. Ruby on Rails possui alguns métodos auxiliares bastante espertos, por exemplo contra injeção de <span class="caps">SQL</span>, logo isso dificilmente será um problema. É bom ver que todas as aplicações feitas com Rails que eu auditei possuem um bom nível de segurança.</p>
+<p>Frameworks para aplicações web existem para ajudar os desenvolvedores a construir aplicações web. Alguns deles também lhe ajudam com a segurança de aplicações web. Na verdade um framework não é mais seguro que outro: se você utiliza-los corretamente, poderá construir aplicações seguras com diversos frameworks. Ruby on Rails possui alguns métodos auxiliares bem &#8220;espertos&#8221;, por exemplo contra injeção de <span class="caps">SQL</span>, logo isso dificilmente será um problema. É bom ver que todas as aplicações Rails que eu auditei possuem um bom nível de segurança.</p>
 <p>De forma geral, não há nada parecido com &#8216;segurança plug-n-play&#8217;. Segurança depende das pessoas que estão usando o framework, e algumas vezes do método de desenvolvimento. Depende também de todas as camadas do ambiente de uma aplicação web: O sistema de armazenamento de dados, o servidor web e a aplicação web em si (e possivelmente outras camadas ou aplicações).</p>
 <p>O Grupo Gartnet estima entretanto que 75% dos ataques ocorrem na camada da aplicação web, e descobriu que &#8220;dentre 300 sites auditados, 97% eram vulneráveis a ataques&#8221;. Isso ocorre porque aplicações web são relativamente fáceis de atacar, uma vez que são simples de entender e manipular, mesmo para pessoas leigas.</p>
 <p>As ameaças contra aplicações web incluem sequestro da conta de usuário, burlar o controle de acesso, ler ou modificar dados sigilosos ou fornecer conteúdo fraudulento. Ou um atacante pode conseguir instalar um programa Cavalo de Tróia ou um software para envio de e-mails não solicitados, tentar enriquecer ou causar danos ao nome de uma marca alterando recursos da empresa. Para prevenir ataques, minimizar seu impacto e remover pontos de ataque, antes de mais nada você precisa entender completamente os métodos de ataque, para que seja capaz de encontrar as medidas preventivas corretas. É esse o objetivo deste guia.</p>
 <p>Para desenvolver aplicações web seguras você deve se manter atualizado em todas as camadas e conhecer seus inimigos. Para manter-se atualizado assine listas de discussão sobre segurança. leia blogs sobre segurança e torne atualizações e verificações de segurança um hábito (dê uma olhada na seção Recursos Adicionais). Eu faço isso manualmente porque é assim que você encontra os problemas com segurança mais sórdidos.</p>
 <h3 id="sesses">2 Sessões</h3>
-<p>Um bom lugar para começar a dar uma olhada na segurança é nas sessõs, as quais podem ser vulneráveis a alguns ataques em particular.</p>
+<p>Um bom lugar para começar a dar uma olhada na segurança são as sessões(sessions), as quais podem ser vulneráveis a alguns ataques em particular.</p>
 <h4 id="oquesosesses">2.1 O que são sessões?</h4>
 <p>&#8212; <em><span class="caps">HTTP</span> é um protocolo que não mantém estado. Sessões fazem com o estado seja mantido.</em></p>
 <p>A maioria das aplicações precisam ter controle sobre alguns aspectos relacionados ao estado de um usuário particular. Pode ser o conteúdo de um carrinho de compras ou o id do usuário atualmente autenticado. Sem a idéia de sessões, o usuário teria que se identificar, e provavelmente se autenticar, a cada nova requisição.
@@ -128,7 +128,7 @@ User.find(session[:user_id])
 	<li>A maioria das pessoas não limpa seus cookies após trabalhar em um terminal público. Assim, se o último usuário não desfizer seu login na aplicação web, você poderá usar a aplicação como se fosse este usuário. Forneça ao usuário um botão <em class="highlight">Sair</em> e torne-o <em class="highlight">visível</em>.</li>
 </ul>
 <ul>
-	<li>Vários ataques de cross-site scripting (<span class="caps">XSS</span>) focam-se em obter o cookie do usuário. Você lê-rá mais sobre <span class="caps">XSS</span> mais à frente neste guia.</li>
+	<li>Vários ataques de cross-site scripting (<span class="caps">XSS</span>) focam-se em obter o cookie do usuário. Você lê-rá <a href="#cross-site-scripting-xss">mais sobre <span class="caps">XSS</span></a> mais à frente neste guia.</li>
 </ul>
 <ul>
 	<li>Ao invés de roubar um cookie desconhecido do atacante, ele fixa o identificador de sessão de um usuário conhecido (no cookie). Leia mais sobre esta forma de fixação de sessão mais à frente.</li>
@@ -176,28 +176,28 @@ config.action_controller.session = {
 <p>&#8212; <em>Além de roubar o id de sessão do usuário, um atacante pode fixar um id de sessão conhecido. Isso é chamado de fixação de sessão.</em></p>
 <p><img src="images/session_fixation.png" title="Session Fixation" alt="Session Fixation" /></p>
 <p>Este ataque foca em fixar o id de sessão de um usuário conhecido do atacante e forçar o navegador do usuário a utilizar este id. Dessa forma não é necessário que o atacante roube o id de sessão. Aqui está como este ataque funciona:</p>
-<ul>
+<ol>
 	<li>O atacante cria um id de sessão válido: Ele carrega a página de login da aplicação web para a qual ele quer fixar a sessão e pega o id de sessão do cookie que vier na resposta (veja os números 1 e 2 na imagem).</li>
-</ul>
-<ul>
+</ol>
+<ol>
 	<li>Ele possivelmente mantém a sessão. Sessões que expiram, por exemplo a cada 20 minutos, reduzem em muito o intervalo de tempo que pode ser utilizado para o ataque. Dessa forma ele precisa acessar a aplicação web de tempo em tempo para manter a sessão ativa.</li>
-</ul>
-<ul>
+</ol>
+<ol>
 	<li>Agora o atacante forçará o navegador do usuário a utilizar este id de sessão (veja o número 3 na imagem). Como você não pode alterar um cookie de outro domínio (devido a política de mesma origem), o atacante deve executar um código JavaScript proveniente do domínio da aplicação web alvo. Injetar o código JavaScript na aplicação através de <span class="caps">XSS</span> torna este ataque possível. Aqui está um exemplo:</li>
-</ul>
+</ol>
 <div class="code_container"><code class="html">
 &lt;script&gt; document.cookie=&quot;_session_id=16d5b78abb28e3d6206b60f22a03c8d9&quot;; &lt;/script&gt;
 </code></div>
 <p>Leia mais sobre <span class="caps">XSS</span> e injeção mais à frente.</p>
-<ul>
+<ol>
 	<li>O atacante atrai a vítima até a página infectada com o código JavaScript. Por ter acessado a página, o navegador do usuário irá alterar o id da sessão para o id fixado pelo atacante.</li>
-</ul>
-<ul>
+</ol>
+<ol>
 	<li>Como a sessão fixada não foi utilizada, a aplicação web solicitará que o usuário se autentique.</li>
-</ul>
-<ul>
+</ol>
+<ol>
 	<li>De agora em diante, a vítima e o atacante utilizarão a aplicação web com a mesma sessão: A sessão tornou-se válida e a vítima não notou o ataque.</li>
-</ul>
+</ol>
 <h4 id="fixaodesesso-medidaspreventivas">2.8 Fixação de sessão &#8211; Medidas preventivas</h4>
 <p>&#8212; <em>Uma linha de código o protegerá contra ataques de fixação de sessão.</em></p>
 <p>A medida preventiva mais eficiente é <em class="highlight">fornecer um novo identificador de sessão</em> e declarar o identificador anterior inválido logo após uma tentativa de autenticação com sucesso. Dessa forma, um atacante não pode usar o identificador da sessão fixada. Esta é também uma boa medida preventiva contra sequestro de sessão. Aqui está como criar uma nova sessão no Rails:</p>
@@ -205,7 +205,7 @@ config.action_controller.session = {
 reset_session
 </code></div>
 <p>Se você utiliza o popular plugin RestfulAuthentication para manutenção de usuários, adicione <tt>reset_session</tt> à action SessionsController#create. Note que isso remove qualquer valor da sessão, <em class="highlight">você precisa transferi-los para a nova sessão</em>.</p>
-<p>Outra medida preventiva é <em class="highlight">salvar propriedades específicas do usuário na sessão</em>, verificá-las a cada novo request, e negar acesso se a informação não bater.Tais propriedades poderiam ser o endereço de IP remoto ou o nome do agente (o nome do navegador), apesar do último ser menos específico do usuário. ao salvar o endereço IP, você deve ter em mente que existem provedores de serviços de Internet ou grandes organizações que colocam seus usuário atrás de proxies. <em class="highlight">Estes proxies podem mudar durante a duração de uma sessão</em>, logo estes usuários não serão capazes de utilizar sua aplicação, ou apenas poderão usá-la de forma limitada.</p>
+<p>Outra medida preventiva é <em class="highlight">salvar propriedades específicas do usuário na sessão</em>, verificá-las a cada novo request, e negar acesso se a informação não bater.Tais propriedades poderiam ser o endereço de IP remoto ou o nome do agente (o nome do navegador), apesar do último ser menos específico do usuário. Ao salvar o endereço IP, você deve ter em mente que existem provedores de serviços de Internet ou grandes organizações que colocam seus usuário atrás de proxies. <em class="highlight">Estes proxies podem mudar durante a duração de uma sessão</em>, logo estes usuários não serão capazes de utilizar sua aplicação, ou apenas poderão usá-la de forma limitada.</p>
 <h4 id="validadedasesso">2.9 Validade da sessão</h4>
 <p>&#8212; <em>Sessões que nunca expiram aumentam o intervalo de tempo para ataques como cross site reference forgery (<span class="caps">CSRF</span>), sequestro de sessão ou fixação de sessão.</em></p>
 <p>Uma possibilidade é definir o time-stamp de validade do cookie com o id da sessão. Entretanto o usuário pode editar cookies que estão armazenados no navegador, logo expirar as sessões no servidor é mais seguro. Aqui está um exemplo de como <em class="highlight">expirar sessões em uma tabela no banco de dados</em>. Chame <tt>Session.sweep("20m")</tt> para expirar sessões que fiquem mais de 20 minutos sem serem usadas.</p>
@@ -222,12 +222,13 @@ class Session &lt; ActiveRecord::Base
    end
  end
 </code></div>
-<p>A seção sobre fixação dee sessão introduziu o problema de manutenção de sessões. Um atacante mantendo uma sessão a cada cinco minutos pode manter a sessão ativa para sempre, apesar de você estar expirando as sessões. Uma solução simples para isso seria adicionar uma coluna <tt>created_at</tt> à tabela de sessões. Agora você pode apagar sessões que foram criadas há muito tempo atrás. Use essa linha no método <tt>sweep</tt> acima:</p>
+<p>A seção sobre fixação de sessão introduziu o problema de manutenção de sessões. Um atacante mantendo uma sessão a cada cinco minutos pode manter a sessão ativa para sempre, apesar de você estar expirando as sessões. Uma solução simples para isso seria adicionar uma coluna <tt>created_at</tt> à tabela de sessões. Agora você pode apagar sessões que foram criadas há muito tempo atrás. Use esta linha no método <tt>sweep</tt> acima:</p>
 <div class="code_container"><code class="ruby">
-self.delete_all &quot;updated_at &lt; '#{time.to_s(:db)}' OR created_at &lt; '#{2.days.ago.to_s(:db)}'&quot;
+self.delete_all &quot;updated_at &lt; '#{time.to_s(:db)}' OR
+  created_at &lt; '#{2.days.ago.to_s(:db)}'&quot;
 </code></div>
-<h3 id="cross-site-reference-forgery-csrf">3 Cross-Site Reference Forgery (<span class="caps">CSRF</span>)
-&#8212; <em>Este método de ataque funciona incluindo código malicioso ou um link em uma página que acessa uma aplicação web na qual acredita-se que o usuário tenha se autenticado. Se a sessão para essa aplicação web não tiver expirado, um atacante pode executar comandos não autorizados.</em></h3>
+<h3 id="cross-site-reference-forgery-csrf">3 Cross-Site Reference Forgery (<span class="caps">CSRF</span>)</h3>
+<p>&#8212; <em>Este método de ataque funciona incluindo código malicioso ou um link em uma página que acessa uma aplicação web na qual acredita-se que o usuário tenha se autenticado. Se a sessão para esta aplicação web não tiver expirado, um atacante pode executar comandos não autorizados.</em></p>
 <p><img src="images/csrf.png" title="CSRF" alt="CSRF" /></p>
 <p>No capítulo sobre sessões você aprendeu que a maioria das aplicações Rails utilizam sessões armazenadas em cookies. Ou elas guardam o id de sessão no cookie e possuem um hash de sessão do lado servidor, ou todo o hash de sessão fica do lado cliente. Em qualquer um dos casos o navegador enviará o cookie a um domínio a cada nova requisição, se ele for capaz de encontrar um cookie para aquele domínio. O ponto controverso é que ele também enviará o cookie se a requisição vier de um domínio diferente. Vamos começar com um exemplo:</p>
 <ul>
@@ -292,10 +293,12 @@ def legacy
 end
 </code></div>
 <p>Isso irá redirecionat o usuário para a action &#8216;main&#8217; se ele tentar acessar a action &#8216;legacy&#8217;. A intenção foi preservar os parãmetros da <span class="caps">URL</span> para a action &#8216;legacy&#8217; e passá-los para a action &#8216;main&#8217;. Entretanto, isso pode ser explorado por um atacante caso ele inclua uma chave &#8216;host&#8217; na <span class="caps">URL</span></p>
-<tt>http://www.example.com/site/legacy?param1=xy&param2=23&host=www.attacker.com</tt><p>Se este parâmetro estiver no final da <span class="caps">URL</span> ele dificilmente será percebido e fará com que o usuário seja redirecionado para o host attacker.com. Uma medida preventiva simples seria <em class="highlight">incluir apenas os parâmetros esperados na action &#8216;legacy&#8217;</em> (novamente uma tática de whitelist, ao contrário de remover parâmetros inesperados). <em class="highlight">E se você redirecionar para uma <span class="caps">URL</span>, verifique-a com uma white list ou expressão regular</em>.</p>
+<p><tt>http://www.example.com/site/legacy?param1=xy&amp;param2=23&amp;host=www.attacker.com</tt>
+Se este parâmetro estiver no final da <span class="caps">URL</span> ele dificilmente será percebido e fará com que o usuário seja redirecionado para o host attacker.com. Uma medida preventiva simples seria <em class="highlight">incluir apenas os parâmetros esperados na action &#8216;legacy&#8217;</em> (novamente uma tática de whitelist, ao contrário de remover parâmetros inesperados). <em class="highlight">E se você redirecionar para uma <span class="caps">URL</span>, verifique-a com uma white list ou expressão regular</em>.</p>
 <h5 id="xss-auto-contido">4.1.1 <span class="caps">XSS</span> Auto-contido</h5>
 <p>Outro ataque de redirecionamento e <span class="caps">XSS</span> auto-contido funciona no Firefox e no Opera, utilizando o protocolo de dados. Este protocolo exibe seu conteúdo diretamente no navegador e pode ser qualquer coisa, de <span class="caps">HTML</span> ou JavaScript a imagens:</p>
-<tt>data:text/html;base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4K</tt><p>Este exemplo é um JavaScript codificado em Base64 que exibe uma simples caixa de mensagem. Em uma <span class="caps">URL</span> de redirecionamento, um atacante poderia fazer um redirecionamento para essa <span class="caps">URL</span> com um código malicioso embutido. Como medida preventiva, <em class="highlight">não permita que o usuário forneça partes da <span class="caps">URL</span> (ou toda ela) para redirecionamento</em>.</p>
+<p><tt>data:text/html;base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4K</tt>
+Este exemplo é um JavaScript codificado em Base64 que exibe uma simples caixa de mensagem. Em uma <span class="caps">URL</span> de redirecionamento, um atacante poderia fazer um redirecionamento para essa <span class="caps">URL</span> com um código malicioso embutido. Como medida preventiva, <em class="highlight">não permita que o usuário forneça partes da <span class="caps">URL</span> (ou toda ela) para redirecionamento</em>.</p>
 <h4 id="uploadsde-arquivos">4.2 Uploads de Arquivos</h4>
 <p>&#8212; <em>Certifique-se de que uploads de arquivos não sobrescrevem arquivos importantes e processe arquivos de media de forma assíncrona.</em></p>
 <p>Muitas aplicações web permitem que usuários façam upload de arquivos. <em class="highlight">Nomes de arquivos que o usuário possa (parcialmente) escolher, devem sempre ser filtrados</em>, uma vez que um atacante pode utilizar um nome de arquivo malicioso para sobrescrever qualquer arquivo no servidor. Se você armazenar os arquivos em /var/www/uploads, e o usuário fornecer um nome como &#8220;../../../etc/passwd&#8221;, isso pode sobrescrever um arquivo importante. Óbviamente o interpretador Ruby precisaria das permissões necessárias para fazer isso &#8211; uma razão a mais para executar web servers, servidores de bancos de dados e outros programas como um usuário Unix menos privilegiado.</p>
@@ -424,7 +427,7 @@ SELECT * FROM users WHERE (users.&lt;notextile&gt;&lt;tt&gt;activation_code&lt;/
 <h4 id="captch-as">7.3 CAPTCHAs</h4>
 <p>&#8212; _Um <span class="caps">CAPTCHA</span> é um teste do tipo desafio-resposta usado para determinar que a resposta não foi gerada por um computador. É geralmente utilizado para proteger formulários de comentários de bots de spam automáticos, solicitando ao usuário que digite as letras presentes em uma imagem distorcida. A idéia de um <span class="caps">CAPTCHA</span> negativo não é pedir que um usuário prove que é humano, mas sim revelar que um robô realmente é um robô.</p>
 <p>Mas robôs de spam (bots) não são o único problema, existem também os bots de login automático. Uma <span class="caps">API</span> para <span class="caps">CAPTCHA</span> popular é a <a href="http://recaptcha.net/">reCAPTCHA</a> a qual exibe duas imagens distorcidas de palavras de livros antigos. Também adiciona uma linha inclinada, ao invés de um fundo distorcido e letras deformadas como os primeiros <span class="caps">CAPTCHAS</span> fizeram, porque o segundo caso tinha problemas. Como um bonus, utilizar reCAPTCHA ajuda a digitalizar livros antigos. O <a href="http://ambethia.com/recaptcha/">ReCAPTCHA</a> é também um plugin para o Rails com o mesmo nome da <span class="caps">API</span>.</p>
-<p>Você vai receber duas chaves da <span class="caps">API</span>, uma pública e outra privada, a qual você deve colocar no eu ambiente Rails. Após isso vocë pode utilizar o método <tt>recaptcha_tags</tt> na sua view e o método <tt>verify_recaptcha</tt> no controller. <tt>verify_recaptcha</tt> retornará false caso a validação falhe.
+<p>Você vai receber duas chaves da <span class="caps">API</span>, uma pública e outra privada, a qual você deve colocar no eu ambiente Rails. Após isso vocë pode utilizar o método <tt>recaptcha_tags</tt> na sua view e o método <tt>verify_recaptcha</tt> no controller. <tt>verify_recaptcha</tt> retornará false caso a validação falhe. 
 O problema com <span class="caps">CAPTCHA</span> é que eles sào irritantes. Além disso, alguns usuários com deficiências visuais têm achado certos tipos de CAPTCHAs distorcidos difíceis de ler. A idéia de CAPTCHAs negativos não é pedir ao usuário uma prova de que ele é humano, mas revelar que um robô de spam é um bot.</p>
 <p>A maioria dos bots é realmente burra, eles rastreiam a web e colocam spam em cada campo de formulário que eles conseguem encontrar. CAPTCHAs negativos usam isso como vantagem e incluem um campo &#8220;honeypot&#8221; no formulário que ficará escondido de usuários humanos através de <span class="caps">CSS</span> ou JavaScript.</p>
 <p>Aqui estão algumas idéias de como esconder campos &#8220;honeypot&#8221; através de JavaScript e/ou <span class="caps">CSS</span>:</p>
