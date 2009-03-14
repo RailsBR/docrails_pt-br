@@ -80,14 +80,14 @@
 <ul>
 	<li>Entender a proposta do roteamento</li>
 	<li>Decifrar o código em <tt>routes.rb</tt></li>
-	<li>Construir suas próprias rotas, utilizando o estilo clássico hash ou o estilo atualmente preferido RESTful</li>
-	<li>Identificar como uma rota pode mapear do controller para uma action</li>
+	<li>Construir suas próprias rotas, utilizando o estilo clássico em hash ou o estilo atualmente preferido em RESTful</li>
+	<li>Identificar como uma rota pode mapear do controlador para uma ação</li>
 </ul>
 
             <div id="subCol">
         <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
         <ol class="chapters">
-<li><a href="#aduplafinalidadedoroteamento">A dupla finalidade do roteamento</a><ul><li><a href="#conectando-ur-lscomcdigo">Conectando URLs com código</a></li><li><a href="#gerando-ur-lsdocdigo">Gerando URLs do código</a></li></ul></li><li><a href="#rpido-tourde-routesrb">Rápido Tour de Routes.rb</a><ul><li><a href="#processandooarquivo">Processando o arquivo</a></li><li><a href="#rotas-res-tful">Rotas RESTful</a></li><li><a href="#rotasnomeadas">Rotas nomeadas</a></li><li><a href="#rotasaninhadas">Rotas aninhadas</a></li><li><a href="#rotasregulares">Rotas regulares</a></li><li><a href="#rotaspadro">Rotas padrão</a></li></ul></li><li><a href="#roteamento-res-tfulo-padro-rails">Roteamento RESTful: o Padrão Rails</a><ul><li><a href="#oque-rest">O que é <span class="caps">REST</span>?</a></li><li><a href="#cru-dverboseaes"><span class="caps">CRUD</span>, verbos e ações</a></li><li><a href="#ur-lse-caminhos">URLs e Caminhos</a></li><li><a href="#definindo-mltiplos-recursosao-mesmo-tempo">Definindo Múltiplos Recursos ao Mesmo Tempo</a></li><li><a href="#recursossingulares">Recursos singulares</a></li><li><a href="#customizandorecursos">Customizando recursos</a></li><li><a href="#namespacesde-controladorese-roteamento">&#8216;Namespaces&#8217; de Controladores e Roteamento</a></li><li><a href="#nested-resources">Nested Resources</a></li><li><a href="#route-generationfrom-arrays">Route Generation from Arrays</a></li><li><a href="#namespaced-resources">Namespaced Resources</a></li><li><a href="#adding-more-res-tful-actions">Adding More RESTful Actions</a></li></ul></li><li><a href="#regular-routes">Regular Routes</a><ul><li><a href="#bound-parameters">Bound Parameters</a></li><li><a href="#wildcard-components">Wildcard Components</a></li><li><a href="#static-text">Static Text</a></li><li><a href="#querystring-parameters">Querystring Parameters</a></li><li><a href="#defining-defaults">Defining Defaults</a></li><li><a href="#named-routes">Named Routes</a></li><li><a href="#route-requirements">Route Requirements</a></li><li><a href="#route-conditions">Route Conditions</a></li><li><a href="#route-globbing">Route Globbing</a></li><li><a href="#route-options">Route Options</a></li></ul></li><li><a href="#formatsandrespond-to">Formats and respond_to</a><ul><li><a href="#specifyingthe-formatwithan-http-header">Specifying the Format with an <span class="caps">HTTP</span> Header</a></li><li><a href="#recognized-mim-etypes">Recognized <span class="caps">MIME</span> types</a></li></ul></li><li><a href="#the-default-routes">The Default Routes</a><ul></ul></li><li><a href="#the-empty-route">The Empty Route</a><ul><li><a href="#usingmaproot">Using map.root</a></li><li><a href="#connectingthe-empty-string">Connecting the Empty String</a></li></ul></li><li><a href="#inspectingand-testing-routes">Inspecting and Testing Routes</a><ul><li><a href="#seeing-existing-routeswithrake">Seeing Existing Routes with rake</a></li><li><a href="#testing-routes">Testing Routes</a></li></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
+<li><a href="#aduplafinalidadedoroteamento">A dupla finalidade do roteamento</a><ul><li><a href="#conectando-ur-lscomocdigo">Conectando URLs com o código</a></li><li><a href="#gerando-ur-lsdocdigo">Gerando URLs do código</a></li></ul></li><li><a href="#rpido-tourde-routesrb">Rápido Tour de Routes.rb</a><ul><li><a href="#processandooarquivo">Processando o arquivo</a></li><li><a href="#rotas-res-tful">Rotas RESTful</a></li><li><a href="#rotasnomeadas">Rotas nomeadas</a></li><li><a href="#rotasaninhadas">Rotas aninhadas</a></li><li><a href="#rotasregulares">Rotas regulares</a></li><li><a href="#rotaspadro">Rotas padrão</a></li></ul></li><li><a href="#roteamento-res-tfulo-padro-rails">Roteamento RESTful: o Padrão Rails</a><ul><li><a href="#oque-rest">O que é <span class="caps">REST</span>?</a></li><li><a href="#cru-dverboseaes"><span class="caps">CRUD</span>, verbos e ações</a></li><li><a href="#ur-lse-caminhos">URLs e Caminhos</a></li><li><a href="#definindo-mltiplos-recursosao-mesmo-tempo">Definindo Múltiplos Recursos ao Mesmo Tempo</a></li><li><a href="#recursossingulares">Recursos singulares</a></li><li><a href="#customizandorecursos">Customizando recursos</a></li><li><a href="#namespacesde-controladorese-roteamento">&#8216;Namespaces&#8217; de Controladores e Roteamento</a></li><li><a href="#recursosaninhados">Recursos aninhados</a></li><li><a href="#geraoderotasapartirde-arrays">Geração de rotas a partir de Arrays</a></li><li><a href="#recursosem-namespaces">Recursos em Namespaces</a></li><li><a href="#adicionandomaisaes-res-tful">Adicionando mais ações RESTful</a></li></ul></li><li><a href="#rotas-regulares">Rotas Regulares</a><ul><li><a href="#paramtros-obrigatrios">Paramêtros Obrigatórios</a></li><li><a href="#componentes-coringas">Componentes Coringas</a></li><li><a href="#static-text">Static Text</a></li><li><a href="#querystring-parameters">Querystring Parameters</a></li><li><a href="#defining-defaults">Defining Defaults</a></li><li><a href="#named-routes">Named Routes</a></li><li><a href="#route-requirements">Route Requirements</a></li><li><a href="#route-conditions">Route Conditions</a></li><li><a href="#route-globbing">Route Globbing</a></li><li><a href="#route-options">Route Options</a></li></ul></li><li><a href="#formatsandrespond-to">Formats and respond_to</a><ul><li><a href="#specifyingthe-formatwithan-http-header">Specifying the Format with an <span class="caps">HTTP</span> Header</a></li><li><a href="#recognized-mim-etypes">Recognized <span class="caps">MIME</span> types</a></li></ul></li><li><a href="#the-default-routes">The Default Routes</a><ul></ul></li><li><a href="#the-empty-route">The Empty Route</a><ul><li><a href="#usingmaproot">Using map.root</a></li><li><a href="#connectingthe-empty-string">Connecting the Empty String</a></li></ul></li><li><a href="#inspectingand-testing-routes">Inspecting and Testing Routes</a><ul><li><a href="#seeing-existing-routeswithrake">Seeing Existing Routes with rake</a></li><li><a href="#testing-routes">Testing Routes</a></li></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
     </div>
   </div>
 
@@ -95,41 +95,39 @@
     <div class="wrapper">
       <div id="mainCol">
         <h3 id="aduplafinalidadedoroteamento">1 A dupla finalidade do roteamento</h3>
-<p>Roteamento Rails é um mecanismo de encaminhamento bidirecional &#8211; como se você pudesse transformar isso em um papel, e depois cada papel de volta em árvore. Especificamente, que liga as duas próximas solicitações de <span class="caps">HTTP</span> request para o código do controlador da aplicação, e ajuda a você gerar URLs sem ter que codificar as strings.</p>
-<h4 id="conectando-ur-lscomcdigo">1.1 Conectando URLs com código</h4>
-<p>quando sua aplicação Rails recebe uma solicitação <span class="caps">HTTP</span> request, fala</p>
+<p>Roteamento Rails é um mecanismo de encaminhamento bidirecional &#8211; como se você pudesse transformar isso em um papel, e depois cada papel de volta em árvore. Especificamente, que liga as solicitações <span class="caps">HTTP</span> recebidas para o código no controlador da sua aplicação, e ajuda a você gerar URLs sem ter que codificar as strings.</p>
+<h4 id="conectando-ur-lscomocdigo">1.1 Conectando URLs com o código</h4>
+<p>Quando sua aplicação Rails recebe uma solicitação <span class="caps">HTTP</span>, fala</p>
 <pre>
 GET /patients/17
 </pre>
-<p>a engine de roteamento dentro do Rails é a parte do código que dispara uma solicitação para o local apropriado na sua aplicação. Neste caso, a aplicação provavelmente executaria a ação <tt>show</tt> dentro do controlador <tt>patients</tt>, mostrando os detalhes do paciente cujo ID é 17.</p>
+<p>a engine de roteamento dentro do Rails é a parte do código que envia uma solicitação para o local apropriado na sua aplicação. Neste caso, a aplicação provavelmente executaria a ação <tt>show</tt> dentro do controlador <tt>patients</tt>, mostrando os detalhes do paciente cujo ID é 17.</p>
 <h4 id="gerando-ur-lsdocdigo">1.2 Gerando URLs do código</h4>
 <p>O roteamento também funciona no caminho reverso. Se sua aplicação contem este código:</p>
-<div class="code_container"><code class="ruby">
-@patient = Patient.find(17)
-&lt;%= link_to &quot;Patient Record&quot;, patient_path(@patient) %&gt;
-</code></div>
+<p>dirty_workaround_for_nontextile_0
+dirty_workaround_for_nontextile_1</p>
 <p>Então a engine de roteamento é a parte que traduz o link para a <span class="caps">URL</span> como <tt>http://example.com/patients/17</tt>. Usando o roteamento nesta forma, você pode reduzir a fragilidade da sua aplicação se comparada com uma aplicação com URLs codificada dificilmente, e torna o seu código ser facilmente lido e entendido.</p>
 <div class='note'><p>Patient necessita ser declarado como um recurso para a tradução de rotas nomeadas possam ser disponível.</p></div>
 <h3 id="rpido-tourde-routesrb">2 Rápido Tour de Routes.rb</h3>
 <p>Há dois componentes para roteamento no Rails: a própria engine de roteameneto, que é fornecida como parte do Rails, e o arquivo <tt>config/routes.rb</tt>, que contém as rotas atuais que serão usadas pela sua aplicação. Aprender exatamente o que você pode colocar em <tt>routes.rb</tt> é o tópico principal deste guia, mas antes vamos obter uma visão geral rápida.</p>
 <h4 id="processandooarquivo">2.1 Processando o arquivo</h4>
-<p>No formato, <tt>routes.rb</tt> não é nada mais do que um grande bloco enviado para <tt>ActionController::Routing::Routes.draw</tt>. Junto com este bloco, você pode ter comentários, mas é provável que a maior parte do seu contéudo será de linhas individuais de código &#8211; cada linha iniciando uma rota na sua aplicação. Você encontrará cinco tipos principaos de conteudo neste arquivo:</p>
+<p>No formato, <tt>routes.rb</tt> não é nada mais do que um grande bloco enviado para <tt>ActionController::Routing::Routes.draw</tt>. Junto com este bloco, você pode ter comentários, mas é provável que a maior parte do seu contéudo será de linhas individuais de código &#8211; cada linha iniciando uma rota na sua aplicação. Você encontrará cinco tipos principais de conteúdo neste arquivo:</p>
 <ul>
-	<li>RESTful Routes</li>
-	<li>Named Routes</li>
-	<li>Nested Routes</li>
-	<li>Regular Routes</li>
-	<li>Default Routes</li>
+	<li>Rotas RESTful</li>
+	<li>Rotas Nomeadas</li>
+	<li>Rotas Aninhadas</li>
+	<li>Rotas Regulares</li>
+	<li>Rotas Padrão</li>
 </ul>
-<p>Cada um desses tipos de rotas é cobertas em mais detalhes neste guia.</p>
-<p>O arquivo <tt>routes.rb</tt> é processado de cima para baixo quando chega uma requisição.A requisição será executada na primeira combinação de rota. Se não nenhum combinação de rota, então o Rails retorna um status <span class="caps">HTTP</span> 404 ao chamador.</p>
+<p>Cada um desses tipos de rotas são cobertas em mais detalhes neste guia.</p>
+<p>O arquivo <tt>routes.rb</tt> é processado de cima para baixo quando chega uma requisição. A requisição será executada na primeira combinação de rota. Se nenhuma rota combina, então o Rails retorna um status <span class="caps">HTTP</span> 404 ao chamador.</p>
 <h4 id="rotas-res-tful">2.2 Rotas RESTful</h4>
 <p>Rotas RESTful tiram a vantagem da orientação built-in do <span class="caps">REST</span> do Rails para empacotar muitas das informações de roteamento em uma simples declaração. Uma rota RESTful se parece como esta:</p>
 <div class="code_container"><code class="ruby">
 map.resources :books
 </code></div>
 <h4 id="rotasnomeadas">2.3 Rotas nomeadas</h4>
-<p>Rotas nomeadas da a você muita links legivéis no seu código, bem como manipulação nas solicitações recebidas. Veja aqui uma típica rota nomeada:</p>
+<p>Rotas nomeadas da a você links legivéis no seu código, bem como manipulação nas solicitações recebidas. Veja aqui uma típica rota nomeada:</p>
 <div class="code_container"><code class="ruby">
 map.login '/login', :controller =&gt; 'sessions', :action =&gt; 'new'
 </code></div>
@@ -146,25 +144,27 @@ end
 map.connect 'parts/:number', :controller =&gt; 'inventory', :action =&gt; 'show'
 </code></div>
 <h4 id="rotaspadro">2.6 Rotas padrão</h4>
-<p>As rotas padrão são a forma segura de capturar requisições sem outras formas de rotas. Muitas aplicações Rails contem este par de rotas como padrão:</p>
+<p>As rotas padrão são a forma segura de capturar requisições sem outras formas de rotas. Muitas aplicações Rails contém este par de rotas como padrão:</p>
 <div class="code_container"><code class="ruby">
 map.connect ':controller/:action/:id'
 map.connect ':controller/:action/:id.:format'
 </code></div>
-<p>Estas rotas padrão são geradas automaticamentes quando você cria uma nova aplicação Rails. Se você está usando roteamento RESTful para tudo na sua aplicação, você provavelmente precisará remove-la. Mas verifique se você não está usando rotas padrões antes de remove-las.</p>
+<p>Estas rotas padrão são geradas automaticamentes quando você cria uma nova aplicação Rails. Se você está usando roteamento RESTful para tudo na sua aplicação, você provavelmente precisará removê-la. Mas verifique se você não está usando rotas padrões antes de removê-las.</p>
 <h3 id="roteamento-res-tfulo-padro-rails">3 Roteamento RESTful: o Padrão Rails</h3>
-<p>Roteamento RESTful é o padrão corrente para roteamento em Rails, e a única que você deve preferir para novas aplicações. Pode demorar um pouco enquando você entende como funciona o roteamento RESTful, mas que vale o esforço; seu código será mais fácil de ser lido e você estará trabalho com Rails, ao invés de lutar contra ele, quando você usa este estilo de roteamento.</p>
+<p>Roteamento RESTful é o padrão corrente de roteamento no Rails, e a única que você deve escolher para novas aplicações. Pode demorar um pouco enquanto você entende como funciona o roteamento RESTful, mas que vale o esforço; seu código será mais fácil de ser lido e você estará trabalho com Rails, ao invés de lutar contra ele, quando você usa este estilo de roteamento.</p>
 <h4 id="oque-rest">3.1 O que é <span class="caps">REST</span>?</h4>
-<p>O Fundação do roteamento RESTful é geralmente considerado na tese de doutorado de Roy Fielding, <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">Architectural Styles and the Design of Network-based Software Architectures</a>. Felizmente, você não precisa ler este documento para entender como o <span class="caps">REST</span> funciona no Rails. <span class="caps">REST</span> é um acronimo para Representational State Transfer, que resume-se em dois principios fundamentais para nossos propósitos:</p>
+<p>O Fundação do roteamento RESTful é geralmente considerado na tese de doutorado de Roy Fielding, <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">Architectural Styles and the Design of Network-based Software Architectures</a>. Felizmente, você não precisa ler este documento para entender como o <span class="caps">REST</span> funciona no Rails. <span class="caps">REST</span> é um acrônimo para Representational State Transfer, que resume-se em dois principios fundamentais para nossos propósitos:</p>
 <ul>
-	<li>Usando um identificador de recurso (na qual, para o propósito da discussão, você pode pensar como as URLs) para representar recursos</li>
-	<li>Transferindo represetações de statos entre recursos e componentes do sistema.</li>
+	<li>Usando identificadores de recurso (na qual, para o propósito da discussão, você pode pensar como as URLs) para representar recursos</li>
+	<li>Transferindo representações de status entre recursos e componentes do sistema.</li>
 </ul>
 <p>Por exemplo, para uma requisição em uma aplicação Rails como esta:</p>
-<p><tt><span class="caps">DELETE</span> /photos/17</tt>
-seria entendido como uma referencia a um recurso foto com o ID 17, e indicaria a ação desejada &#8211; deletar este recurso. <span class="caps">REST</span> é um estilo natural para a arquitetura de aplicações web, e Rails faz isso de uma forma mais natural usando convenções para protejer você de algumas complexidades do RESTful.</p>
+<pre>
+DELETE /photos/17
+</pre>
+<p>seria entendido como uma referencia a um recurso photo com o ID 17, e indicaria a ação desejada &#8211; deletar este recurso. <span class="caps">REST</span> é um estilo natural para a arquitetura de aplicações web, e Rails faz isso de uma forma mais natural usando convenções para protejer você de algumas complexidades do RESTful.</p>
 <h4 id="cru-dverboseaes">3.2 <span class="caps">CRUD</span>, verbos e ações</h4>
-<p>No Rails, uma rota RESTful fornece o mapeamento entre verbos <span class="caps">HTTP</span>, ações de controladores, e (implicitamente) a operações <span class="caps">CRUD</span> no banco de dados. Uma entrada unica no arquivo de roteamento, como essa</p>
+<p>No Rails, uma rota RESTful fornece o mapeamento entre verbos <span class="caps">HTTP</span>, ações de controladores, e (implicitamente) a operações <span class="caps">CRUD</span> no banco de dados. Uma entrada única no arquivo de roteamento, como essa</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos
 </code></div>
@@ -227,7 +227,7 @@ map.resources :photos
 		<td>apaga uma foto específica</td>
 	</tr>
 </table>
-<p>Para rotas específicas (aqueles que fazem referencia a um uníco recurso), o indetificador do recurso deverá ser disponível na ação correspondente de um controlador como um <tt>params[:id]</tt>.</p>
+<p>Para estas rotas específicas (aqueles que fazem referencia a um uníco recurso), o indetificador do recurso deverá ser disponível na ação correspondente de um controlador como um <tt>params[:id]</tt>.</p>
 <div class='info'><p>Se você consistentimente usar rotas RESTful na sua aplicação, você deverá desabilitar as rotas padrões em <tt>routes.rb</tt> de modo que o Rails aplicará o mapeamento entre verbos <span class="caps">HTTP</span> e rotas.</p></div>
 <h4 id="ur-lse-caminhos">3.3 URLs e Caminhos</h4>
 <p>Criando uma rota RESTful também tornará disponível um monte de helpers dentro da sua aplicação:</p>
@@ -521,11 +521,11 @@ map.resources :photos, :path_prefix =&gt; '/photographers/:photographer_id'
 <div class='note'><p>Você também pode usar <tt>:path_prefix</tt> com rotas não RESTful.</p></div>
 <h5 id="usandoname-prefix">3.7.7 Usando :name_prefix</h5>
 <p>Você pode usar a opção :name_prefix para evitar colisões entre rotas. Isto é mais usando quando você tem dois recursos com o mesmo nome que usam <tt>:path_prefix</tt> para mapear diferentemente. Por exemplo:</p>
-<p>dirty_workaround_for_nontextile_21&gt;</p>
-<p>This combination will give you route helpers such as <tt>photographer_photos_path</tt> and <tt>agency_edit_photo_path</tt> to use in your code.</p>
-<div class='note'><p>You can also use <tt>:name_prefix</tt> with non-RESTful routes.</p></div>
-<h4 id="nested-resources">3.8 Nested Resources</h4>
-<p>It&#8217;s common to have resources that are logically children of other resources. For example, suppose your application includes these models:</p>
+<p>dirty_workaround_for_nontextile_22&gt;</p>
+<p>Com esta combinação você irá receber helpers tais como <tt>photographer_photos_path</tt> e <tt>agency_edit_photo_path</tt> para usar no seu código.</p>
+<div class='note'><p>Você pode usar <tt>:name_prefix</tt> com rotas não RESTful.</p></div>
+<h4 id="recursosaninhados">3.8 Recursos aninhados</h4>
+<p>É comum ter recursos que são logicamente filhos de outros recursos. Por exemplo, suponha que a sua aplicação inclua os seguintes modelos:</p>
 <div class="code_container"><code class="ruby">
 class Magazine &lt; ActiveRecord::Base
   has_many :ads
@@ -536,7 +536,7 @@ class Ad &lt; ActiveRecord::Base
 end
 &lt;pre&gt;
 
-Each ad is logically subservient to one magazine. Nested routes allow you to capture this relationship in your routing. In this case, you might include this route declaration:
+Cada ad é logicamente subordinado a uma magazine. Rotas aninhadas permite que você captura o relacionamento no seu roteamento. Neste caso, você deve incluir nas suas rotas a declaração:
 
 &lt;ruby&gt;
 map.resources :magazines do |magazine|
@@ -544,50 +544,50 @@ map.resources :magazines do |magazine|
 end 
 &lt;pre&gt;
 
-In addition to the routes for magazines, this declaration will also create routes for ads, each of which requires the specification of a magazine in the URL:
+Além dessas rotas para magazines, esta declaração criará rotas para ads, cada um da qual exige a especificação de uma magazine na URL:
 
-|_.HTTP verb  |_.URL                      |_.controller  |_.action   |_.used for|
-|GET        |/magazines/1/ads         |Ads         |index    |display a list of all ads for a specific magazine|
-|GET        |/magazines/1/ads/new     |Ads         |new      |return an HTML form for creating a new ad belonging to a specific magazine|
-|POST       |/magazines/1/ads         |Ads         |create   |create a new ad belonging to a specific magazine|
-|GET        |/magazines/1/ads/1       |Ads         |show     |display a specific ad belonging to a specific magazine|
-|GET        |/magazines/1/ads/1/edit  |Ads         |edit     |return an HTML form for editing an ad belonging to a specific magazine|
-|PUT        |/magazines/1/ads/1       |Ads         |update   |update a specific ad belonging to a specific magazine|
-|DELETE     |/magazines/1/ads/1       |Ads         |destroy  |delete a specific ad belonging to a specific magazine|
+|_.verbo HTTP  |_.URL                      |_.controlador  |_.ação   |_.usado por|
+|GET        |/magazines/1/ads         |Ads         |index    |mostra a lista de todas as ads para uma magazine específica|
+|GET        |/magazines/1/ads/new     |Ads         |new      |retorna um formulário HTML para criação de um novo ad pertencente a um magazine especifíco|
+|POST       |/magazines/1/ads         |Ads         |create   |cria um novo ad pertencente a uma magazine especifíca|
+|GET        |/magazines/1/ads/1       |Ads         |show     |mostra um especifíco ad pertencente display a specific ad belonging to a specific magazine|
+|GET        |/magazines/1/ads/1/edit  |Ads         |edit     |retorna um formulário HTML para edição de um ad pertencente a uma magazine especifíca|
+|PUT        |/magazines/1/ads/1       |Ads         |update   |atualiza um especifíco ad pertencente a uma magazine especifíca|
+|DELETE     |/magazines/1/ads/1       |Ads         |destroy  |apaga um ad especifíco pertencente a um magazine especifíco|
 
 
-This will also create routing helpers such as +magazine_ads_url+ and +edit_magazine_ad_path+.
+Além disso criará helpers de roteamento como +magazine_ads_url+ e +edit_magazine_ad_path+.
 
-h5(#usingname-prefix). 3.8.1 Using :name_prefix
+h5(#usandoname-prefix). 3.8.1 Usando :name_prefix
 
-The +:name_prefix+ option overrides the automatically-generated prefix in nested route helpers. For example,
+A opção +:name_prefix+ sobrescreve um prefixo automaticamente gerado nos helpers das rotas aninhadas. Por exemplo, 
 
 &lt;ruby&gt;
 map.resources :magazines do |magazine|
   magazine.resources :ads, :name_prefix =&gt; 'periodical'
 end 
 </code></div>
-<p>This will create routing helpers such as <tt>periodical_ads_url</tt> and <tt>periodical_edit_ad_path</tt>. You can even use <tt>:name_prefix</tt> to suppress the prefix entirely:</p>
+<p>Isso irá criar helpers de roteamento como <tt>periodical_ads_url</tt> e <tt>periodical_edit_ad_path</tt>. Você pode mesmo utilizar <tt>:name_prefix</tt> para esconder o prefixo completamente:</p>
 <div class="code_container"><code class="ruby">
 map.resources :magazines do |magazine|
   magazine.resources :ads, :name_prefix =&gt; nil
 end 
 </code></div>
-<p>This will create routing helpers such as <tt>ads_url</tt> and <tt>edit_ad_path</tt>. Note that calling these will still require supplying an article id:</p>
+<p>Isso irá criar helpers de roteamente como <tt>ads_url</tt> e <tt>edit_ad_path</tt>. Note que continua exigindo que você forneça um article id:</p>
 <div class="code_container"><code class="ruby">
 ads_url(@magazine)
 edit_ad_path(@magazine, @ad)
 </code></div>
-<h5 id="usinghas-oneandhas-many">3.8.2 Using :has_one and :has_many</h5>
-<p>The <tt>:has_one</tt> and <tt>:has_many</tt> options provide a succinct notation for simple nested routes. Use <tt>:has_one</tt> to nest a singleton resource, or <tt>:has_many</tt> to nest a plural resource:</p>
+<h5 id="usandohas-oneehas-many">3.8.2 Usando :has_one e :has_many</h5>
+<p>As opções <tt>:has_one</tt> e <tt>:has_many</tt> fornece uma notação sucinta para simples rotas aninhadas. Use <tt>:has_one</tt> para aninhar um único recurso, ou <tt>:has_many</tt> para aninhar um recurso no plural:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :has_one =&gt; :photographer, :has_many =&gt; [:publications, :versions]
 </code></div>
-<p>This has the same effect as this set of declarations:</p>
-<p>dirty_workaround_for_nontextile_26
+<p>Isso tem o mesmo efeito que as sequintes declarações:</p>
+<p>dirty_workaround_for_nontextile_27
  
-h5(#limitsto-nesting). 3.8.3 Limits to Nesting</p>
-<p>You can nest resources within other nested resources if you like. For example:</p>
+h5(#limitesparaosaninhamentos). 3.8.3 Limites para os aninhamentos</p>
+<p>Você pode aninhar recursos com outros recursos aninhados se você quiser. Por exemplo:</p>
 <div class="code_container"><code class="ruby">
 map.resources :publishers do |publisher|
   publisher.resources :magazines do |magazine|
@@ -595,14 +595,14 @@ map.resources :publishers do |publisher|
   end
 end
 </code></div>
-<p>However, without the use of <tt>name_prefix => nil</tt>, deeply-nested resources quickly become cumbersome. In this case, for example, the application would recognize URLs such as</p>
+<p>Entretanto, sem a utilização de <tt>name_prefix => nil</tt>, os recursos extremamentes aninhados se tornarão pesado. Neste caso, por exemplo, a aplicação reconheceria URLs como</p>
 <pre>
 /publishers/1/magazines/2/photos/3
 </pre>
-<p>The corresponding route helper would be <tt>publisher_magazine_photo_url</tt>, requiring you to specify objects at all three levels. Indeed, this situation is confusing enough that a popular <a href="http://weblog.jamisbuck.org/2007/2/5/nesting-resources">article</a> by Jamis Buck proposes a rule of thumb for good Rails design:</p>
-<p><em>Resources should never be nested more than 1 level deep.</em></p>
-<h5 id="shallow-nesting">3.8.4 Shallow Nesting</h5>
-<p>The <tt>:shallow</tt> option provides an elegant solution to the difficulties of deeply-nested routes. If you specify this option at any level of routing, then paths for nested resources which reference a specific member (that is, those with an <tt>:id</tt> parameter) will not use the parent path prefix or name prefix. To see what this means, consider this set of routes:</p>
+<p>O helper correspondente a rota seria <tt>publisher_magazine_photo_url</tt>, exigindo que você especifíque objetos para todos os níveis da árvore. Esta situação é confusa o suficiente para que um popular <a href="http://weblog.jamisbuck.org/2007/2/5/nesting-resources">artigo</a> por Jamis Buck propõe uma regra de ouro para um bom design em Rails:</p>
+<p><em>Recursos nunca devem ser aninhados mais do que 1 nível de profundidade.</em></p>
+<h5 id="aninhamento-superficial">3.8.4 Aninhamento Superficial</h5>
+<p>A opção <tt>:shallow</tt> fornece uma solução elegante para as dificuldades de rotas extremamentes aninhadas. Se você especifícar esta opção a qualquer nível de roteamento, então os caminhos para recursos aninhados que referência a um membro especifíco (isto é, aqueles com o parâmetro <tt>:id</tt>) não usará o caminho ou o nome do prefíxo. Para ver o que isso significa, considere a sequinte configuração de rotas:</p>
 <div class="code_container"><code class="ruby">
 map.resources :publishers, :shallow =&gt; true do |publisher|
   publisher.resources :magazines do |magazine|
@@ -610,7 +610,7 @@ map.resources :publishers, :shallow =&gt; true do |publisher|
   end
 end
 </code></div>
-<p>This will enable recognition of (among others) these routes:</p>
+<p>Isso permitirá o reconhecimentos (entre outros) dessas rotas:</p>
 <pre>
 /publishers/1           ==&gt; publisher_path(1)
 /publishers/1/magazines ==&gt; publisher_magazines_path(1)
@@ -618,94 +618,94 @@ end
 /magazines/2/photos     ==&gt; magazines_photos_path(2)
 /photos/3               ==&gt; photo_path(3)
 </pre>
-<p>With shallow nesting, you need only supply enough information to uniquely identify the resource that you want to work with &#8211; but you <em>can</em> supply more information. All of the nested routes continue to work, just as they would without shallow nesting, but less-deeply nested routes (even direct routes) work as well. So, with the declaration above, all of these routes refer to the same resource:</p>
+<p>Com o roteamento superficial, você somente precisa fornecer informações suficiente para identificar unicamente o recurso que você precisa para trabalhar com ele &#8211; mas você <em>pode</em> fornecer mais informações. Todas as rotas aninhadas continuam funcionando, do mesmo modo sem o aninhamento superficial, mas as rotas menos profundamente aninhadas (mesmo de rotas diretas) funcionarão bem. Então, mesmo com a declaração acima, todas estas rotas se referem ao mesmo recurso:</p>
 <pre>
 /publishers/1/magazines/2/photos/3   ==&gt; publisher_magazine_photo_path(1,2,3)
 /magazines/2/photos/3                ==&gt; magazine_photo_path(2,3)
 /photos/3                            ==&gt; photo_path(3)
 </pre>
-<p>Shallow nesting gives you the flexibility to use the shorter direct routes when you like, while still preserving the longer nested routes for times when they add code clarity.</p>
-<p>If you like, you can combine shallow nesting with the <tt>:has_one</tt> and <tt>:has_many</tt> options:</p>
+<p>O aninhamento superficial dá a flexibilidade para usar rotas curtas diretas quando você quiser, ao mesmo tempo que preserva as longas rotas aninhadas, as vezes, quando acrescentam códigos com clareza.</p>
+<p>Se você quiser você pode combinar o aninhamento surpeficial com as opções <tt>:has_one</tt> e <tt>:has_many</tt>:</p>
 <div class="code_container"><code class="ruby">
 map.resources :publishers, :has_many =&gt; { :magazines =&gt; :photos }, :shallow =&gt; true
 </code></div>
-<h4 id="route-generationfrom-arrays">3.9 Route Generation from Arrays</h4>
-<p>In addition to using the generated routing helpers, Rails can also generate RESTful routes from an array of parameters. For example, suppose you have a set of routes generated with these entries in routes.rb:</p>
+<h4 id="geraoderotasapartirde-arrays">3.9 Geração de rotas a partir de Arrays</h4>
+<p>Além de utilizar a os helpers geradores de roteamento, Rails também pode gerar rotas RESTful de um array de paramêtros. Por exemplo, suponha que você tem a configuração de rotas geradas com essas entradas no routes.rb:</p>
 <div class="code_container"><code class="ruby">
 map.resources :magazines do |magazine|
   magazine.resources :ads
 end
 </code></div>
-<p>Rails will generate helpers such as magazine_ad_path that you can use in building links:</p>
+<p>Rails gerará helpers como magazine_ad_path que você pode usar na construção de links:</p>
 <div class="code_container"><code class="ruby">
 &lt;%= link_to &quot;Ad details&quot;, magazine_ad_path(@magazine, @ad) %&gt;
 </code></div>
-<p>Another way to refer to the same route is with an array of objects:</p>
+<p>Outra forma para referir a mesma rota com um array de objetos:</p>
 <div class="code_container"><code class="ruby">
 &lt;%= link_to &quot;Ad details&quot;, [@magazine, @ad] %&gt;
 </code></div>
-<p>This format is especially useful when you might not know until runtime which of several types of object will be used in a particular link.</p>
-<h4 id="namespaced-resources">3.10 Namespaced Resources</h4>
-<p>It&#8217;s possible to do some quite complex things by combining <tt>:path_prefix</tt> and <tt>:name_prefix</tt>. For example, you can use the combination of these two options to move administrative resources to their own folder in your application:</p>
+<p>Este formato é especialmente útil quando você não sabe em tempo de execução os vários tipos de objetos que podem ser usados em um link particular.</p>
+<h4 id="recursosem-namespaces">3.10 Recursos em Namespaces</h4>
+<p>É possível fazer algumas coisas muito complexas pela combinação de <tt>:path_prefix</tt> e <tt>:name_prefix</tt>. Por exemplo, você pode usar a combinação dessas duas opções para mover recursos administrativos para sua própria pasta na sua aplicação:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :path_prefix =&gt; 'admin', :controller =&gt; 'admin/photos'
 map.resources :tags, :name_prefix =&gt; 'admin_photo_', :path_prefix =&gt; 'admin/photos/:photo_id', :controller =&gt; 'admin/photo_tags'
 map.resources :ratings, :name_prefix =&gt; 'admin_photo_', :path_prefix =&gt; 'admin/photos/:photo_id', :controller =&gt; 'admin/photo_ratings'
 </code></div>
-<p>The good news is that if you find yourself using this level of complexity, you can stop. Rails supports <em>namespaced resources</em> to make placing resources in their own folder a snap. Here&#8217;s the namespaced version of those same three routes:</p>
+<p>A boa notícia é que se você se encontrar com este nível de complexidade, você pode parar. Rails suporta <em>recursos namespaced</em> para mover recursos de lugares para suas próprias pastas com um estalo. Aqui é uma versão namespaced da mesma árvore de rotas:</p>
 <div class="code_container"><code class="ruby">
 map.namespace(:admin) do |admin|
 	admin.resources :photos,
 	  :has_many =&gt; { :tags, :ratings}
 end
 </code></div>
-<p>As you can see, the namespaced version is much more succinct than the one that spells everything out &#8211; but it still creates the same routes. For example, you&#8217;ll get <tt>admin_photos_url</tt> that expects to find an <tt>Admin::PhotosController</tt> and that matches <tt>admin/photos</tt>, and <tt>admin_photos_ratings_path</tt> that matches <tt>/admin/photos/_photo_id_/ratings</tt>, expecting to use <tt>Admin::RatingsController</tt>. Even though you&#8217;re not specifying <tt>path_prefix</tt> explicitly, the routing code will calculate the appropriate <tt>path_prefix</tt> from the route nesting.</p>
-<h4 id="adding-more-res-tful-actions">3.11 Adding More RESTful Actions</h4>
-<p>You are not limited to the seven routes that RESTful routing creates by default. If you like, you may add additional member routes (those which apply to a single instance of the resource), additional new routes (those that apply to creating a new resource), or additional collection routes (those which apply to the collection of resources as a whole).</p>
-<h5 id="adding-member-routes">3.11.1 Adding Member Routes</h5>
-<p>To add a member route, use the <tt>:member</tt> option:</p>
+<p>Como você pode ver, a versão namespaced é muito mais sucinta do que do outro modo &#8211; mas ainda cria as mesmas rotas. Por exemplo, você vai ter <tt>admin_photos_url</tt> que espera encontrar um <tt>Admin::PhotosController</tt> e ainda corresponde com <tt>admin/photos</tt>, e <tt>admin_photos_ratings_path</tt> corresponde com <tt>/admin/photos/_photo_id_/ratings</tt>, esperado para usar <tt>Admin::RatingsController</tt>. Mesmo que você não está especificando explicitamente <tt>path_prefix</tt>, o código de roteamento calculará o apropriado <tt>path_prefix</tt> do roteamento aninhado.</p>
+<h4 id="adicionandomaisaes-res-tful">3.11 Adicionando mais ações RESTful</h4>
+<p>Você não está limitado as sete rotas que o roteamento RESTful cria por padrão. Se você quiser, você pode adicionar mais membros de rotas (aqueles que se aplicam para uma única instância do recurso), novas rotas adicionais (aqueles que você aplica para a criação de novos recursos), ou uma coleção de rotas adicionais (aqueles que se aplicam para a coleção de recursos como um todo).</p>
+<h5 id="adicionando-membrosde-rotas">3.11.1 Adicionando Membros de Rotas</h5>
+<p>Para adicionar um membro de uma rota, use a opção <tt>:member</tt>:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :member =&gt; { :preview =&gt; :get }
 </code></div>
-<p>This will enable Rails to recognize URLs such as <tt>/photos/1/preview</tt> using the <span class="caps">GET</span> <span class="caps">HTTP</span> verb, and route them to the preview action of the Photos controller. It will also create a <tt>preview_photo</tt> route helper.</p>
-<p>Within the hash of member routes, each route name specifies the <span class="caps">HTTP</span> verb that it will recognize. You can use <tt>:get</tt>, <tt>:put</tt>, <tt>:post</tt>, <tt>:delete</tt>, or <tt>:any</tt> here. You can also specify an array of methods, if you need more than one but you don&#8217;t want to allow just anything:</p>
+<p>Isso habilitará o Rails para reconhecer URLs como <tt>/photos/1/preview</tt> usando o verbo <span class="caps">HTTP</span> <span class="caps">GET</span>, e rotea-las para a ação preview do controlador de Photos. Isto irá criar o helper de rota <tt>preview_photo</tt>.</p>
+<p>Dentro da hash de membros de rotas, o nome de cada rota especifíca um verbo <span class="caps">HTTP</span> que irá ser reconhecido. Você pode usar <tt>:get</tt>, <tt>:put</tt>, <tt>:post</tt>, <tt>:delete</tt>, ou <tt>:any</tt>. Além disso você pode especificar um array de métodos, se você precisar de mais do que um, mas se você não quiser permitir qualquer um:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :member =&gt; { :prepare =&gt; [:get, :post] }
 </code></div>
-<h5 id="adding-collection-routes">3.11.2 Adding Collection Routes</h5>
-<p>To add a collection route, use the <tt>:collection</tt> option:</p>
+<h5 id="adicionandouma-coleode-rotas">3.11.2 Adicionando uma Coleção de Rotas</h5>
+<p>Para adicionar uma coleção de rotas, usar a opção <tt>:collection</tt>:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :collection =&gt; { :search =&gt; :get }
 </code></div>
-<p>This will enable Rails to recognize URLs such as <tt>/photos/search</tt> using the <span class="caps">GET</span> <span class="caps">HTTP</span> verb, and route them to the search action of the Photos controller. It will also create a <tt>search_photos</tt> route helper.</p>
-<p>Just as with member routes, you can specify an array of methods for a collection route:</p>
+<p>Isso habilitará o Rails a reconhecer URLs como <tt>/photos/search</tt> usando o verbo <span class="caps">HTTP</span> <span class="caps">GET</span>, e a rota para a ação search no controlador de Photos. Isso criará o helper <tt>search_photos</tt> para esta rota.</p>
+<p>Assim como os membros das rotas, você pode especificar um array de métodos para uma collection da rota:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :collection =&gt; { :search =&gt; [:get, :post] }
 </code></div>
-<h5 id="adding-new-routes">3.11.3 Adding New Routes</h5>
-<p>To add a new route (one that creates a new resource), use the <tt>:new</tt> option:</p>
+<h5 id="adicionando-novas-rotas">3.11.3 Adicionando Novas Rotas</h5>
+<p>Para adicionar novas rotas (um que cria novos recursos), use a opção <tt>:new</tt>:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :new =&gt; { :upload =&gt; :post }
 </code></div>
-<p>This will enable Rails to recognize URLs such as <tt>/photos/upload</tt> using the <span class="caps">POST</span> <span class="caps">HTTP</span> verb, and route them to the upload action of the Photos controller. It will also create a <tt>upload_photos</tt> route helper.</p>
-<div class='info'><p>If you want to redefine the verbs accepted by one of the standard actions, you can do so by explicitly mapping that action. For example:</p></div>
+<p>Isto habilitará o Rails para reconheceria URLs como <tt>/photos/upload</tt> usando o verbo <span class="caps">HTTP</span> <span class="caps">POST</span>, e a rota para a ação upload no controlador de Photos. Isso criará o helper <tt>upload_photos</tt> para esta rota.</p>
+<div class='info'><p>Se você precisa redefinir os métodos aceitáveis um por um para ações padrão, você pode fazer um mapeamento explicíto para a ação. Por exemplo:</p></div>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :new =&gt; { :new =&gt; :any }
 </code></div>
-<p>This will allow the new action to be invoked by any request to <tt>photos/new</tt>, no matter what <span class="caps">HTTP</span> verb you use.</p>
-<h5 id="a-noteof-caution">3.11.4 A Note of Caution</h5>
-<p>If you find yourself adding many extra actions to a RESTful route, it&#8217;s time to stop and ask yourself whether you&#8217;re disguising the presence of another resource that would be better split off on its own. When the <tt>:member</tt> and <tt>:collection</tt> hashes become a dumping-ground, RESTful routes lose the advantage of easy readability that is one of their strongest points.</p>
-<h3 id="regular-routes">4 Regular Routes</h3>
-<p>In addition to RESTful routing, Rails supports regular routing &#8211; a way to map URLs to controllers and actions. With regular routing, you don&#8217;t get the masses of routes automatically generated by RESTful routing. Instead, you must set up each route within your application separately.</p>
-<p>While RESTful routing has become the Rails standard, there are still plenty of places where the simpler regular routing works fine. You can even mix the two styles within a single application. In general, you should prefer RESTful routing <em>when possible</em>, because it will make parts of your application easier to write. But there&#8217;s no need to try to shoehorn every last piece of your application into a RESTful framework if that&#8217;s not a good fit.</p>
-<h4 id="bound-parameters">4.1 Bound Parameters</h4>
-<p>When you set up a regular route, you supply a series of symbols that Rails maps to parts of an incoming <span class="caps">HTTP</span> request. Two of these symbols are special: <tt>:controller</tt> maps to the name of a controller in your application, and <tt>:action</tt> maps to the name of an action within that controller. For example, consider one of the default Rails routes:</p>
+<p>Isto permitirá que a ação new seja invocada por qualquer requisição para <tt>photos/new</tt>, não importa o verbo HTTp que você use.</p>
+<h5 id="umanotadecuidado">3.11.4 Uma nota de cuidado</h5>
+<p>Se você está adicionando muitas rotas extras para uma rota RESTful, é hora de parar e se perguntar se você está disfarçando a presença de outro recurso que seria melhor utilizar o seu próprio. Quando o <tt>:member</tt> e <tt>:collection</tt> se tornam um lixo, então as rotas RESTful perdem a vantagem da facilidade de legibilidade, que é um de seus pontos fortes.</p>
+<h3 id="rotas-regulares">4 Rotas Regulares</h3>
+<p>Além do roteamento RESTful, Rails suporta roteamento regular &#8211; a forma para mapear URLs para controladores e ações. Com o roteamento regular, você não recebe a massas de rotas geradas automaticamentes pelo roteamento RESTful. Em vez disso, você deve configurar cada rota dentro do seu aplicativo separadamente.</p>
+<p>Enquanto o roteamento RESTful tornou-se o padrão Rails, ainda há muitos lugares onde o simples roteamento regular funciona perfeitamente. Você pode mesclar os dois estilos junto em uma única aplicação. Geralmente, você deve preferir o roteamento RESTful <em>quando possível</em>, por quê fará partes da sua aplicação serem escritas mais fáceis. Mas não é necessariamente tentar forçar cada última peça da sua aplicação dentro de um framework RESTful se isto não é um bom ajuste.</p>
+<h4 id="paramtros-obrigatrios">4.1 Paramêtros Obrigatórios</h4>
+<p>Quando você configurar uma rota regular,você fornece uma série de símbolos que o Rails mapeia partes de uma requisição <span class="caps">HTTP</span> de entrada. Dois desses símbolos são especiais: <tt>:controller</tt> mapeia para o nome do controlador na sua aplicação, e <tt>:action</tt> mapeia para o nome da ação do respectivo controlador. Por exemplo, considere uma rota Rails padrão:</p>
 <div class="code_container"><code class="ruby">
 map.connect ':controller/:action/:id'
 </code></div>
-<p>If an incoming request of <tt>/photos/show/1</tt> is processed by this route (because it hasn&#8217;t matched any previous route in the file), then the result will be to invoke the <tt>show</tt> action of the <tt>Photos</tt> controller, and to make the final parameter (1) available as <tt>params[:id]</tt>.</p>
-<h4 id="wildcard-components">4.2 Wildcard Components</h4>
-<p>You can set up as many wildcard symbols within a regular route as you like. Anything other than <tt>:controller</tt> or <tt>:action</tt> will be available to the matching action as part of the params hash. So, if you set up this route:</p>
+<p>Se a requisição de entrada para <tt>/photos/show/1</tt> é processada para esta rota (por quê não correspondeu com qualquer rota previamente no arquivo), então o resultado é que será invocado a ação <tt>show</tt> do controlador <tt>Photos</tt>, e contruída com o parâmetro final (1) disponível como <tt>params[:id]</tt>.</p>
+<h4 id="componentes-coringas">4.2 Componentes Coringas</h4>
+<p>Você pode configurar vários símbolos coringas junto com as rotas regulares como você quiser. Qualquer outra coisa diferente de <tt>:controller</tt> ou <tt>:action</tt> estará disponível para combinar a ação com a parte dos parâmetros da hash. Então, se você configurar rota como esta:</p>
 <div class="code_container"><code class="ruby">
 map.connect ':controller/:action/:id/:user_id'
 </code></div>

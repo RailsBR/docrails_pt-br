@@ -86,7 +86,7 @@
             <div id="subCol">
         <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
         <ol class="chapters">
-<li><a href="#associaesporqu">Associações, por quê?</a><ul></ul></li><li><a href="#ostiposdeassociaes">Os tipos de associações</a><ul><li><a href="#aassociaobelongs-to">A associação <tt>belongs_to</tt></a></li><li><a href="#aassociaohas-one">A associação <tt>has_one</tt></a></li><li><a href="#aassociaohas-many">A associação <tt>has_many</tt></a></li><li><a href="#a-associaohas-manythrough">A Associação <tt>has_many :through</tt></a></li><li><a href="#aassociaohas-onethrough">A associação <tt>has_one: through</tt></a></li><li><a href="#aassociaohas-and-belongs-to-many">A associação <tt>has_and_belongs_to_many</tt></a></li><li><a href="#escolhendoentrebelongs-toehas-one">Escolhendo entre <tt>belongs_to</tt> e <tt>has_one</tt></a></li><li><a href="#escolhendoentrehas-manythroughehas-and-belongs-to-many">Escolhendo entre <tt>has_many :through</tt> e <tt>has_and_belongs_to_many</tt></a></li><li><a href="#associaespolimrficas">Associações polimórficas</a></li><li><a href="#auto-associaes">Auto-associações</a></li></ul></li><li><a href="#dicastruqueseavisos">Dicas, truques e avisos</a><ul><li><a href="#controlandocaching">Controlando caching</a></li><li><a href="#evitandocolisescomnomes">Evitando colisões com nomes</a></li><li><a href="#atualizandooschema">Atualizando o schema</a></li><li><a href="#controlandooescopodasassociaes">Controlando o escopo das associações</a></li></ul></li><li><a href="#referncia-detalhadasobre-associaes">Referência Detalhada sobre Associações</a><ul><li><a href="#refernciadaassociaobelongs-to">Referência da associação <tt>belongs_to</tt></a></li><li><a href="#associaohas-one">Associação has_one</a></li><li><a href="#aassociaohas-many">A associação has_many</a></li><li><a href="#a-associaohas-and-belongs-to-many">A Associação has_and_belongs_to_many</a></li><li><a href="#association-callbacks">Association Callbacks</a></li><li><a href="#extensesde-associao">Extensões de Associação</a></li></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
+<li><a href="#associaesporqu">Associações, por quê?</a><ul></ul></li><li><a href="#ostiposdeassociaes">Os tipos de associações</a><ul><li><a href="#aassociaobelongs-to">A associação <tt>belongs_to</tt></a></li><li><a href="#aassociaohas-one">A associação <tt>has_one</tt></a></li><li><a href="#aassociaohas-many">A associação <tt>has_many</tt></a></li><li><a href="#a-associaohas-manythrough">A Associação <tt>has_many :through</tt></a></li><li><a href="#aassociaohas-onethrough">A associação <tt>has_one: through</tt></a></li><li><a href="#aassociaohas-and-belongs-to-many">A associação <tt>has_and_belongs_to_many</tt></a></li><li><a href="#escolhendoentrebelongs-toehas-one">Escolhendo entre <tt>belongs_to</tt> e <tt>has_one</tt></a></li><li><a href="#escolhendoentrehas-manythroughehas-and-belongs-to-many">Escolhendo entre <tt>has_many :through</tt> e <tt>has_and_belongs_to_many</tt></a></li><li><a href="#associaespolimrficas">Associações polimórficas</a></li><li><a href="#auto-associaes">Auto-associações</a></li></ul></li><li><a href="#dicastruqueseavisos">Dicas, truques e avisos</a><ul><li><a href="#controlandocaching">Controlando caching</a></li><li><a href="#evitandocolisescomnomes">Evitando colisões com nomes</a></li><li><a href="#atualizandooschema">Atualizando o schema</a></li><li><a href="#controlandooescopodasassociaes">Controlando o escopo das associações</a></li></ul></li><li><a href="#referncia-detalhadasobre-associaes">Referência Detalhada sobre Associações</a><ul><li><a href="#refernciadaassociaobelongs-to">Referência da associação <tt>belongs_to</tt></a></li><li><a href="#refernciadaassociaohas-one">Referência da associação <tt>has_one</tt></a></li><li><a href="#refernciadaassociaohas-many">Referência da associação <tt>has_many</tt></a></li><li><a href="#refernciadaassociaohas-and-belongs-to-many">Referência da associação <tt>has_and_belongs_to_many</tt></a></li><li><a href="#association-callbacks">Association Callbacks</a></li><li><a href="#extensesdeassociao">Extensões de associação</a></li></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
     </div>
   </div>
 
@@ -636,7 +636,7 @@ end
 </code></div>
 <div class='note'><p>Não há necessidade de usar <tt>:include</tt> para associações imediatas &#8211; isto significa que, se você tiver <tt>Order belongs_to :customer</tt>, então customer é pré-carregado automaticamente quando for necessário.</p></div>
 <h6 id="polymorphic">4.1.2.8 :polymorphic</h6>
-<p>Passando <tt>true</tt> para a opção <tt>:polymorphic</tt> indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes <a href="#polymorphic-associations">anteriormente neste guia</a>.</p>
+<p>Passando <tt>true</tt> para a opção <tt>:polymorphic</tt> indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes <a href="#associaespolimrficas">anteriormente neste guia</a>.</p>
 <h6 id="readonly">4.1.2.9 :readonly</h6>
 <p>Se você definir a opção <tt>:readonly</tt> para <tt>true</tt>, então o objeto associado terá acesso somente leitura quando for retornado pela associação.</p>
 <h6 id="select">4.1.2.10 :select</h6>
@@ -653,18 +653,17 @@ end
 </code></div>
 <h5 id="quandoobjetossogravados">4.1.4 Quando objetos são gravados?</h5>
 <p>Atribuir um objeto a uma associação <tt>belongs_to</tt> <em>não</em> o grava automaticamente. Também não grava o objeto associado.</p>
-<h4 id="associaohas-one">4.2 Associação has_one</h4>
-<p>A associação <tt>has_one</tt> cria uma relação um-para-um com outro model. Se tratando de banco de dados, esta associação diz que a outra classe terá a chave estrangeira. Se esta class possuir a chave estrangeira, então você deve usar um <tt>belongs_to</tt> ao invés.</p>
+<h4 id="refernciadaassociaohas-one">4.2 Referência da associação <tt>has_one</tt></h4>
+<p>A associação <tt>has_one</tt> cria uma relação um-para-um com outro model. Em termos de banco de dados, esta associação diz que a outra classe terá a chave estrangeira. Se esta classe possuir a chave estrangeira, então você deve usar um <tt>belongs_to</tt>.</p>
 <h5 id="mtodos-adicionadospelohas-one">4.2.1 Métodos Adicionados pelo <tt>has_one</tt></h5>
-<p>Quando você declara a associação <tt>has_one</tt>, a classe declarante automaticamente ganha cinco métodos relacionados a associação:</p>
+<p>Quando você declara a associação <tt>has_one</tt>, a classe declarante automaticamente ganha quatro métodos relacionados a associação:</p>
 <ul>
 	<li><tt><em>association</em>(force_reload = false)</tt></li>
 	<li><tt><em>association</em>=(associate)</tt></li>
-	<li><tt><em>association</em>.nil?</tt></li>
 	<li><tt>build_<em>association</em>(attributes = {})</tt></li>
 	<li><tt>create_<em>association</em>(attributes = {})</tt></li>
 </ul>
-<p>Em todos estes métodos, <tt><em>association</em></tt> são substituídos pelo símbolo passado como o primeiro argumento do método <tt>has_one</tt> . Por exemplo,  a declaração abaixo:</p>
+<p>Em todos estes métodos, <tt><em>association</em></tt> é substituído pelo símbolo passado como o primeiro argumento do método <tt>has_one</tt> . Por exemplo,  na declaração abaixo:</p>
 <div class="code_container"><code class="ruby">
 class Supplier &lt; ActiveRecord::Base
   has_one :account
@@ -674,7 +673,6 @@ end
 <div class="code_container"><code class="ruby">
 account
 account=
-account.nil?
 build_account
 create_account
 </code></div>
@@ -683,26 +681,19 @@ create_account
 <div class="code_container"><code class="ruby">
 @account = @supplier.account
 </code></div>
-<p>Se o objeto associado já tiver sido buscado do banco de dados para este objeto (@supplier), a versão cacheada será retornada. Para sobrescrever este comportamento ( e força a leitura do banco de dados), passe <tt>true</tt> para o argumento <tt>force_reload</tt> .</p>
+<p>Se o objeto associado já tiver sido buscado do banco de dados para este objeto (@supplier), a versão cacheada será retornada. Para sobrescrever este comportamento ( e forçar a leitura no banco de dados), passe <tt>true</tt> para o argumento <tt>force_reload</tt> .</p>
 <h6 id="emassociationemassociate">4.2.1.2 <em>association</em>=(associate)</h6>
-<p>O método <tt><em>association</em></tt>= atribui um objeto associado a esta associação. Por trás dos panos, isto significa extrair a chave primária do objeto e definir a chave estrangeira do objeto associado ao mesmo valor.</p>
+<p>O método <tt><em>association</em></tt>= atribui um objeto associado a este objeto. Por trás dos panos, isto significa extrair a chave primária do objeto e definir a chave estrangeira do objeto associado ao mesmo valor.</p>
 <div class="code_container"><code class="ruby">
 @suppler.account = @account
 </code></div>
-<h6 id="emassociationemnil">4.2.1.3 <em>association</em>.nil?</h6>
-<p>O método <tt><em>association</em></tt>.nil? retorna <tt>true</tt> se não houver nenhum objeto associado.</p>
-<div class="code_container"><code class="ruby">
-if @supplier.account.nil?
-  @msg = &quot;No account found for this supplier&quot;
-end
-</code></div>
-<h6 id="build-emassociationemattributes">4.2.1.4 build_<em>association</em>(attributes = {})</h6>
-<p>O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira, mas o objeto associado não será gravado.</p>
+<h6 id="build-emassociationemattributes">4.2.1.3 build_<em>association</em>(attributes = {})</h6>
+<p>O método <tt>build_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira, mas o objeto associado não será gravado ainda.</p>
 <div class="code_container"><code class="ruby">
 @account = @supplier.build_account({:terms =&gt; &quot;Net 30&quot;})
 </code></div>
-<h6 id="create-emassociationemattributes">4.2.1.5 create_<em>association</em>(attributes = {})</h6>
-<p>O método <tt>create_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira. Porém, o objeto associado <em>será</em> gravado ( assumindo que ele passe por todas as validações).</p>
+<h6 id="create-emassociationemattributes">4.2.1.4 create_<em>association</em>(attributes = {})</h6>
+<p>O método <tt>create_<em>association</em></tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir do atributos passados, e será associado através de sua chave estrangeira. Adicionalmente, o objeto associado <em>será</em> gravado ( assumindo que ele passe por todas as validações).</p>
 <div class="code_container"><code class="ruby">
 @account = @supplier.create_account({:terms =&gt; &quot;Net 30&quot;})
 </code></div>
@@ -732,18 +723,18 @@ end
 	<li><tt>:validate</tt></li>
 </ul>
 <h6 id="as">4.2.2.1 :as</h6>
-<p>Definindo a opção <tt>:as</tt> indica que esta será uma associação polimórfica. Associações polimórficas <a href="#associaespolimrficas">já foram discutidas em detalhes neste guia</a>.</p>
+<p>Definindo a opção <tt>:as</tt> indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes <a href="#associaespolimrficas">anteriormente neste guia</a>.</p>
 <h6 id="autosave">4.2.2.2 <tt>:autosave</tt></h6>
-<p>Se você definir a opção <tt>:autosave</tt> para <tt>true</tt>, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.</p>
+<p>Se você definir a opção <tt>:autosave</tt> para <tt>true</tt>, o Rails irá salvar qualquer membro carregado e destruir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.</p>
 <h6 id="class-name">4.2.2.3 :class_name</h6>
-<p>Se o nome do outro model não puder ser adivinhado a partir do nome da associação, você pode usar a opção <tt>:class_name</tt> para fornecer o nome da classe. Por exemplo, se fornecedor(supplier) possui uma conta(account), mas o nome do model atual que contém as contas (accounts) é Billing, você precisa definir as coisas como abaixo:</p>
+<p>Se o nome do outro model não puder ser adivinhado a partir do nome da associação, você pode usar a opção <tt>:class_name</tt> para fornecer o nome do model. Por exemplo, se fornecedor (supplier) possui uma conta (account), mas o nome do model atual que contém as contas (accounts) é Billing, você precisará definí-los assim:</p>
 <div class="code_container"><code class="ruby">
 class Supplier &lt; ActiveRecord::Base
   has_one :account, :class_name =&gt; &quot;Billing&quot;
 end
 </code></div>
 <h6 id="conditions">4.2.2.4 :conditions</h6>
-<p>A opção <tt>:conditions</tt> permite que você especifique as condições que o objeto associado deve satisfazer ( a sintaxe é usada por uma cláusula <span class="caps">SQL</span> <tt>WHERE</tt> ).</p>
+<p>A opção <tt>:conditions</tt> permite que você especifique as condições que o objeto associado deve satisfazer (a sintaxe é usada por uma cláusula <span class="caps">SQL</span> <tt>WHERE</tt>).</p>
 <div class="code_container"><code class="ruby">
 class Supplier &lt; ActiveRecord::Base
   has_one :account, :conditions =&gt; &quot;confirmed = 1&quot;
@@ -752,19 +743,15 @@ end
 <h6 id="dependent">4.2.2.5 :dependent</h6>
 <p>Se você definir a opção <tt>:dependent</tt> para <tt>:destroy</tt>, ao apagar este objeto irá chamar o método destroy no objeto associado para apagá-lo também. Se você definir a opção <tt>:dependent</tt> para <tt>:delete</tt>, então apagando este objeto irá excluir o objeto associado <em>sem</em> chamar o método <tt>destroy</tt>. Se você definir a opção <tt>:dependent</tt> to <tt>:nullify</tt>, ao excluir este objeto irá definir a chave estrangeira do objeto associado para <tt>NULL</tt>.</p>
 <h6 id="foreign-key">4.2.2.6 :foreign_key</h6>
-<p>Por convenção, Rails adivinha que a coluna usada para guardar a chave estrangeira no outro model é o nome do model com o sufixo <tt>_id</tt> adicionada. A opção  <tt>:foreign_key</tt> permite que você defina o nome da chave estrangeira diretamente:</p>
+<p>Por convenção, o Rails adivinha que a coluna usada para guardar a chave estrangeira no outro model é o nome do model com o sufixo <tt>_id</tt> adicionado. A opção  <tt>:foreign_key</tt> permite que você defina o nome da chave estrangeira diretamente:</p>
 <div class="code_container"><code class="ruby">
 class Supplier &lt; ActiveRecord::Base
   has_one :account, :foreign_key =&gt; &quot;supp_id&quot;
 end
 </code></div>
-<div class='info'><p>Em nenhum caso, Rails irá criar a coluna da chave estrangeira para você. Você precisa defini-la como parte de suas migrations.</p></div>
+<div class='info'><p>O Rails nunca irá criar a coluna da chave estrangeira para você. Você precisa defini-la explicitamente como parte de suas migrations.</p></div>
 <h6 id="include">4.2.2.7 :include</h6>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; <span class="caps">HEAD</span>:railties/guides/source/pt-BR/association_basics.textile
-Você pode usar a opção :include para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os models abaixo:
-===
-Você pode usar a opção <tt>:include</tt> para especificar uma associação de segunda ordem que deve ser pré carregada (eager-loaded) quando a associação for usar. Por exemplo, considere os modelos abaixo:
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 4e297b239acf7230e13df250e35bdf88dd2c94c9:railties/guides/source/pt-BR/association_basics.textile</p>
+<p>Você pode usar a opção <tt>:include</tt> para especificar uma associação de segunda ordem que deve ser pré carregada quando a associação for utilizada. Por exemplo, considere os models abaixo:</p>
 <div class="code_container"><code class="ruby">
 class Supplier &lt; ActiveRecord::Base
   has_one :account
@@ -777,7 +764,7 @@ class Representative &lt; ActiveRecord::Base
   has_many :accounts
 end
 </code></div>
-<p>Se você freqüentemente buscar representantes( representatives ) a partir de fornecedores( suppliers, ex.: <tt>@supplier.account.representative</tt> ), então você pode fazer seu código se tornar mais eficiente, incluindo representantes (representatives) na associação de fornecedores ( suppliers ) para contas ( accounts ):</p>
+<p>Se você freqüentemente buscar representantes (representatives) a partir de fornecedores (suppliers, ex.: <tt>@supplier.account.representative</tt>), então você pode tornar seu código mais eficiente incluindo representantes (representatives) na associação de fornecedores (suppliers) para contas (accounts):</p>
 <div class="code_container"><code class="ruby">
 class Supplier &lt; ActiveRecord::Base
   has_one :account, :include =&gt; :representative
@@ -791,30 +778,37 @@ class Representative &lt; ActiveRecord::Base
 end
 </code></div>
 <h6 id="order">4.2.2.8 :order</h6>
-<p>A opção <tt>:order</tt> dita a ordem em que os objetos associados deverão ser retornados (em uma sintaxe usada por uma cláusula <span class="caps">SQL</span> <tt>ORDER BY</tt>). Mas como é uma associação <tt>has_one</tt> vai retornar apenas um objeto, esta opção não é necessária.</p>
+<p>A opção <tt>:order</tt> dita a ordem em que os objetos associados deverão ser retornados (em uma sintaxe usada por uma cláusula <span class="caps">SQL</span> <tt>ORDER BY</tt>). Como a associação <tt>has_one</tt> vai retornar apenas um objeto, esta opção não deve ser necessária.</p>
 <h6 id="primary-key">4.2.2.9 :primary_key</h6>
-<p>Por convenção, Rails adivinha que a coluna que irá armazenar a chave primária será deste model é <tt>id</tt>. Você pode sobrescrever isto e especificar a chave primária com a opção <tt>:primary_key</tt> .</p>
+<p>Por convenção, o Rails adivinha que a coluna que irá armazenar a chave primária será <tt>id</tt>. Você pode sobrescrever isto e especificar a chave primária com a opção <tt>:primary_key</tt> .</p>
 <h6 id="readonly">4.2.2.10 :readonly</h6>
 <p>Se você definir a opção <tt>:readonly</tt> para <tt>true</tt>, o objeto associado será exclusivamente para leitura quando for retornado pela associação.</p>
 <h6 id="select">4.2.2.11 :select</h6>
-<p>A opção <tt>:select</tt> permite que você altere a cláusula <span class="caps">SQL</span> <tt>SELECT</tt> que é usada para retornar os do objeto associado. Por padrão, Rails retorna todas as colunas.</p>
+<p>A opção <tt>:select</tt> permite que você altere a cláusula <span class="caps">SQL</span> <tt>SELECT</tt> que é usada para retornar os atributos do objeto associado. Por padrão, o Rails retorna todas as colunas.</p>
 <h6 id="source">4.2.2.12 :source</h6>
-<p>A opção <tt>:source</tt>  específica o nome para fonte para uma associação <tt>has_one :through</tt> .</p>
+<p>A opção <tt>:source</tt>  específica o nome da fonte para uma associação <tt>has_one :through</tt> .</p>
 <h6 id="source-type">4.2.2.13 :source_type</h6>
-<p>A opção <tt>:source_type</tt> específica o tipo da fonte para a associação <tt>has_one :through</tt> em uma associação polimórfica.</p>
+<p>A opção <tt>:source_type</tt> específica o tipo da fonte para uma associação <tt>has_one :through</tt> em uma associação polimórfica.</p>
 <h6 id="through">4.2.2.14 :through</h6>
-<p>A opção <tt>:through</tt> específica um model para a junção (join) para executar a query. <a href="#a-associaohas-onethrough">Associações <tt>has_one :through</tt> já foram discutidas em detalhes</a>.</p>
+<p>A opção <tt>:through</tt> específica um model para a junção para executar a query. <a href="#aassociaohas-onethrough">Associações <tt>has_one :through</tt> já foram discutidas em detalhes</a>.</p>
 <h6 id="validate">4.2.2.15 :validate</h6>
 <p>Se você definir a opção <tt>:validate</tt> para <tt>true</tt>, os objetos associados serão validados sempre que você salvar este objeto. Por padrão, ele é <tt>false</tt>: objetos associados não serão validados quando este objeto for salvo.</p>
-<h5 id="quando-objetos-so-salvos">4.2.3 Quando Objetos São Salvos?</h5>
-<p>Quando você atribuir um objeto a uma associação <tt>has_one</tt>, este objeto é automaticamente salvo(para atualizar a chave estrangeira). Além disso, qualquer objeto que estiver sendo substituído também é salvo automaticamente, porque sua chave estrangeira também será alterada.</p>
+<h5 id="comosaberseexisteumobjetoassociado">4.2.3 Como saber se existe um objeto associado?</h5>
+<p>Para saber se existe um objeto associado, simplesmente cheque <tt>association.nil?</tt>:</p>
+<div class="code_container"><code class="ruby">
+if @supplier.account.nil? 
+  @msg = &quot;No account found for this supplier&quot; 
+end 
+</code></div>
+<h5 id="quandoobjetossosalvos">4.2.4 Quando objetos são salvos?</h5>
+<p>Quando você atribuir um objeto a uma associação <tt>has_one</tt>, este objeto é automaticamente salvo (para atualizar a chave estrangeira). Além disso, qualquer objeto que estiver sendo substituído também é salvo automaticamente, porque sua chave estrangeira também será alterada.</p>
 <p>Se qualquer uma dessas gravações falhar devido a erros de validação, então a atribuição retornará <tt>false</tt> e a própria atribuição é cancelada.</p>
-<p>Se o objeto pai (o que estiver declarando a associação <tt>has_one</tt>) não é salvo (isso é, <tt>new_record?</tt> retorna <tt>true</tt>) então os objeto filhos não serão salvos.</p>
+<p>Se o objeto pai (o que estiver declarando a associação <tt>has_one</tt>) não estiver salvo (isto é, <tt>new_record?</tt> retorna <tt>true</tt>) então os objeto filhos não serão salvos. Eles serão automaticamente salvos quando o pai for.</p>
 <p>Se você quiser atribuir um objeto para uma associação <tt>has_one</tt> sem salvar o objeto, use o método <tt>association.build</tt> .</p>
-<h4 id="aassociaohas-many">4.3 A associação has_many</h4>
-<p>A associação <tt>has_many</tt> cria uma relação um-para-muitos com outro model. Em termos de banco de dados, esta associação diz que a outra classe terá a chave estrangeira que referência a instância desta classe.</p>
-<h5 id="mtodos-adicionados">4.3.1 Métodos Adicionados</h5>
-<p>Quando você declara a  associação <tt>has_many</tt>, a classe declarante irá ganhar automaticamente 13 métodos relacionados a associação:</p>
+<h4 id="refernciadaassociaohas-many">4.3 Referência da associação <tt>has_many</tt></h4>
+<p>A associação <tt>has_many</tt> cria uma relação um-para-muitos com outro model. Em termos de banco de dados, esta associação diz que a outra classe terá a chave estrangeira que referência instâncias desta classe.</p>
+<h5 id="mtodosadicionados">4.3.1 Métodos adicionados</h5>
+<p>Quando você declara uma associação <tt>has_many</tt>, a classe declarante irá receber automaticamente 13 métodos relacionados a associação:</p>
 <ul>
 	<li><tt><em>collection</em>(force_reload = false)</tt></li>
 	<li><tt><em>collection</em>&lt;&lt;(object, &#8230;)</tt></li>
@@ -830,7 +824,7 @@ end
 	<li><tt><em>collection</em>.build(attributes = {}, &#8230;)</tt></li>
 	<li><tt><em>collection</em>.create(attributes = {})</tt></li>
 </ul>
-<p>Em todos estes métodos, <tt><em>collection&gt;</em></tt> é substituído pelo símbolo passado como primeiro argumento da <tt>has_many</tt>, e <tt><em>collection_singular</em></tt> é substituído pela versão no singular deste símbolo. Por exemplo, veja abaixo:</p>
+<p>Em todos estes métodos, <tt><em>collection&gt;</em></tt> é substituído pelo símbolo passado como primeiro argumento em <tt>has_many</tt>, e <tt><em>collection_singular</em></tt> é substituído pela versão no singular deste símbolo. Por exemplo, veja abaixo:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders
@@ -869,16 +863,16 @@ orders.create(attributes = {})
 </code></div>
 <div class='warning'><p>Os objetos associados serão destruídos, se existir <tt>:dependent => :destroy</tt>, e excluídos se estiverem associados com <tt>:dependent => :delete_all</tt>.</p></div>
 <h6 id="emcollectionemobjects">4.3.1.4 <em>collection</em>=objects</h6>
-<p>O método <tt><em>collection</em>=</tt> faz com que a coleção contenha apenas os objetos passados, adicionando ou removendo o que não interessa.</p>
+<p>O método <tt><em>collection</em>=</tt> faz com que a coleção contenha apenas os objetos passados, adicionando ou removendo apropriadamente.</p>
 <h6 id="emcollection-singularem-ids">4.3.1.5 <em>collection_singular</em>_ids</h6>
 <p>O método <tt><em>collection_singular</em>_ids</tt> retorna um array com os ids dos objetos da coleção.</p>
 <div class="code_container"><code class="ruby">
 @order_ids = @customer.order_ids
 </code></div>
 <h6 id="emcollection-singularem-idsids">4.3.1.6 <em>collection_singular</em>_ids=ids</h6>
-<p>O método <tt><em>collection_singular</em>_ids=</tt> faz com que a coleção contenha apenas os objetos identificados pela chave primária passada, adicionando e apagando o que não interessa.</p>
+<p>O método <tt><em>collection_singular</em>_ids=</tt> faz com que a coleção contenha apenas os objetos identificados pelas chaves primárias passadas, adicionando e apagando apropriadamente.</p>
 <h6 id="emcollectionemclear">4.3.1.7 <em>collection</em>.clear</h6>
-<p>O método <tt><em>collection</em>.clear</tt> remove todos os objetos da coleção. Isto destrói os objetos associados se estiverem associados com a opção <tt>:dependent => :destroy</tt>, ou apagando-os direto do banco de dados caso seja definido <tt>:dependent => :delete_all</tt>, caso contrário suas chaves estrangeiras serão definidas para <tt>NULL</tt>.</p>
+<p>O método <tt><em>collection</em>.clear</tt> remove todos os objetos da coleção. Isto destrói os objetos associados se estiverem associados com a opção <tt>:dependent => :destroy</tt>, ou apagando-os direto do banco de dados caso seja definido <tt>:dependent => :delete_all</tt>, e em outros casos suas chaves estrangeiras serão definidas para <tt>NULL</tt>.</p>
 <h6 id="emcollectionemempty">4.3.1.8 <em>collection</em>.empty?</h6>
 <p>O método <tt><em>collection</em>.empty?</tt> retorna <tt>true</tt> se a coleção não contiver nenhum objeto associado.</p>
 <div class="code_container"><code class="ruby">
@@ -904,18 +898,18 @@ orders.create(attributes = {})
 @order = @customer.orders.build({:order_date =&gt; Time.now, :order_number =&gt; &quot;A12345&quot;})
 </code></div>
 <h6 id="emcollectionemcreateattributes">4.3.1.13 <em>collection</em>.create(attributes = {})</h6>
-<p>O método <tt><em>collection</em>.create</tt> retorna um novo objeto do tipo associado. Estes objetos são instanciados a partir dos atributos passados, e associados através da chave estrangeira que será criada, mas os objetos associados ainda <em>serão</em> salvos (assumindo que passem nas validações).</p>
+<p>O método <tt><em>collection</em>.create</tt> retorna um novo objeto do tipo associado. Estes objetos são instanciados a partir dos atributos passados, e associados através da chave estrangeira que será criada, e os objetos associados  <em>serão</em> salvos (assumindo que passem nas validações).</p>
 <div class="code_container"><code class="ruby">
 @order = @customer.orders.create({:order_date =&gt; Time.now, :order_number =&gt; &quot;A12345&quot;})
 </code></div>
 <h5 id="optionsforhas-many">4.3.2 Options for has_many</h5>
-<p>Em várias situações, você pode usar as opções padrão para o <tt>has_many</tt> sem nenhuma customização. Mas você pode alterar este comportamento de várias maneiras. Esta seção cobre as opções que você pode passar quando cria uma associação <tt>has_many</tt> . Por exemplo, uma associação com várias opção pode parecer como isto:</p>
+<p>Em várias situações, você pode usar as opções padrão para o <tt>has_many</tt> sem nenhuma customização. Mas você pode alterar este comportamento de várias maneiras. Esta seção cobre as opções que você pode passar quando cria uma associação <tt>has_many</tt> . Por exemplo, uma associação com várias opções pode se parecer como isto:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders, :dependent =&gt; :delete_all, :validate =&gt; :false
 end
 </code></div>
-<p>Uma associação <tt>has_many</tt> suporta estas opções:</p>
+<p>A associação <tt>has_many</tt> suporta estas opções:</p>
 <ul>
 	<li><tt>:as</tt></li>
 	<li><tt>:autosave</tt></li>
@@ -941,18 +935,18 @@ end
 	<li><tt>:validate</tt></li>
 </ul>
 <h6 id="as">4.3.2.1 :as</h6>
-<p>Definindo a opção <tt>:as</tt> indica que essa será uma associação polimórfica, <a href="#associaespolimrficas">como já discutido previamente neste guia</a>.</p>
+<p>Definindo a opção <tt>:as</tt> indica que essa será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes <a href="#associaespolimrficas">anteriormente neste guia</a>.</p>
 <h6 id="autosave">4.3.2.2 <tt>:autosave</tt></h6>
-<p>Se você definir a opção <tt>:autosave</tt> para <tt>true</tt>, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.</p>
+<p>Se você definir a opção <tt>:autosave</tt> para <tt>true</tt>, o Rails irá salvar qualquer membro carregado e destruir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.</p>
 <h6 id="class-name">4.3.2.3 :class_name</h6>
-<p>Se o nome do outro model não puder ser descoberto pelo nome da associação, você pode usar <tt>:class_name</tt> para prover o nome do model. Por exemplo, se um cliente (customer) possui muitos pedidos (orders), mas o nome atual do model que contém pedidos é <tt>Transaction</tt>, você vai definir as coisas desta forma:</p>
+<p>Se o nome do outro model não puder ser descoberto pelo nome da associação, você pode usar <tt>:class_name</tt> para provêr o nome do model. Por exemplo, se um cliente (customer) possui muitos pedidos (orders), mas o nome atual do model que contém pedidos é <tt>Transaction</tt>, você pode definir as coisas desta forma:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders, :class_name =&gt; &quot;Transaction&quot;
 end
 </code></div>
 <h6 id="conditions">4.3.2.4 :conditions</h6>
-<p>A opção <tt>:conditions</tt> permite que especifique as condições que a associação precisa atender ( na sintaxe usada por uma cláusula <span class="caps">SQL</span> <tt>WHERE</tt>).</p>
+<p>A opção <tt>:conditions</tt> permite que se especifique as condições que a associação precisa atender (na sintaxe usada por uma cláusula <span class="caps">SQL</span> <tt>WHERE</tt>).</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :confirmed_orders, :class_name =&gt; &quot;Order&quot;, :conditions =&gt; &quot;confirmed = 1&quot;
@@ -964,7 +958,7 @@ class Customer &lt; ActiveRecord::Base
   has_many :confirmed_orders, :class_name =&gt; &quot;Order&quot;, :conditions =&gt; { :confirmed =&gt; true }
 end
 </code></div>
-<p>Se você usa <tt>:conditions</tt> no estilo hash, então a criação do registro através desta associação terá automaticamente o escopo usando o hash. Neste caso, usando  <tt>@customer.confirmed_orders.create</tt> ou <tt>@customer.confirmed_orders.build</tt> vai criar pedidos que tenham a coluna confirmed igual a <tt>true</tt>.</p>
+<p>Se você usar <tt>:conditions</tt> no estilo hash, então a criação do registro através desta associação terá automaticamente o escopo usando o hash. Neste caso, usando  <tt>@customer.confirmed_orders.create</tt> ou <tt>@customer.confirmed_orders.build</tt> vai criar pedidos que tenham a coluna confirmed igual a <tt>true</tt>.</p>
 <h6 id="counter-sql">4.3.2.5 :counter_sql</h6>
 <p>Normalmente o Rails gera automaticamente o <span class="caps">SQL</span> apropriado para contar os membros de uma associação. Com a opção <tt>:counter_sql</tt>, você pode especificar o comando <span class="caps">SQL</span> para fazer o &#8220;count&#8221; da sua forma.</p>
 <div class='note'><p>Se você especificar <tt>:finder_sql</tt> mas não definir <tt>:counter_sql</tt>, então o <span class="caps">SQL</span> para contador será gerado substituindo <tt>SELECT COUNT(*) FROM</tt> para a cláusula <tt>SELECT ... FROM</tt> da sua declaração do <tt>:finder_sql</tt>.</p></div>
@@ -972,17 +966,17 @@ end
 <p>Se você definir a opção <tt>:dependent</tt> para <tt>:destroy</tt>, apagando este objeto irá chamar o método destroy de cada objeto associado para apagá-lo. Se você definir <tt>:dependent</tt> para <tt>:delete_all</tt>, então apagar este objeto irá excluir os objetos associados <em>sem</em> chamar o método <tt>destroy</tt></p>
 <div class='note'><p>Esta opção é ignorada quando você utiliza a opção <tt>:through</tt> na associação.</p></div>
 <h6 id="extend">4.3.2.7 :extend</h6>
-<p>A opção <tt>:extend</tt> especifica o nome de um módulo para extender a association proxy. Extensão de associações são discutidas mais a frente neste guia.</p>
+<p>A opção <tt>:extend</tt> especifica o nome de um módulo para extender o proxy de associação. Extensão de associações <a href="#extensesdeassociao">serão discutidas com mais detalhes neste guia</a>.</p>
 <h6 id="finder-sql">4.3.2.8 :finder_sql</h6>
-<p>Normalmente o Rails gera automaticamente o <span class="caps">SQL</span> apropriado para buscar os membros da associação. Com a opção <tt>:finder_sql</tt>, você pode especificar a cláusula <span class="caps">SQL</span> para busca-los. Se esta busca dos membros associados requer um <span class="caps">SQL</span> multi-table complexo, esta opção pode ser útil.</p>
+<p>Normalmente o Rails gera automaticamente o <span class="caps">SQL</span> apropriado para buscar os membros da associação. Com a opção <tt>:finder_sql</tt>, você pode especificar a cláusula <span class="caps">SQL</span> para buscá-los. Se a busca dos membros associados necessitar de um <span class="caps">SQL</span> complexo envolvendo várias tabelas, esta opção pode ser útil.</p>
 <h6 id="foreign-key">4.3.2.9 :foreign_key</h6>
-<p>Por convenção, Rails descobre que a coluna usada para armazenar a chave estrangeira em outro model é o nome deste model com o sufixo <tt>_id</tt> adicionado. A opção <tt>:foreign_key</tt> permite que você defina o nome da chave estrangeira diretamente.</p>
+<p>Por convenção, o Rails descobre que a coluna usada para armazenar a chave estrangeira em outro model é o nome deste model com o sufixo <tt>_id</tt> adicionado. A opção <tt>:foreign_key</tt> permite que você defina o nome da chave estrangeira diretamente.</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders, :foreign_key =&gt; &quot;cust_id&quot;
 end
 </code></div>
-<div class='info'><p>Em nenhum caso, Rails vai gerar as colunas para a chave estrangeira automaticamente para você. Você precisa defini-las explicitamente em seus migrations.</p></div>
+<div class='info'><p>O Rails nunca vai gerar as colunas para a chave estrangeira automaticamente para você. Você precisa definí-las explicitamente em suas migrations.</p></div>
 <h6 id="group">4.3.2.10 :group</h6>
 <p>A opção <tt>:group</tt> passa o nome de um atributo que será usado para agrupar o resultado, usando uma cláusula <tt>GROUP BY</tt> no <span class="caps">SQL</span>.</p>
 <div class="code_container"><code class="ruby">
@@ -991,7 +985,7 @@ class Customer &lt; ActiveRecord::Base
 end
 </code></div>
 <h6 id="include">4.3.2.11 :include</h6>
-<p>Você pode usar a opção <tt>:include</tt> para especificar associações de segunda ordem que devem ser carregadas previamente ( eager-loaded ) quando a associação for usada. Por exemplo, considere os models abaixo:</p>
+<p>Você pode usar a opção <tt>:include</tt> para especificar associações de segunda ordem que devem ser pré-carregadas quando a associação for usada. Por exemplo, considere os models abaixo:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders
@@ -1004,7 +998,7 @@ class LineItem &lt; ActiveRecord::Base
   belongs_to :order
 end
 </code></div>
-<p>Se você freqüentemente retorna line items diretamente de customers (<tt>@customer.orders.line_items</tt>), então você pode fazer seu código um pouco mais eficiente incluindo line item na associação de customers para orders:</p>
+<p>Se você freqüentemente retorna line items diretamente de customers (<tt>@customer.orders.line_items</tt>), então você pode tornar seu código um pouco mais eficiente incluindo line item na associação de customers para orders:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders, :include =&gt; :line_items
@@ -1018,14 +1012,14 @@ class LineItem &lt; ActiveRecord::Base
 end
 </code></div>
 <h6 id="limit">4.3.2.12 :limit</h6>
-<p>A opção <tt>:limit</tt> permite que restringir o total de objetos que serão buscados através da associação.</p>
+<p>A opção <tt>:limit</tt> permite se restringir o total de objetos que serão buscados através da associação.</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :recent_orders, :class_name =&gt; &quot;Order&quot;, :order =&gt; &quot;order_date DESC&quot;, :limit =&gt; 100
 end
 </code></div>
 <h6 id="offset">4.3.2.13 :offset</h6>
-<p>A opção <tt>:offset</tt> permite que você especifique de onde a busca dos objetos associados deve iniciar. Por exemplo, se você definir <tt>:offset => 11</tt>, irá ignorar os 10 primeiros registros.</p>
+<p>A opção <tt>:offset</tt> permite que você especifique de onde a busca dos objetos associados deve iniciar. Por exemplo, se você definir <tt>:offset => 11</tt>, irá ignorar os 11 primeiros registros.</p>
 <h6 id="order">4.3.2.14 :order</h6>
 <p>A opção <tt>:order</tt> dita a ordem que cada objeto associado deve ser retornado ( gerando uma cláusula <span class="caps">SQL</span> <tt>ORDER BY</tt>).</p>
 <div class="code_container"><code class="ruby">
@@ -1034,31 +1028,31 @@ class Customer &lt; ActiveRecord::Base
 end
 </code></div>
 <h6 id="primary-key">4.3.2.15 :primary_key</h6>
-<p>Por convenção, o Rails descobre que a coluna que armazenará a chave primária deste model é <tt>id</tt>. Você sobrescrever isso e especificar a chave primária com a opção <tt>:primary_key</tt>.</p>
+<p>Por convenção, o Rails descobre que a coluna que armazenará a chave primária deste model é <tt>id</tt>. Você pode sobrescrever isso e especificar a chave primária com a opção <tt>:primary_key</tt>.</p>
 <h6 id="readonly">4.3.2.16 :readonly</h6>
 <p>Se você definir a opção <tt>:readonly</tt> para <tt>true</tt>, os objetos associados serão somente leitura (read-only) quando forem retornados através da associação.</p>
 <h6 id="select">4.3.2.17 :select</h6>
-<p>A opção <tt>:select</tt> permite que você sobrescreva a cláusula <span class="caps">SQL</span> <tt>SELECT</tt> que será usada para retornar os objetos associados. Por padrão, Rails retorna todas as colunas.</p>
-<div class='warning'><p>Se você especificar seu próprio <tt>:select</tt>, não se esqueça de incluir a chave primária e chave estrangeira do model associado. Se você não o fizer, Rails irás disparar um erro.</p></div>
+<p>A opção <tt>:select</tt> permite que você sobrescreva a cláusula <span class="caps">SQL</span> <tt>SELECT</tt> que será usada para retornar os objetos associados. Por padrão, o Rails retorna todas as colunas.</p>
+<div class='warning'><p>Se você especificar seu próprio <tt>:select</tt>, não se esqueça de incluir a chave primária e chave estrangeira do model associado. Se você não o fizer, o Rails irá disparar um erro.</p></div>
 <h6 id="source">4.3.2.18 :source</h6>
 <p>A opção <tt>:source</tt> especifica o nome de origem da associação para uma associação <tt>has_many :through</tt>. Você só precisa usar esta opção se o nome da associação não puder se inferida automaticamente a partir do nome da associação.</p>
 <h6 id="source-type">4.3.2.19 :source_type</h6>
-<p>A opção <tt>:source_type</tt> especifica o tipo da associação de origem para uma associação <tt>has_many :through</tt> que proceda através de uma associação polimórfica.</p>
+<p>A opção <tt>:source_type</tt> especifica o tipo da associação de origem para uma associação <tt>has_many :through</tt> que ocorra através de uma associação polimórfica.</p>
 <h6 id="through">4.3.2.20 :through</h6>
-<p>A opção <tt>:through</tt> especifica um model para uma junção. Associações <tt>has_many :through</tt> criam uma forma de implementar uma associação many-to-many (muitos para muitos), <a href="#a-associaohas-manythrough">como discutido anteriormente neste guia</a>.</p>
+<p>A opção <tt>:through</tt> especifica um model para uma junção. Associações <tt>has_many :through</tt> criam uma forma de implementar uma associação many-to-many (muitos para muitos), <a href="#a-associaohas-manythrough">como discutido anteriormente neste guia</a> .</p>
 <h6 id="uniq">4.3.2.21 :uniq</h6>
 <p>A opção <tt>:uniq => true</tt> remove os registros duplicados de uma coleção retornada. É mais útil em conjunto com a opção <tt>:through</tt>.</p>
 <h6 id="validate">4.3.2.22 :validate</h6>
 <p>Se você definir a opção <tt>:validate</tt> para <tt>false</tt>, então os objetos associados não serão validados quando você salvar este objeto. Por padrão, este valor é <tt>true</tt>: objetos associados serão validados quando o objeto for salvo.</p>
-<h5 id="quandoos-objetosso-salvos">4.3.3 Quando os Objetos são Salvos?</h5>
-<p>Quando você atribui um objeto a uma associação <tt>has_many</tt>, este objeto é automaticamente salvo ( para atualizar sua chave estrangeira ). Se você atribuir múltiplos objetos em uma única declaração, então todos são salvos.</p>
-<p>Se alguma dessas gravações falhar por error de validação, então a declaração de atribuição retornará <tt>false</tt> e a atribuição será cancelada.</p>
-<p>Se o objeto pai( o que estiver declarando a associação <tt>has_many</tt>) não é salvo ( ou seja, <tt>new_record?</tt> retorna <tt>true</tt>) então os objetos filhos não são salvos quando são adicionados. Todos os membros não salvos de uma associação serão automaticamente salvos  quando o pai for salvo.</p>
+<h5 id="quandoosobjetossosalvos">4.3.3 Quando os objetos são salvos?</h5>
+<p>Quando você atribui um objeto a uma associação <tt>has_many</tt>, este objeto é automaticamente salvo (para atualizar sua chave estrangeira). Se você atribuir múltiplos objetos em uma única declaração, então todos são salvos.</p>
+<p>Se alguma dessas gravações falhar por erros de validação, então a declaração de atribuição retornará <tt>false</tt> e a atribuição será cancelada.</p>
+<p>Se o objeto pai (o que estiver declarando a associação <tt>has_many</tt>) não estiver salvo (ou seja, <tt>new_record?</tt> retorna <tt>true</tt>) então os objetos filhos não são salvos quando são adicionados. Todos os membros não salvos de uma associação serão automaticamente salvos quando o pai for salvo.</p>
 <p>Se você quiser atribuir um objeto a uma associação <tt>has_many</tt> sem salvar o objeto, use o método <tt><tt><em>collection</em></tt>.build</tt>.</p>
-<h4 id="a-associaohas-and-belongs-to-many">4.4 A Associação has_and_belongs_to_many</h4>
-<p>A associação <tt>has_and_belongs_to_many</tt> cria um relacionamento muitos-para-muitos com outro model. Em termos de banco de dados, associa duas classes através de uma tabela intermediária que inclui as chaves estrangeiras de cada classe.</p>
-<h5 id="mtodos-adicionados">4.4.1 Métodos Adicionados</h5>
-<p>Quando você declara uma associação <tt>has_and_belongs_to_many</tt>, a classe que declara ganha 13 métodos relacionados a associação:</p>
+<h4 id="refernciadaassociaohas-and-belongs-to-many">4.4 Referência da associação <tt>has_and_belongs_to_many</tt></h4>
+<p>A associação <tt>has_and_belongs_to_many</tt> cria um relacionamento muitos-para-muitos com outro model. Em termos de banco de dados, ela associa duas classes através de uma tabela intermediária que inclui as chaves estrangeiras de cada classe.</p>
+<h5 id="mtodosadicionados">4.4.1 Métodos adicionados</h5>
+<p>Quando você declara uma associação <tt>has_and_belongs_to_many</tt>, a classe declarante ganha 13 métodos relacionados a associação:</p>
 <ul>
 	<li><tt><em>collection</em>(force_reload = false)</tt></li>
 	<li><tt><em>collection</em>&lt;&lt;(object, &#8230;)</tt></li>
@@ -1081,26 +1075,13 @@ class Part &lt; ActiveRecord::Base
 end
 </code></div>
 <p>Cada instância do model terá os seguintes métodos:</p>
-<div class="code_container"><code class="ruby">
-assemblies(force_reload = false)
-assemblies&lt;&lt;(object, ...)
-assemblies.delete(object, ...)
-assemblies=objects
-assembly_ids
-assembly_ids=ids
-assemblies.clear
-assemblies.empty?
-assemblies.size
-assemblies.find(...)
-assemblies.exist?(...)
-assemblies.build(attributes = {}, ...)
-assemblies.create(attributes = {})
-</code></div>
-<h6 id="mtodos-para-colunas-adicionais">4.4.1.1 Métodos Para Colunas Adicionais</h6>
-<p>Se a tabela auxiliar para a junção de uma associação <tt>has_and_belongs_to_many</tt> possui alguma coluna além das duas chaves estrangeiras, estas colunas serão adicionadas como atributos no registros retornados pela associação. Registros retornados com atributos adicionais serão sempre somente-leitura(read-only), porque o Rails não pode salvar alterações nestes atributos.</p>
-<div class='warning'><p>O uso de atributos extra em uma tabela de junção em uma associação <tt>has_and_belongs_to_many</tt> foi deprecado. Se você precisa deste tipo de comportamento complexo em uma tabela que une dois models em uma relação many-to-many(muitos para muitos), você deve usar uma associação <tt>has_many :through</tt> ao invés de <tt>has_and_belongs_to_many</tt>.</p></div>
+<p>dirty_workaround_for_nontextile_81
+ 
+h6(#mtodosparacolunasadicionais). 4.4.1.1 Métodos para colunas adicionais</p>
+<p>Se a tabela de junção de uma associação <tt>has_and_belongs_to_many</tt> possui colunas adicionais além das duas chaves estrangeiras, estas colunas serão adicionadas como atributos nos registros retornados pela associação. Registros retornados com atributos adicionais serão sempre somente leitura, porque o Rails não pode salvar alterações nestes atributos.</p>
+<div class='warning'><p>O uso de atributos extra em uma tabela de junção em uma associação <tt>has_and_belongs_to_many</tt> foi depreciado. Se você precisa deste tipo de comportamento complexo em uma tabela que une dois models em uma relação muitos para muitos, você deve usar uma associação <tt>has_many :through</tt> ao invés de <tt>has_and_belongs_to_many</tt>.</p></div>
 <h6 id="emcollectionemforce-reloadfalse">4.4.1.2 <em>collection</em>(force_reload = false)</h6>
-<p>O método <tt><em>collection</em></tt> retorna um array com todos os objetos associados. Se não existir objetos associados, retorna um array vázio.</p>
+<p>O método <tt><em>collection</em></tt> retorna um array com todos os objetos associados. Se não existir objetos associados, retorna um array vazio.</p>
 <div class="code_container"><code class="ruby">
 @assemblies = @part.assemblies
 </code></div>
@@ -1109,23 +1090,23 @@ assemblies.create(attributes = {})
 <div class="code_container"><code class="ruby">
 @part.assemblies &lt;&lt; @assembly1
 </code></div>
-<div class='note'><p>Este método é uma alias para <tt><em>collection</em>.concat</tt> e <tt><em>collection</em>.push</tt>.</p></div>
+<div class='note'><p>Este método possui os alias <tt><em>collection</em>.concat</tt> e <tt><em>collection</em>.push</tt>.</p></div>
 <h6 id="emcollectionemdeleteobject">4.4.1.4 <em>collection</em>.delete(object, &#8230;)</h6>
-<p>O método <tt><em>collection</em>.delete</tt> remove um ou mais objetos da coleção apagando registros da tabela de junção. Não destrói os objetos.</p>
+<p>O método <tt><em>collection</em>.delete</tt> remove um ou mais objetos da coleção apagando registros da tabela de junção. Ele não destrói os objetos.</p>
 <div class="code_container"><code class="ruby">
 @part.assemblies.delete(@assembly1)
 </code></div>
 <h6 id="emcollectionemobjects">4.4.1.5 <em>collection</em>=objects</h6>
-<p>O método <tt><em>collection</em>=</tt> faz com que a coleção contenha apenas os objetos passados, adicionando e excluindo o que não interessa.</p>
+<p>O método <tt><em>collection</em>=</tt> faz com que a coleção contenha apenas os objetos passados, adicionando e excluindo apropriadamente.</p>
 <h6 id="emcollection-singularem-ids">4.4.1.6 <em>collection_singular</em>_ids</h6>
 <p>O método <tt>_collection\_singular_\_ids</tt> retorna um array com os ids dos objetos na coleção.</p>
 <div class="code_container"><code class="ruby">
 @assembly_ids = @part.assembly_ids
 </code></div>
 <h6 id="emcollection-singularem-idsids">4.4.1.7 <em>collection_singular</em>_ids=ids</h6>
-<p>O método <tt><em>collection_singular</em>_ids=</tt> faz com que a coleção contenha apenas os objetos identificados pelas chaves primárias passadas, inserindo e excluindo o que não interessa.</p>
+<p>O método <tt><em>collection_singular</em>_ids=</tt> faz com que a coleção contenha apenas os objetos identificados pelas chaves primárias passadas, inserindo e excluindo apropriadamente.</p>
 <h6 id="emcollectionemclear">4.4.1.8 <em>collection</em>.clear</h6>
-<p>O método <tt><em>collection</em>.clear</tt> remove cada objeto da coleção através da exclusão das linhas na tabela. Isso não destrói os objetos associados.</p>
+<p>O método <tt><em>collection</em>.clear</tt> remove cada objeto da coleção através da exclusão das linhas na tabela de junção. Isso não destrói os objetos associados.</p>
 <h6 id="emcollectionemempty">4.4.1.9 <em>collection</em>.empty?</h6>
 <p>O método <tt><em>collection</em>.empty?</tt> retorna <tt>true</tt> se a coleção não contém nenhum objeto associado.</p>
 <div class="code_container"><code class="ruby">
@@ -1139,24 +1120,24 @@ assemblies.create(attributes = {})
 @assembly_count = @part.assemblies.size
 </code></div>
 <h6 id="emcollectionemfind">4.4.1.11 <em>collection</em>.find(&#8230;)</h6>
-<p>O método <tt><em>collection</em>.find</tt> encontra os objetos dentro da coleção. Ele utiliza a mesma sintaxe e opções do <tt>ActiveRecord::Base.find</tt>. Acrescenta também a condição adicional de que o objeto deve estar na coleção.</p>
+<p>O método <tt><em>collection</em>.find</tt> encontra objetos dentro da coleção. Ele utiliza a mesma sintaxe e opções do <tt>ActiveRecord::Base.find</tt>. Acrescenta também a condição adicional de que o objeto deve estar na coleção.</p>
 <div class="code_container"><code class="ruby">
 @new_assemblies = @part.assemblies.find(:all, :conditions =&gt; [&quot;created_at &gt; ?&quot;, 2.days.ago])
 </code></div>
 <h6 id="emcollectionemexist">4.4.1.12 <em>collection</em>.exist?(&#8230;)</h6>
 <p>O método <tt><em>collection</em>.exist?</tt> checa se algum objeto atende as condições na coleção. Utiliza a mesma sintaxe e opções do <tt>ActiveRecord::Base.exists?</tt>.</p>
 <h6 id="emcollectionembuildattributes">4.4.1.13 <em>collection</em>.build(attributes = {})</h6>
-<p>O método <tt><em>collection</em>.build</tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, e uma associação será criada através da tabela de junção, mas o objeto associado ainda <em>não</em> será salvo.</p>
+<p>O método <tt><em>collection</em>.build</tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, e uma associação será criada através da tabela de junção, mas o objeto associado <em>não</em> será salvo.</p>
 <div class="code_container"><code class="ruby">
 @assembly = @part.assemblies.build({:assembly_name =&gt; &quot;Transmission housing&quot;})
 </code></div>
 <h6 id="emcollectionemcreateattributes">4.4.1.14 <em>collection</em>.create(attributes = {})</h6>
-<p>O método <tt><em>collection</em>.create</tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, e uma associação será criada através da tabela de junção, e o objeto associado <em>será</em> salvo (contando que atenda todas as validações).</p>
+<p>O método <tt><em>collection</em>.create</tt> retorna um novo objeto do tipo associado. Este objeto será instanciado a partir dos atributos passados, e uma associação será criada através da tabela de junção, e o objeto associado <em>será</em> salvo (contando que passe por todas as validações).</p>
 <div class="code_container"><code class="ruby">
 @assembly = @part.assemblies.create({:assembly_name =&gt; &quot;Transmission housing&quot;})
 </code></div>
 <h5 id="opesparahas-and-belongs-to-many">4.4.2 Opções para has_and_belongs_to_many</h5>
-<p>Em muitas situações, você pode usar o comportamento padrão para <tt>has_and_belongs_to_many</tt> sem nenhuma customização. Mas você pode alterar este comportamento de várias formas. Esta seção cobre as opções que você pode passar quando ao criar uma associação <tt>has_and_belongs_to_many</tt>. Por exemplo, uma associação com várias opções pode parecer com isso:</p>
+<p>Em muitas situações, você pode usar o comportamento padrão para <tt>has_and_belongs_to_many</tt> sem nenhuma customização. Mas você pode alterar este comportamento de várias formas. Esta seção cobre as opções que você pode passar ao criar uma associação <tt>has_and_belongs_to_many</tt>. Por exemplo, uma associação com várias opções pode se parecer com isso:</p>
 <div class="code_container"><code class="ruby">
 class Parts &lt; ActiveRecord::Base
   has_and_belongs_to_many :assemblies, :uniq =&gt; true, :read_only =&gt; true
@@ -1186,8 +1167,8 @@ end
 	<li><tt>:validate</tt></li>
 </ul>
 <h6 id="association-foreign-key">4.4.2.1 :association_foreign_key</h6>
-<p>Por convenção, o Rails descobre que a coluna na tabela de junção usada para armazenar as chaves estrangeiras apontando para outros models é o nome do model com o sufixo <tt>_id</tt> . A opção <tt>:association_foreign_key</tt> permite que você defina o nome da chave estrangeira diretamente:</p>
-<div class='info'><p>As opções <tt>:foreign_key</tt> e <tt>:association_foreign_key</tt> são uteis quando você estiver definindo um relação muitos-para-muitos em uma auto-junção. Por exemplo:</p></div>
+<p>Por convenção, o Rails adivinha que a coluna na tabela de junção usada para armazenar as chaves estrangeiras apontando para outros models é o nome do model com o sufixo <tt>_id</tt> . A opção <tt>:association_foreign_key</tt> permite que você defina o nome da chave estrangeira diretamente:</p>
+<div class='info'><p>As opções <tt>:foreign_key</tt> e <tt>:association_foreign_key</tt> são úteis quando você estiver definindo uma relação muitos-para-muitos em uma auto-associação. Por exemplo:</p></div>
 <div class="code_container"><code class="ruby">
 class User &lt; ActiveRecord::Base
   has_and_belongs_to_many :friends, :class_name =&gt; &quot;User&quot;,
@@ -1195,16 +1176,16 @@ class User &lt; ActiveRecord::Base
 end
 </code></div>
 <h6 id="autosave">4.4.2.2 <tt>:autosave</tt></h6>
-<p>Se você definir a opção <tt>:autosave</tt> para <tt>true</tt>, Rails irá salvar qualquer membro carregado e destroir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.</p>
+<p>Se você definir a opção <tt>:autosave</tt> para <tt>true</tt>, o Rails irá salvar qualquer membro carregado e destruir os membros que estiverem marcados para serem destruídos quando salvar o objeto paí.</p>
 <h6 id="class-name">4.4.2.3 :class_name</h6>
-<p>Se o nome do outro model não pouder ser encontrado a partir do nome da associação, você pode usar a opção <tt>:class_name</tt> para passar o nome do model. Por exemplo, se parts contém assemblies, mas o nome do model que contém os assemblies é <tt>Gadget</tt>, você deve fazer algo como abaixo:</p>
+<p>Se o nome do outro model não puder ser derivado a partir do nome da associação, você pode usar a opção <tt>:class_name</tt> para passar o nome do model. Por exemplo, se parts contém assemblies, mas o nome do model que contém os assemblies é <tt>Gadget</tt>, você deve fazer algo como abaixo:</p>
 <div class="code_container"><code class="ruby">
 class Parts &lt; ActiveRecord::Base
   has_and_belongs_to_many :assemblies, :class_name =&gt; &quot;Gadget&quot;
 end
 </code></div>
 <h6 id="conditions">4.4.2.4 :conditions</h6>
-<p>A opção <tt>:conditions</tt> permiti especificar a condição que o objeto associado deve atender ( na sintaxe usada por uma cláusula <span class="caps">SQL</span> <tt>WHERE</tt> ).</p>
+<p>A opção <tt>:conditions</tt> permite especificar a condição que o objeto associado deve atender (na sintaxe usada por uma cláusula <span class="caps">SQL</span> <tt>WHERE</tt>).</p>
 <div class="code_container"><code class="ruby">
 class Parts &lt; ActiveRecord::Base
   has_and_belongs_to_many :assemblies, :conditions =&gt; &quot;factory = 'Seattle'&quot;
@@ -1221,11 +1202,11 @@ end
 <p>Normalmente o Rails gera automaticamente o <span class="caps">SQL</span> apropriado para contar os membros da associação. Com a opção <tt>:counter_sql</tt>, você pode especificar o <span class="caps">SQL</span> para fazer a contagem.</p>
 <div class='note'><p>Se você especificar <tt>:finder_sql</tt> mas não <tt>:counter_sql</tt>, o <span class="caps">SQL</span> contador será gerado substituindo <tt>SELECT COUNT(*) FROM</tt> para a cláusula <tt>SELECT ... FROM</tt> para a declaração do seu <tt>:finder_sql</tt>.</p></div>
 <h6 id="delete-sql">4.4.2.6 :delete_sql</h6>
-<p>Normalmente Rails gera automaticamente o <span class="caps">SQL</span> apropriado para remover as ligações entre as classes associadas. Com a opção <tt>:delete_sql</tt>, você pode especificar uma cláusula <span class="caps">SQL</span> para excluir da sua forma.</p>
+<p>Normalmente o Rails gera automaticamente o <span class="caps">SQL</span> apropriado para remover as ligações entre as classes associadas. Com a opção <tt>:delete_sql</tt>, você pode especificar uma cláusula <span class="caps">SQL</span> para exclusão.</p>
 <h6 id="extend">4.4.2.7 :extend</h6>
-<p>A opção <tt>:extend</tt> especifica um módulo para estender o proxy de associação. Extensão de associações <a href="#extensesde-associao">serão discutidas com mais detalhes neste guia</a>.</p>
+<p>A opção <tt>:extend</tt> especifica um módulo para estender o proxy de associação. Extensão de associações <a href="#extensesdeassociao">serão discutidas com mais detalhes neste guia</a>.</p>
 <h6 id="finder-sql">4.4.2.8 :finder_sql</h6>
-<p>Normalmente Rails gera automaticamente o <span class="caps">SQL</span> apropriado para buscar os membros da associação. Com a opção <tt>:finder_sql</tt>, você pode especificar sua própria cláusula <span class="caps">SQL</span> para buscar os registros. Se a busca dos objetos requer um <span class="caps">SQL</span> complexo em um hierarquia multi-table, então esta opção pode ser necessária.</p>
+<p>Normalmente Rails gera automaticamente o <span class="caps">SQL</span> apropriado para buscar os membros da associação. Com a opção <tt>:finder_sql</tt>, você pode especificar sua própria cláusula <span class="caps">SQL</span> para buscar os registros. Se a busca dos objetos requer um <span class="caps">SQL</span> complexo em um hierarquia de múltiplas tabelas, então esta opção pode ser necessária.</p>
 <h6 id="foreign-key">4.4.2.9 :foreign_key</h6>
 <p>Por convenção, o Rails adivinha que a coluna na tabela de junção que será usada para armazenar a chave estrangeira será o nome do model mais o sufixo <tt>_id</tt>. A opção <tt>:foreign_key</tt> permite que você especifique o nome da chave estrangeira diretamente:</p>
 <div class="code_container"><code class="ruby">
@@ -1242,11 +1223,11 @@ class Parts &lt; ActiveRecord::Base
 end
 </code></div>
 <h6 id="include">4.4.2.11 :include</h6>
-<p>Você pode usar a opção <tt>:include</tt> para especificar uma associação de segunda ordem que deve ser previamente carregada quando a associação for utilizada.</p>
+<p>Você pode usar a opção <tt>:include</tt> para especificar uma associação de segunda ordem que deve ser pré-carregada quando a associação for utilizada.</p>
 <h6 id="insert-sql">4.4.2.12 :insert_sql</h6>
 <p>Normalmente o Rails gera automaticamente o <span class="caps">SQL</span> apropriado para criar a associação entre as classes. Com a opção <tt>:insert_sql</tt>, você pode especificar um comando <span class="caps">SQL</span> para inserir os registros da sua forma.</p>
 <h6 id="join-table">4.4.2.13 :join_table</h6>
-<p>Se o nome padrão da tabela de junção, baseada em ordem léxica, não é o que você deseja, então é possível usar a opção <tt>:join_table</tt> para sobrescrever este comportamento.</p>
+<p>Se o nome padrão da tabela de junção, baseada em ordem alfabética, não é o que você deseja, então é possível usar a opção <tt>:join_table</tt> para sobrescrever este comportamento.</p>
 <h6 id="limit">4.4.2.14 :limit</h6>
 <p>A opção <tt>:limit</tt> permite a você restringir o número total de objeto que serão buscados através da associação.</p>
 <div class="code_container"><code class="ruby">
@@ -1256,29 +1237,29 @@ class Parts &lt; ActiveRecord::Base
 end
 </code></div>
 <h6 id="offset">4.4.2.15 :offset</h6>
-<p>A opção <tt>:offset</tt> permite que você especifique de onde a busca dos objetos associados deve iniciar. Por exemplo, se você definir <tt>:offset => 11</tt>, irá ignorar os 10 primeiros registros.</p>
+<p>A opção <tt>:offset</tt> permite que você especifique de onde a busca dos objetos associados deve iniciar. Por exemplo, se você definir <tt>:offset => 11</tt>, irá ignorar os 11 primeiros registros.</p>
 <h6 id="order">4.4.2.16 :order</h6>
-<p>A opção <tt>:order</tt> dita a ordem que cada objeto associado deve ser retornado ( gerando uma cláusula <span class="caps">SQL</span> <tt>ORDER BY</tt>).</p>
+<p>A opção <tt>:order</tt> dita a ordem que cada objeto associado deve ser retornado (gerando uma cláusula <span class="caps">SQL</span> <tt>ORDER BY</tt>).</p>
 <div class="code_container"><code class="ruby">
 class Parts &lt; ActiveRecord::Base
   has_and_belongs_to_many :assemblies, :order =&gt; &quot;assembly_name ASC&quot;
 end
 </code></div>
 <h6 id="readonly">4.4.2.17 :readonly</h6>
-<p>Se você definir a opção <tt>:readonly</tt> para <tt>true</tt>, os objetos associados serão somente leitura (read-only) quando forem retornados através da associação.</p>
+<p>Se você definir a opção <tt>:readonly</tt> para <tt>true</tt>, os objetos associados serão somente leitura quando forem retornados através da associação.</p>
 <h6 id="select">4.4.2.18 :select</h6>
-<p>A opção <tt>:select</tt> permite que você sobrescreva a cláusula <span class="caps">SQL</span> <tt>SELECT</tt> que será usada para retornar os objetos associados. Por padrão, Rails retorna todas as colunas.</p>
+<p>A opção <tt>:select</tt> permite que você sobrescreva a cláusula <span class="caps">SQL</span> <tt>SELECT</tt> que será usada para retornar os objetos associados. Por padrão, o Rails retorna todas as colunas.</p>
 <h6 id="uniq">4.4.2.19 :uniq</h6>
-<p>Especificar a opção <tt>:uniq => true</tt> remove as duplicações da coleção.</p>
+<p>Especificar a opção <tt>:uniq => true</tt> remove duplicatas da coleção.</p>
 <h6 id="validate">4.4.2.20 :validate</h6>
-<p>Quando você define a opção <tt>:validate</tt> para <tt>false, os objetos associados não serão associados quando você salvo este objeto. Por padrão, esta opção recebe </tt>true+: objetos associados também serão validados quando o objeto for salvo.</p>
+<p>Quando você define a opção <tt>:validate</tt> para <tt>false, os objetos associados não serão validados quando você salvar este objeto. Por padrão, esta opção recebe </tt>true+: objetos associados também serão validados quando o objeto for salvo.</p>
 <h5 id="quandoos-objetosso-salvos">4.4.3 Quando os Objetos são Salvos?</h5>
-<p>Quando você atribuir um objeto a uma associação <tt>has_and_belongs_to_many</tt>, este objeto é automaticamente salvo( para poder atualizar a tabela de junção). Se você atribuir múltiplos objetos em uma declaração, então todos são salvos.</p>
-<p>Se uma das gravações falhar durante o processo de validações, então a atribuição retornará <tt>false</tt> e a atribuição em si, será cancelada.</p>
-<p>Se o objeto pai( o que estiver declarando a associação <tt>has_and_belongs_to_many</tt>) não for salvo (ou seja, <tt>new_record?</tt> retorna <tt>true</tt>) então os filhos também não serão salvos quando forem adicionados. Todos os membros não salvos na associação serão automaticamente salvos quando o pai for salvo.</p>
+<p>Quando você atribuir um objeto a uma associação <tt>has_and_belongs_to_many</tt>, este objeto é automaticamente salvo (para atualizar a tabela de junção). Se você atribuir múltiplos objetos em uma declaração, então todos são salvos.</p>
+<p>Se uma das gravações falhar durante o processo de validações, então a atribuição retornará <tt>false</tt> e a atribuição em si será cancelada.</p>
+<p>Se o objeto pai (o que estiver declarando a associação <tt>has_and_belongs_to_many</tt>) não estiver salvo (ou seja, <tt>new_record?</tt> retorna <tt>true</tt>) então os filhos também não serão salvos quando forem adicionados. Todos os membros não salvos na associação serão automaticamente salvos quando o pai for salvo.</p>
 <p>Se você quiser atribuir um objeto a uma associação <tt>has_and_belongs_to_many</tt> sem salvar o objeto, use o método <tt><em>collection</em>.build</tt>.</p>
 <h4 id="association-callbacks">4.5 Association Callbacks</h4>
-<p>Normalmente callbacks fazem para do ciclo de vida de objetos Active Record, permitindo que você trabalhe com estes objetos em vários pontos. Por exemplo, você pode usar o callback <tt>:before_save</tt> para fazer com que algo aconteça antes do objeto ser salvo.</p>
+<p>Callbacks normais são atrelados ao ciclo de vida de objetos Active Record, permitindo que você trabalhe com estes objetos em vários pontos. Por exemplo, você pode usar o callback <tt>:before_save</tt> para fazer com que algo aconteça antes do objeto ser salvo.</p>
 <p>Callbacks de associação são similares a callbacks normais, mas eles são acionados por eventos no ciclo de vida da coleção. Existem quatro callbacks de associação disponíveis:</p>
 <ul>
 	<li><tt>before_add</tt></li>
@@ -1296,7 +1277,7 @@ class Customer &lt; ActiveRecord::Base
   end
 end
 </code></div>
-<p>Rails passa o objeto a ser adicionado ou removido para o callback.</p>
+<p>O Rails passa o objeto a ser adicionado ou removido para o callback.</p>
 <p>Você pode empilhar callbacks em um único evento passando-os como array:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
@@ -1312,8 +1293,8 @@ class Customer &lt; ActiveRecord::Base
 end
 </code></div>
 <p>Se <tt>before_add</tt> disparar uma exceção, o objeto não será adicionado a coleção. Similarmente, se o callback <tt>before_remove</tt> disparar uma exceção, o objeto não será removido da coleção.</p>
-<h4 id="extensesde-associao">4.6 Extensões de Associação</h4>
-<p>Você não está limitado as funcionalidades que o Rails automaticamente constrói nos objetos de um association proxy. Você pode estender estes objetos através de módulos anônimos, adicionando novos finders, creators ou outros métodos. Por exemplo:</p>
+<h4 id="extensesdeassociao">4.6 Extensões de associação</h4>
+<p>Você não está limitado as funcionalidades que o Rails automaticamente constrói nos objetos de um proxy de associação. Você pode extender estes objetos através de módulos anônimos, adicionando novos finders, creators ou outros métodos. Por exemplo:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders do
@@ -1323,7 +1304,7 @@ class Customer &lt; ActiveRecord::Base
   end
 end
 </code></div>
-<p>Se você tiver uma extensão que deve ser compartilhada em várias associações, então você pode usar um módulo nomeado. Por exemplo:</p>
+<p>Se você tiver uma extensão que deve ser compartilhada por várias associações, então você pode usar um módulo nomeado. Por exemplo:</p>
 <div class="code_container"><code class="ruby">
 module FindRecentExtension
   def find_recent
@@ -1339,13 +1320,13 @@ class Supplier &lt; ActiveRecord::Base
   has_many :deliveries, :extend =&gt; FindRecentExtension
 end
 </code></div>
-<p>Para incluir mais de um módulo de extensão em uma única associações, basta especificar um array de nomes:</p>
+<p>Para incluir mais de um módulo de extensão em uma única associação, basta especificar um array de modulos:</p>
 <div class="code_container"><code class="ruby">
 class Customer &lt; ActiveRecord::Base
   has_many :orders, :extend =&gt; [FindRecentExtension, FindActiveExtension]
 end
 </code></div>
-<p>Extensões podem referenciar a própria association proxy através de três acessadores:</p>
+<p>Extensões podem referenciar o proxy de associação através de três acessadores:</p>
 <ul>
 	<li><tt>proxy_owner</tt> retorna o objeto que a associação faz parte.</li>
 	<li><tt>proxy_reflection</tt> retorna o objeto de reflexão que descreve a associação.</li>
@@ -1354,6 +1335,7 @@ end
 <h3 id="changelog">5 Changelog</h3>
 <p><a href="http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/11">Ticket no Lighthouse</a></p>
 <ul>
+	<li>Março 13, 2009: Revisão da tradução por <a href="translators.html#fabiokr">Fabio Kreusch</a></li>
 	<li>February  28, 2009: Atualização da tradução com a opção <tt>:autosave</tt> <a href="translators.html#danielvlopes">Daniel Lopes</a></li>
 	<li>Fevereiro 1, 2009: Adicionado a opção <tt>:autosave</tt> <a href="credits.html#mgunderloy">Mike Gunderloy</a></li>
 	<li>Janeiro   18, 2009: Primeira versão da tradução para português por <a href="translators.html#danielvlopes">Daniel Lopes</a></li>
