@@ -633,96 +633,98 @@ Você pode configurar vários símbolos coringas junto com as rotas regulares co
 map.connect ':controller/:action/:id/:user_id'
 </ruby>
 
-An incoming URL of +/photos/show/1/2+ will be dispatched to the +show+ action of the +Photos+ controller. +params[:id]+ will be set to 1, and +params[:user_id]+ will be set to 2.
+A chegada de uma URL de +/photos/show/1/2+ será despachada para a ação +show+ do controlador +Photos+. +params[:id]+ será definido para 1, e +params[:user_id]+ será definido para 2.
 
-h4. Static Text
+h4. Texto Estático
 
-You can specify static text when creating a route. In this case, the static text is used only for matching the incoming requests:
+Você pode especificar um texto estático quando cria a rota. Neste caso, o texto estático é usado somente para combinar com as solicitações de entrada:
 
 <ruby>
 map.connect ':controller/:action/:id/with_user/:user_id'
 </ruby>
 
-This route would respond to URLs such as +/photos/show/1/with_user/2+.
+Esta rota deverá responder para URLs como +/photos/show/1/with_user/2+.
 
-h4. Querystring Parameters
+h4. Querystring Parâmetros
 
-Rails routing automatically picks up querystring parameters and makes them available in the +params+ hash. For example, with this route:
+O roteamento Rails automaticamente pega parâmetros de querystring e os torna disponíveis na hash +params+. Por exemplo, com esta rota:
 
 <ruby>
 map.connect ':controller/:action/:id'
 </ruby>
 
-An incoming URL of +/photos/show/1?user_id=2+ will be dispatched to the +show+ action of the +Photos+ controller. +params[:id]+ will be set to 1, and +params[:user_id]+ will be equal to 2.
+Solicitações de URL para +/photos/show/1?user_id=2+ será despachada para a ação +show+ do controlador +Photos+. +params[:id]+ será definido como 1, e +params[:user_id]+ será definido como 2.
 
-h4. Defining Defaults
+h4. Definindo Padrões
 
-You do not need to explicitly use the +:controller+ and +:action+ symbols within a route. You can supply defaults for these two parameters in a hash:
+Você não precisa explicitamente usar o símbolos +:controller+ e +:action+ juntamente com a rota. Você pode fornecer padrões para esses dois parâmetros em uma hash:
 
 <ruby>
 map.connect 'photo/:id', :controller => 'photos', :action => 'show'
 </ruby>
 
-With this route, an incoming URL of +/photos/12+ would be dispatched to the +show+ action within the +Photos+ controller.
+Com esta rota, chamadas URL para +/photos/12+ será despachado para a ação +show+ juntamente para o controlador +Photos+.
 
-You an also define other defaults in a route by supplying a hash for the +:defaults+ option. This even applies to parameters that are not explicitly defined elsewhere in the route. For example:
+Você pode definir outros padrões na rota fornecendo uma hash para a opção +:defaults+. Isto mesmo se aplica para os parâmetros que não estão explicitamente definidos em outros locais na rota. Por exemplo:
 
 <ruby>
 map.connect 'photo/:id', :controller => 'photos', :action => 'show', :defaults => { :format => 'jpg' }
 </ruby>
 
-With this route, an incoming URL of +photos/12+ would be dispatched to the +show+ action within the +Photos+ controller, and +params[:format]+ will be set to +jpg+.
+Com esta rota, solicitações URL para +photos/12+ serão despachado para a ação +show+ juntamente para o controlador +Photos+, e o +params[:format]+ será definido para +jpg+.
 
-h4. Named Routes
+h4. Rotas Nomeadas
 
-Regular routes need not use the +connect+ method. You can use any other name here to create a _named route_. For example,
+Rotas regulares não precisa usar o método +connect+. Você pode usar qualquer outro nome para criar uma _rota nomeada_. Por exemplo,
 
 <ruby>
 map.logout '/logout', :controller => 'sessions', :action => 'destroy'
 </ruby>
 
-This will do two things. First, requests to +/logout+ will be sent to the +destroy+ method of the +Sessions+ controller. Second, Rails will maintain the +logout_path+ and +logout_url+ helpers for use within your code.
+Isto terá duas coisas. Primeiro, requisições para +/logout+ serão enviadas para o método +destroy+ do controlador +Sessions+. Segundo, Rails manterá os helpers +logout_path+ e +logout_url+ para usar nos seus códigos.
 
-h4. Route Requirements
+h4. Requisitos de Rota
 
-You can use the +:requirements+ option to enforce a format for any parameter in a route:
+Você pode usar a opção +:requirements+ para obrigar um formato para qualquer parâmetro na rota:
 
 <ruby>
 map.connect 'photo/:id', :controller => 'photos', :action => 'show',
  :requirements => { :id => /[A-Z]\d{5}/ }
 </ruby>
 
-This route would respond to URLs such as +/photo/A12345+. You can more succinctly express the same route this way:
+Isso irá responder para URLs como +/photo/A12345+. Você pode expressar sucintamente a mesma rota desta forma:
 
 <ruby>
 map.connect 'photo/:id', :controller => 'photos', :action => 'show',
   :id => /[A-Z]\d{5}/ 
 </ruby>
 
-h4. Route Conditions
+h4. Condições na Rota
 
-Route conditions (introduced with the +:conditions+ option) are designed to implement restrictions on routes. Currently, the only supported restriction is +:method+:
+Condições na rota (introduzido com a opção +:conditions+) são projetados para implementar restrições nas rotas. Atualmente, somente a restrição suportada é +:method+.
 
 <ruby>
 map.connect 'photo/:id', :controller => 'photos', :action => 'show',
  :conditions => { :method => :get }
 </ruby>
 
-As with conditions in RESTful routes, you can specify +:get+, +:post+, +:put+, +:delete+, or +:any+ for the acceptable method.
+Como nas condições em rotas RESTful, você pode especificar +:get+, +:post+, +:put+, +:delete+, ou +:any+ para os métodos aceitáveis.
 
-h4. Route Globbing
+h4. Englobamento de Rota
 
-Route globbing is a way to specify that a particular parameter (which must be the last parameter in the route) should be matched to all the remaining parts of a route. For example
+O englobamento de rota é a forma de especifícar um parâmetro em particulpar (que deve ser o último parâmetro na rota) deverá combinar com todas as partes restantes da rota. Por exemple
 
 <ruby>
 map.connect 'photo/*other', :controller => 'photos', :action => 'unknown',
 </ruby>
 
-This route would match +photo/12+ or +/photo/long/path/to/12+ equally well, creating an array of path segments as the value of +params[:other]+.
+Esta rota deverá combinar com +photo/12+ ou +/photo/long/path/to/12+ igualmente, criando um array de caminhos como o valor +params[:other]+
 
-h4. Route Options
+h4. Opções de Rotas
 
-You can use +:with_options+ to simplify defining groups of similar routes:
+Você pode usar +:with_options+
+
+Você pode usar +:with_options+ para simplificar a definindo grupos de rotas similares:
 
 <ruby>
 map.with_options :controller => 'photo' do |photo|
@@ -732,19 +734,19 @@ map.with_options :controller => 'photo' do |photo|
 end
 </ruby>
 
-The importance of +map.with_options+ has declined with the introduction of RESTful routes.
+A importância de +map.with_options+ está declinando com a introdução de rotas RESTful.
 
-h3. Formats and respond_to
+h3. Formatos e respond_to
 
-There's one more way in which routing can do different things depending on differences in the incoming HTTP request: by issuing a response that corresponds to what the request specifies that it will accept. In Rails routing, you can control this with the special +:format+ parameter in the route.
+Há mais de uma forma de roteamento que pode fazer coisas diferentes dependendo das diferenças nas solicitações HTTP: pela emissão de respostas que corresponde como a requisição específica será aceita. No roteamento Rails, você pode controlar isto em especial com o parâmetro +:format+ na rota.
 
-For instance, consider the second of the default routes in the boilerplate +routes.rb+ file:
+Por exemplo, considere o segundo padrão de rotas nos padrões do arquivo +routes.rb+:
 
 <ruby>
 map.connect ':controller/:action/:id.:format'
 </ruby>
 
-This route matches requests such as +/photo/edit/1.xml+ or +/photo/show/2.rss+. Within the appropriate action code, you can issue different responses depending on the requested format:
+Esta rota combina com requisições como +/photo/edit/1.xml+ ou +/photo/show/2.rss+. Juntamente com o código apropriado, você pode diferenciar a resposta dependendo de como ela foi requisitada:
 
 <ruby>
 respond_to do |format|
@@ -753,78 +755,78 @@ respond_to do |format|
 end
 </ruby>
 
-h4. Specifying the Format with an HTTP Header
+h4. Especificando o Formato com um cabeçalho HTTP
 
-If there is no +:format+ parameter in the route, Rails will automatically look at the HTTP Accept header to determine the desired format.
+Se não houver o parâmetro +:format+ na rota, o Rails automaticamente olhará para o cabeçalho HTTP Accept para determinar o formato desejado.
 
-h4. Recognized MIME types
+h4. Reconhecendo tipos MIME
 
-By default, Rails recognizes +html+, +text+, +json+, +csv+, +xml+, +rss+, +atom+, and +yaml+ as acceptable response types. If you need types beyond this, you can register them in your environment:
+Por padrão, o Rails reconhece +html+, +text+, +json+, +csv+, +xml+, +rss+, +atom+, e +yaml+ como tipos de respostas aceitáveis. Se você necessita de tipos por trás disso, você pode registrar isto no seu environment:
 
 <ruby>
 Mime::Type.register "image/jpg", :jpg
 </ruby>
 
-h3. The Default Routes
+h3. As Rotas Padrões
 
-When you create a new Rails application, +routes.rb+ is initialized with two default routes:
+Quando você cria uma nova aplicação Rails, +routes.rb+ é inicializado com essas duas rotas padrões:
 
 <ruby>
 map.connect ':controller/:action/:id'
 map.connect ':controller/:action/:id.:format'
 </ruby>
 
-These routes provide reasonable defaults for many URLs, if you're not using RESTful routing.
+Essas rotas fornecem razoáveis padrões para muitas URLs, se você não está usando roteamento RESTful.
 
-NOTE: The default routes will make every action of every controller in your application accessible to GET requests. If you've designed your application to make consistent use of RESTful and named routes, you should comment out the default routes to prevent access to your controllers through the wrong verbs. If you've had the default routes enabled during development, though, you need to be sure that you haven't unwittingly depended on them somewhere in your application - otherwise you may find mysterious failures when you disable them.
+NOTE: O padrão de rotas fará a cada ação para cada controlador na sua aplicação acessível por requisições GET. Se você conceber sua aplicação para fazer o uso consistente de RESTful e rotas nomeadas, você deve comentar as rotas padrões para previnir o acesso de seus controladores atráves de verbos errados. Se você tiver as rotas padrões habilidades durante o desenvolvimento, embora, você precisa ter certeza de que não tenha involutariamente dependente deles em algum lugar da sua aplicação - de outra forma você pode encontrar falhas misteriosas quando você desativá-las.
 
-h3. The Empty Route
+h3. A Rota Vazia
 
-Don't confuse the default routes with the empty route. The empty route has one specific purpose: to route requests that come in to the root of the web site. For example, if your site is example.com, then requests to +http://example.com+ or +http://example.com/+ will be handled by the empty route.
+Não confuda as rotas padrões com a rota vazia. A rota vazia tem uma finalidade específica: para requisitar os pedidos dentro da raiz do web site. Por exemplo, se seu site é example.com, então as requisições para +http://example.com+ ou +http://example.com/+ serão tratadas pela rota vazia.
 
-h4. Using map.root
+h4. Usando map.root
 
-The preferred way to set up the empty route is with the +map.root+ command:
+A forma preferida de configurar uma rota vazia é com o comando +map.root+:
 
 <ruby>
 map.root :controller => "pages", :action => "main"
 </ruby>
 
-The use of the +root+ method tells Rails that this route applies to requests for the root of the site.
+O uso do método +root+ fornece Rails que esta rota deve ser aplicada quando requisitado a raiz do site.
 
-For better readability, you can specify an already-created route in your call to +map.root+:
+Para uma melhor legibilidade, você pode especificar uma rota já criada na chamda para +map.root+:
 
 <ruby>
 map.index :controller => "pages", :action => "main"
 map.root :index
 </ruby>
 
-Because of the top-down processing of the file, the named route must be specified _before_ the call to +map.root+.
+Por causa do processamento de cima para baixo do arquivo, a rota nomeada deve ser especifícada _antes_ da chamada para +map.root+.
 
-h4. Connecting the Empty String
+h4. Conectando uma String Vazia
 
-You can also specify an empty route by explicitly connecting the empty string:
+Você pode especificar uma rota vazia explicitamente conectando uma string vazia:
 
 <ruby>
 map.connect '', :controller => "pages", :action => "main"
 </ruby>
 
-TIP: If the empty route does not seem to be working in your application, make sure that you have deleted the file +public/index.html+ from your Rails tree.
+TIP: Se a rota vazia não parece que está funcionando na sua aplicação, tenha certeza que você tenha deletado o arquivo +public/index.html+ da sua árvore Rails.
 
-h3. Inspecting and Testing Routes
+h3. Inspencionando e Testando Rotas
 
-Routing in your application should not be a "black box" that you never open. Rails offers built-in tools for both inspecting and testing routes.
+Roteando na sua aplicação não deve ser uma "caixa preta" que você nunca abrirá. O Rails oferece ferramentas prontas tanto para inspecionar e testas as rotas.
 
-h4. Seeing Existing Routes with rake
+h4. Vendo Rotas Existentes com Rake
 
-If you want a complete list of all of the available routes in your application, run the +rake routes+ command. This will dump all of your routes to the console, in the same order that they appear in +routes.rb+. For each route, you'll see:
+Se você precisa de uma lista de todas as rotas disponíveis na sua aplicação, roda o comando +rake routes+. Irá descarregar todas as rotas para o console, na mesma ordem que aparecem em +routes.rb+. Para cada rota, você verá:
 
-* The route name (if any)
-* The HTTP verb used (if the route doesn't respond to all verbs)
-* The URL pattern
-* The routing parameters that will be generated by this URL
+* O nome da rota (se houver)
+* O verbo HTTP usado (se a rota não responder para todos os verbos)
+* O padrão de URL
+* Os parâmetros de roteamento que serão gerados pela URL
 
-For example, here's a small section of the +rake routes+ output for a RESTful route:
+Por exemplo, aqui é uma pequena seção da saída do +rake routes+ para uma rota RESTful:
 
 <pre>
           users GET  /users          {:controller=>"users", :action=>"index"}
@@ -833,48 +835,48 @@ formatted_users GET  /users.:format  {:controller=>"users", :action=>"index"}
                 POST /users.:format  {:controller=>"users", :action=>"create"}
 </pre>
 
-TIP: You'll find that the output from +rake routes+ is much more readable if you widen your terminal window until the output lines don't wrap.
+TIP: Você verá que a saída de +rake routes+ é muito mais legível se você aumentar a janela do terminal até que as linhas de saída não se enrolem
 
-h4. Testing Routes
+h4. Testando Rotas
 
-Routes should be included in your testing strategy (just like the rest of your application). Rails offers three "built-in assertions":http://api.rubyonrails.com/classes/ActionController/Assertions/RoutingAssertions.html designed to make testing routes simpler:
+Rotas devem ser incluídas na sua estratégia de teste (assim como o resto da sua aplicação). Rails oferece três "built-in assertions":http://api.rubyonrails.com/classes/ActionController/Assertions/RoutingAssertions.html projetado para testar rotas mais simples:
 
 * +assert_generates+
 * +assert_recognizes+
 * +assert_routing+
 
-h5. The +assert_generates+ Assertion
+h5. A Assertion The +assert_generates+
 
-Use +assert_generates+ to assert that a particular set of options generate a particular path. You can use this with default routes or custom routes
+Use +assert_generates+ para afirmar que um conjunto particular de opções gera um caminho particular. Você pode usar junto com as rotas padrões ou com rotas customizadas.
 
 <ruby>
 assert_generates "/photos/1", { :controller => "photos", :action => "show", :id => "1" }
 assert_generates "/about", :controller => "pages", :action => "about"
 </ruby>
 
-h5. The +assert_recognizes+ Assertion
+h5. A Assertion +assert_recognizes+
 
-The +assert_recognizes+ assertion is the inverse of +assert_generates+. It asserts that Rails recognizes the given path and routes it to a particular spot in your application.
+A afirmação +assert_recognizes+ é o inverso da +assert_generates+. Ela afirma ao Rails reconhecer os caminhos recebidos e as rotas para um local em particulpar na sua aplicação.
 
 <ruby>
 assert_recognizes { :controller => "photos", :action => "show", :id => "1" }, "/photos/1"
 </ruby>
 
-You can supply a +:method+ argument to specify the HTTP verb:
+Você pode fornecer o argumento +:method+ para especificar um verbo HTTP:
 
 <ruby>
 assert_recognizes { :controller => "photos", :action => "create" }, { :path => "photos", :method => :post }
 </ruby>
 
-You can also use the RESTful helpers to test recognition of a RESTful route:
+Você também pode usar helpers RESTful para testar o reconhecimento da rota RESTful:
 
 <ruby>
 assert_recognizes new_photo_url, { :path => "photos", :method => :post }
 </ruby>
 
-h5. The +assert_routing+ Assertion
+h5. A Assertion +assert_routing+ 
 
-The +assert_routing+ assertion checks the route both ways: it tests that the path generates the options, and that the options generate the path. Thus, it combines the functions of +assert_generates+ and +assert_recognizes+.
+A afirmação +assert_routing+ verifica a rota de duas formas: testa se o caminho gera as opções, e que as opções geram o caminho. Deste modo, combina as funções de +assert_generates+ e +assert_recognizes+.
 
 <ruby>
 assert_routing { :path => "photos", :method => :post }, { :controller => "photos", :action => "create" }
@@ -887,3 +889,4 @@ h3. Changelog
 * October 4, 2008: Added additional detail on specifying verbs for resource member/collection routes , by "Mike Gunderloy":credits.html#mgunderloy
 * September 23, 2008: Added section on namespaced controllers and routing, by "Mike Gunderloy":credits.html#mgunderloy
 * September 10, 2008: initial version by "Mike Gunderloy":credits.html#mgunderloy
+* March, 14, 2009: translated by "Cairo Noleto":credits.html#caironoleto
