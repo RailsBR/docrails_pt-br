@@ -788,5 +788,5 @@ h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/17
 
-* Março 2, 2008: Revisão da tradução por "Daniel Lopes":translators.html#danielvlopes
+* Março 2, 2009: Revisão da tradução por "Daniel Lopes":translators.html#danielvlopes
 * Novembro 4, 2008: Primeira versão por Tore Darrell

