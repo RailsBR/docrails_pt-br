@@ -1,0 +1,567 @@
+h2. Notas de Lançamento do Ruby on Rails 2.3
+
+NOTE: Estas notas de lançamento referem-se ao RC2 do Rails 2.3. Este á um release candidate, e não a versão final do Rails 2.3. Ele tem a intenção de ser um release estável para testes, e nós pedimos que você teste suas próprias aplicações e reporte quaisquer problemas para o "Rails Lighthouse":http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/overview.
+
+O Rails 2.3 traz uma variedade de novas e melhoradas funcionalidades, incluindo integração com Rack pervasiva, atualização do suporte aos Rails Engines, transações aninhadas para o Active Record, escopos dinâmicos e padrões, roteamento mais eficiente, templates de aplicação, e backtraces silenciosos. Esta lista abrange os maiores upgrades, mas não inclui cada pequena correção de bug e alteração. Se você quer visualizar tudo, verifique a "lista de commits":http://github.com/rails/rails/commits/master no repositório principal do Rails no GitHub ou revise os arquivos +CHANGELOG+ para os componentes individuais do Rails.
+
+endprologue.
+
+h3. Arquitetura da Aplicação
+
+Existem duas mudanças grandes na arquitetura das aplicações Rails: integração completa da interface modular para servidores web "Rack":http://rack.rubyforge.org/, e suporte renovado para os Rails Engines.
+
+h4. Integração com o Rack
+
+O Rails agora separou-se do seu passado com CGI, a usa Rack em toda parte. Isto exigiu e resultou em um número tremendo de modificações internas (mas se você usa CGI, não se preocupe; Rails agora suporta CGI através de uma interface proxy). Ainda, esta é uma mudança importante para o Rails. Após atualizar para o 2.3, você deve testar em seu ambiente local e em seu ambiente de produção. Algumas coisas para testar:
+
+* Sessões
+* Cookies
+* Upload de arquivos
+* APIs JSON/XML
+
+Segue um resumo das mudanças relacionadas ao rack:
+
+* +script/server+ foi mudado para usar Rack, o que significa que suporta qualquer servidor compatível com Rack. +script/server+ também irá carregar um arquivo de configuração rackup se existir. Por padrão, ele irá procurar um arquivo +config.ru+, mas você pode sobrescrever isto com o modificador +-c+.
+* O gerenciador FCGI passa pelo Rack
+* +ActionController::Dispatcher+ mantém sua própria pilha de middleware padrão. Middlewares podem ser injetados, reordenados, e removidos. A pilha é compilada dentro da cadeia no boot. Você pode configurar a pilha de middleware no +environment.rb+
+* A tarefa +rake middleware+ foi adicionada para inspecionar a pilha de middleware. Isto é útil para depurar a ordem da pilha de middleware.
+* O executador de testes de integração foi modificado para executar as pilhas de middleware e da aplicação inteiras. Isto faz os testes de integração perfeitos para testar o middleware Rack.
+* +ActionController::CGIHandler+ é um wrapper para compatibilidade CGI em torno do Rack. O +CGIHandler+ destina-se a pegar um antigo objeto CGI e converter sua informação de ambiente em um formato compatível com Rack.
+* +CgiRequest+ e +CgiResponse+ foram removidos
+* Armazenamentos de sessão são agora carregadas sob demanda. Se você nunca acessar o objeto da sessão durante uma requisição, ele nunca tentará carregar os dados da sessão (analisar cookies, carregar os dados do memcache, ou buscar um objeto Active Record).
+* +CGI::Session::CookieStore+ foi substituído pelo +ActionController::Session::CookieStore+
+* +CGI::Session::MemCacheStore+ foi substituído pelo +ActionController::Session::MemCacheStore+
+* +CGI::Session::ActiveRecordStore+ foi substituído pelo +ActiveRecord::SessionStore+
+* Você ainda pode mudar seu armazenamento de sessão com +ActionController::Base.session_store = :active_record_store+
+* Opções padrão das sessões ainda são definidas com +ActionController::Base.session = { :key => "..." }+
+* O mutex que normalmente envolve toda a requisição foi movido para um middleware, +ActionController::Lock+
+* +ActionController::AbstractRequest+ e +ActionController::Request+ foram unificados. O novo +ActionController::Request+ herda de +Rack::Request+. Isto afeta o acesso ao +response.headers['type']+ nas requisições de teste. Use no lugar +response.content_type+.
+* O middleware +ActiveRecord::QueryCache+ é automaticamente inserido dentro da pilha de middleware se o +ActiveRecord+ foi carregado. Este middleware monta e limpa a cache de consultas do Active Record por requisição.
+* As classes router e controller do Rails seguem a especificação do Rack. Você pode chamar um controller diretamente com +SomeController.call(env)+. O router armazena os parâmetros de roteamento em +rack.routing_args+.
+* +ActionController::Request+ herda de +Rack::Request+
+* Ao invés de +config.action_controller.session = { :session_key => 'foo', ...+ use +config.action_controller.session = { :key => 'foo', ...+
+* Usando o middleware +ParamsParser+ quaisquer requisições XML, JSON, ou YAML são pré-processadas, podendo então ser normalmente lidas com qualquer objeto +Rack::Request+ após isto.
+
+h4. Suporte renovado para Rails Engines
+
+Após algumas versões sem atualização, o Rails 2.3 traz algumas novas funcionalidades para Rails Engines (aplicações Rails que podem ser embutidas dentro de outras aplicações). Primeiro, arquivos de roteamento nos engines são automaticamente carregados e recarregados agora, assim como seu arquivo +routes.rb+ (isto também se aplica a arquivos de roteamento em outros plugins). Segundo, se seu plugin possui um diretório app, então app/[models|controllers|helpers] serão automaticamente adicionados ao load path do Rails. Engines também suportam agora a adição de caminhos para views, e o Action Mailer assim como o Action View usará views dos engines e outros plugins.
+
+h3. Documentação
+
+O projeto "Guias Ruby on Rails":http://guides.rubyonrails.org/ tem publicado vários guias adicionais para o Rails 2.3. Além disso, um "site separado":http://guides.rails.info/ mantém cópias atualizadas dos Guias para o Rails Edge. Outros esforços de documentação incluem o relançamento do "wiki Rails":http://newwiki.rubyonrails.org/ e o planejamento antecipado para um livro de Rails.
+
+* Mais informações: "Rails Documentation Projects":http://weblog.rubyonrails.org/2009/1/15/rails-documentation-projects
+
+h3. Suporte para o Ruby 1.9.1
+
+O Rails 2.3 deve passar por todos os seus próprios testes se você está rodando o Ruby 1.8 ou o recentemente liberado Ruby 1.9.1. No entando, você deve estar ciente que mudar para o 1.9.1 acarreta checar todos os adaptadores de dados, plugins, e outros códigos que você depende para compatibilidade com o Ruby 1.9.1, assim como o core do Rails.
+
+h3. Active Record
+
+O Active Record recebe um número considerável de novas funcionalidades e correções de bug no Rails 2.3. Os destaques incluem atributos aninhados, transações aninhadas, escopos dinâmicos e padrão, e processamento em lote.
+
+h4. Atributos Aninhados
+
+O Active Record pode agora atualizar os atributos em modelos aninhados diretamente, desde que você o diga para fazê-lo:
+
+<ruby>
+class Book < ActiveRecord::Base
+  has_one :author
+  has_many :pages
+
+  accepts_nested_attributes_for :author, :pages
+end
+</ruby>
+
+Ligar os atributos aninhados habilita uma séria de coisas: salvamento automático (e atômico) de um registro juntamente com seus filhos associados, conhecimento das validações nos filhos, e suporte para formulários aninhados (discutidos mais tarde).
+
+Você também pode especificar requerimentos para qualquer novo registro que for adicionado através de atributos aninhados usando a opção +:reject_if+
+
+<ruby>
+accepts_nested_attributes_for :author,
+  :reject_if => proc { |attributes| attributes['name'].blank? }
+</ruby>
+
+* Contribuidor Líder: "Eloy Duran":http://www.superalloy.nl/blog/
+* Mais Informações: "Nested Model Forms":http://weblog.rubyonrails.org/2009/1/26/nested-model-forms
+
+h4. Transações Aninhadas
+
+O Active Record suporta agora transações aninhadas, uma funcionalidade muito requisitada. Agora você pode escrever código como este:
+
+<ruby>
+User.transaction do
+    User.create(:username => 'Admin')
+    User.transaction(:requires_new => true) do
+      User.create(:username => 'Regular')
+      raise ActiveRecord::Rollback
+    end
+  end
+
+  User.find(:all)  # => Returns only Admin
+</ruby>
+
+Transações aninhadas permitem que você cancele uma transação interna sem afetar o estado da transação externa. Se você deseja que uma transação seja aninhada, precisa adicionar explicitamente a opção +:requires_new+; caso contrário, a transação aninhada simplesmente será parte da transação pai (assim como é atualmente no Rails 2.2). Por baixo dos panos, transações aninhadas estão "usando savepoints":http://rails.lighthouseapp.com/projects/8994/tickets/383, portanto elas são suportadas mesmo em bancos de dados que não possuem transações aninhadas reais. Existe também um pouco de mágica acontecendo para fazer com que essas transações funcionem bem com fixtures transacionais durantes os testes.
+
+* Contribuidores Líderes: "Jonathan Viney":http://www.workingwithrails.com/person/4985-jonathan-viney e "Hongli Lai":http://izumi.plan99.net/blog/
+
+h4. Escopos Dinâmicos
+
+Você conhece sobre os finders dinâmicos no Rails (que permitem que você concatene métodos como +find_by_color_and_flavor+ dinamicamente). Bem, agora você pode ter métodos de escopo dinâmicos. A idéia é unir sintaxes que permitam filtragem dinâmica _e_ encadeamento de métodos. Por exemplo:
+
+<ruby>
+Order.scoped_by_customer_id(12)
+Order.scoped_by_customer_id(12).find(:all,
+  :conditions => "status = 'open'")
+Order.scoped_by_customer_id(12).scoped_by_status("open")
+</ruby>
+
+Não há nada para definir o uso de escopos dinâmicos: eles apenas funcionam.
+
+* Contribuidor Líder: "Yaroslav Markin":http://evilmartians.com/
+* Mais informações: "What's New in Edge Rails: Dynamic Scope Methods":http://ryandaigle.com/articles/2008/12/29/what-s-new-in-edge-rails-dynamic-scope-methods.
+
+h4. Escopos Padrão
+
+O Rails 2.3 introduzirá a noção de _escopos padrão_ similares aos named scopes, mas aplicados a todos os named scopes ou métodos find dentro do modelo. Por exemplo, você pode escrever +default_scope :order => 'name ASC'+ e em qualquer hora que você recuperar registros daquele modelo eles retornarão ordenados pelo nome (a menos que você sobrescreva a opção, é claro).
+
+* Contribuidor Líder: Paweł Kondzior
+* Mais informações: "What's New in Edge Rails: Default Scoping":http://ryandaigle.com/articles/2008/11/18/what-s-new-in-edge-rails-default-scoping
+
+h4. Processamento em Lote
+
+Você pode agora processar um grande número de registros de um model ActiveRecord com menos pressão sobre a memória usando +find_in_batches+:
+
+<ruby>
+Customer.find_in_batches(:conditions => {:active => true}) do |customer_group|
+  customer_group.each { |customer| customer.update_account_balance! }
+end
+</ruby>
+
+Você pode passar a maioria das opções do +find+ para o +find_in_batches+. Entretanto, você não pode especificar uma ordem para os registros serem retornados (eles sempre retornarão em ordem crescente pela chave primária, que precisa ser um inteiro), ou usar a opção +:limit+. Ao invés, utilize a opção +:batch_size+, que tem o padrão de 1000, para definir o número de registros que serão retornados em cada lote.
+
+O novo método +each+ proporciona um wrapper em torno do +find_in_batches+ que retorna registros individuais, com o próprio find sendo executado em lotes (de 1000 por padrão):
+
+<ruby>
+Customer.each do |customer|
+  customer.update_account_balance!
+end
+</ruby>
+
+Note que você só deve utilizar este método para processamento em lote: para números de registros pequenos (menores que 1000), você deve usar só os métodos find regulares com seu próprio loop.
+
+* Mais Informações:
+ - "Rails 2.3: Batch Finding":http://afreshcup.com/2009/02/23/rails-23-batch-finding/
+ - "What's New in Edge Rails: Batched Find":http://ryandaigle.com/articles/2009/2/23/what-s-new-in-edge-rails-batched-find
+
+h4. Condições Múltiplas para Callbacks
+
+Quando se usa os callbacks do Active Record, você pode agora combinar opções +:if+ e +:unless+ no mesmo callback, e fornecer condições múltiplas como um array:
+
+<ruby>
+before_save :update_credit_rating, :if => :active,
+  :unless => [:admin, :cash_only]
+</ruby>
+* Contribuidor Líder: L. Caviola
+
+h4. Find com having
+
+Rails agora tem uma opção +:having+ no find (assim como nas associações +has_many+ e +has_and_belongs_to_many+) para filtragem de registros em finds agrupados. Tal como aqueles com backgrounds SQL pesados sabem, isto permite filtragem baseada em resultados agrupados:
+
+<ruby>
+developers =  Developer.find(:all, :group => "salary",
+  :having => "sum(salary) >  10000", :select => "salary")
+</ruby>
+
+* Contribuidor Líder: "Emilio Tagua":http://github.com/miloops
+
+h4. Condições Hash para relacionamentos has_many
+
+Você pode novamente usar um hash em condições para um relacionamento +has_many+:
+
+<ruby>
+has_many :orders, :conditions => {:status => 'confirmed'}
+</ruby>
+
+Isto funcionava no Rails 2.1, falha no Rails 2.2, e agora volta a funcionar no Rails 2.3 (se você está lidando com isto no Rails 2.2, pode usar uma string em vez de um hash para definir as condições).
+
+* Contribuidor Líder: "Frederick Cheung":http://www.spacevatican.org/
+
+h4. Reconectando Conexões MySQL
+
+O MySQL suporta a flag de reconectar em suas conexões - se definida como verdadeiro, então o cliente tentará reconectar ao servidor antes de desistir no caso de uma conexão perdida. Você pode agora setar +reconnect = true+ para suas conexões MySQL no +database.yml+ para obter este comportamento em uma aplicação Rails. O padrão é +false+, assim o comportamento das aplicações existentes não muda.
+
+* Contribuidor Líder: "Dov Murik":http://twitter.com/dubek
+* Mais informações:
+** "Controlling Automatic Reconnection Behavior":http://dev.mysql.com/doc/refman/5.0/en/auto-reconnect.html
+** "MySQL auto-reconnect revisited":http://groups.google.com/group/rubyonrails-core/browse_thread/thread/49d2a7e9c96cb9f4
+
+h4. Outras Mundaças no Active Record
+
+* Um +AS+ extra foi removido do SQL gerado pela carga do has_and_belongs_to_many, melhorando o funcionamento para alguns bancos de dados.
+* +ActiveRecord::Base#new_record?+ agora retorna +false+ ao contrário de +nil+ quando confrontado com um registro existente.
+* Um bug com o nome de tabelas com aspas em algumas associações +has_many :through+ foi corrigido.
+* Você pode agora especificar um timestamp particular para o +updated_at+: +cust = Customer.create(:name => "ABC Industries", :updated_at => 1.day.ago)+
+* Melhores mensagens de erro em falhas nos métodos +find_by_attribute!+.
+* O suporte ao +to_xml+ do Active Record fica um pouco mais flexível com a adição da opção +:camelize+.
+* Um bug no cancelamento de callbacks a partir do +before_update+ ou +before_create+ foi corrigido.
+* Tarefas Rake para bases de teste via JDBC fora adicionadas.
+* +validates_length_of+ usará a mensagem de erro customizada com a opção +:in+ ou +:within+ (se for fornecida)
+
+h3. Action Controller
+
+O Action Controller lança algumas mudanças significantes à renderização, bem como melhoramentos no roteamento e em outras áreas, neste release.
+
+h4. Renderização Unificada
+
++ActionController::Base#render+ é muito mais esperto na hora de decidir o que renderizar. Agora você pode apenas dizer para ele o que renderizar e esperar obter os resultados corretos. Em versões antigas do Rails, muitas vezes você precisava fornecer a informação a ser renderizada explicitamente:
+
+<ruby>
+render :file => '/tmp/random_file.erb'
+render :template => 'other_controller/action'
+render :action => 'show'
+</ruby>
+
+Agora no Rails 2.3, você pode apenas fornecer o que você quer renderizar:
+
+<ruby>
+render '/tmp/random_file.erb'
+render 'other_controller/action'
+render 'show'
+render :show
+</ruby>
+O Rails escolhe entre arquivo, template, e ação dependendo se existe uma barra no início, um barra embutida, ou nenhuma barra em todo o conteúdo do que é para ser renderizado. Note que você também pode utilizar um símbolo em vez de uma string quando renderizar uma ação. Outros estilos de renderização (+:inline+, +:text+, +:update+, +:nothing+, +:json+, +:xml+, +:js+) ainda requerem uma opção explícita.
+
+h4. Application Controller Renomeado
+
+Se você é uma das pessoas que sempre se aborreceu pelo caso especial de nomenclatura do +application.rb+, alegre-se! Ele foi reformulado para application_controller.rb no Rails 2.3. Além disso, há uma nova tarefa rake, +rake rails:update:application_controller+ para fazer isto automaticamente para você - e ela rodará como parte do processo normal do +rake rails:update+.
+
+* Mais Informações:
+** "The Death of Application.rb":http://afreshcup.com/2008/11/17/rails-2x-the-death-of-applicationrb/
+** "What's New in Edge Rails: Application.rb Duality is no More":http://ryandaigle.com/articles/2008/11/19/what-s-new-in-edge-rails-application-rb-duality-is-no-more
+
+h4. Suporte a Autenticação HTTP Digest
+
+O Rails agora possui suporte embutido a autenticação HTTP digest. Para usá-la, você chama +authenticate_or_request_with_http_digest+ com um bloco que retorne a senha do usuário (a qual é então transformada em hash e comparada contra as credenciais transmitidas):
+
+<ruby>
+class PostsController < ApplicationController
+  Users = {"dhh" => "secret"}
+  before_filter :authenticate
+
+  def secret
+    render :text => "Password Required!"
+  end
+
+  private
+  def authenticate
+    realm = "Application"
+    authenticate_or_request_with_http_digest(realm) do |name|
+      Users[name]
+    end
+  end
+end
+</ruby>
+
+* Contribuidor Líder: "Gregg Kellogg":http://www.kellogg-assoc.com/
+* Mais Informações: "What's New in Edge Rails: HTTP Digest Authentication":http://ryandaigle.com/articles/2009/1/30/what-s-new-in-edge-rails-http-digest-authentication
+
+h4. Roteamento Mais Eficiente
+
+Existe um par de mundaças significativas no roteamento do Rails 2.3. Os helpers de rota +formatted_+ sumiram, em favor de apenas passar +:format+ como uma opção. Isto reduz o processo de geração de rotas em 50% para qualquer recurso - e pode salvar uma quantia substancial de memória (até 100MB em grandes aplicações). Se o seu código utiliza os helpers +formatted_+, ele ainda funcionará atualmente - mas este comportamento está deprecado e sua aplicação será mais eficiente se você reescrever estas rotas usando o novo padrão. Outra granda mudança é que o Rails agora suporta vários arquivos de roteamento, não só o +routes.rb+. Você pode utilizar +RouteSet#add_configuration_file+ para importar mais rotas a qualquer momento - sem limpar as rotas carregadas atualmente. Embora esta mudança é mais útil para os Engines, você pode utilizá-la em qualquer aplicação que precise carregar rotas em lote.
+
+* Contribuidores Líderes: "Aaron Batalion":http://blog.hungrymachine.com/
+
+h4. Sessões com Carga Preguiçosa (lazy-load) baseadas no Rack
+
+Uma grande mudança empurrou as camadas baixas de armazenamento de sessão do Action Controller para o nível do Rack. Isto envolveu uma grande quantidade de trabalho no código, apesar de que deve ser completamente transparente para suas aplicações Rails (como um bônus, alguns patches desagradáveis em torno do antigo gerenciador de sessão CGI foram removidos). Isto ainda é significativo, entretanto, por uma simples razão: aplicações Rails não baseadas no Rack tem acesso aos mesmos gerenciadores de armazenamento de sessão (e por conseqüência a mesma sessão) assim como sua aplicação Rails. Além disso, as sessões agora são carregadas de forma preguiçosa (lazy load) (em conjunto com os melhoramentos de carga do resto do framework). Isto significa que você não precisa mais desabilitar as sessões explicitamente se você não as quer; somente não se refira a elas e elas não serão carregadas.
+
+h4. Mundanças no Tratamento de Tipos MIME
+
+Há um par de mudanças no código para tratamento de tipos MIME no Rails. Primeiro, agora o +MIME::Type+ implementa o operador +=~+, tornando as coisas muito mais limpas quando você precisa checar pelapresença de um tipo que possui sinônimos:
+
+<ruby>
+if content_type && Mime::JS =~ content_type
+  # do something cool
+end
+
+Mime::JS =~ "text/javascript"        => true
+Mime::JS =~ "application/javascript" => true
+</ruby>
+
+A outra mudança é que agora o framework utiliza o +Mime::JS+ quando checa por javascript em vários lugares, tornando o tratamento dessas alternativas limpo.
+
+* Contribuidor Líder: "Seth Fitzsimmons":http://www.workingwithrails.com/person/5510-seth-fitzsimmons
+
+h4. Otimização do +respond_to+
+
+Em alguns dos primeiros frutos da união entre o Rails e o Merb, o Rails 2.3 inclui algumas otimizações para o método +respond_to+, que é certamente muito utilizada em muitas aplicações Rails para permitir que seu controller formate resultados diferentemente baseado no tipo MIME da requisição de entrada. Após eliminar uma chamada ao +method_missing+ e alguns recortes e aprimoramentos, nós estamos vendo uma melhoria de 8% no número de requisições por segundo servidas por um simples +respond_to+ que altera entre três formatos. A melhor parte? Nenhuma mudança é requerida em todo o código de sua aplicação para obter vantagem deste ganho.
+
+h4. Melhoria na Performance do Caching
+
+O Rails agora mantém um cache local por requisição, reduzindo leituras desnecessárias e melhorando o desempenho do site. Embora este trabalho era originalmente limitado ao +MemCacheStore+, ele está disponível para qualquer armazenamento remoto que implemente os métodos necessários.
+
+* Contribuidor Líder: "Nahum Wild":http://www.motionstandingstill.com/
+
+h4. Views Localizadas
+
+O Rails agora pode fornecer views localizadas, dependendo do locale que você definiu. Por exemplo, suponha que você tem um controller +Posts+ com uma ação +show+. Por padrão, isto irá renderizar +app/views/posts/show.html.erb+. Mas se você setar +I18n.locale = :da+, ele irá renderizar +app/views/posts/show.da.html.erb+. Se o template localizado não existe, a versão normal será usada. O Rails inclui também +I18n#available_locales+ e +I18n::SimpleBackend#available_locales+, que retornam um array das traduções disponíveis no projeto Rails atual.
+
+h4. Escopo Parcial para Traduções
+
+Uma mudança na API de tradução torna as coisas mais fáceis e menos repetitivas para escrever traduções chave dentro de partials. Se você chamar +translate(".foo")+ a partir do template +people/index.html.erb+, na verdade você estará chamando +I18n.translate("people.index.foo")+. Se você não iniciar a chave com um ponto, então a API não usará o escopo, assim como antes.
+
+h4. Outras Mudanças do Action Controller
+
+* A manipulação de ETag foi um pouco organizada: O Rails agora pula o envio de um cabeçalho ETag quando não há corpo para a resposta ou quando enviar arquivos com +send_file+.
+* O fato do Rails checar por IP spoofing pode ser um incômodo para sites com tráfico pesado de telefones celulares, porque os proxies deles geralmente não ajustam as coisas de maneira correta. Se você é um desses, pode agora definir +ActionController::Base.ip_spoofing_check = false+ para desabilitar esta checagem por completo.
+* O +ActionController::Dispatcher+ implementa agora sua própria pilha de middleware, que você pode ver executando +rake middleware+.
+* Sessões em cookie possuem agora identificadores de sessão persistentes, com compatibilidade de API com o armazenamento no lado servidor.
+* As opções +:only+ e +:except+ para o +map.resources+ não são mais herdadas por recursos aninhados.
+* You can now use symbols for the +:type+ option of +send_file+ and +send_data+, like this: +send_file("fabulous.png", :type => :png)+.
+* O pacote memcached client foi atualizado para a versão 1.6.4.99.
+* Os métodos +expires_in+, +stale?+, e +fresh_when+ aceitam agora uma opção +:public+ para fazê-las funcionar bem com proxy caching.
+
+h3. Action View
+
+O Action View no Rails 2.3 traz formulários com modelos aninhados, melhorias no +render+, prompts mais flexíveis para os helpers de seleção de data, e um ganho no cache de assets, dentre outras coisas.
+
+h4. Formulários com Objetos Aninhados
+
+Contanto que o model pai aceite atributos aninhados para os objetos filhos (como discutido na seção do Active Record), você pode criar formulários aninhados usando +form_for+ e +field_for+. Estes formulários podem ser aninhados em profundidade arbitrária, permitindo que você edite hierarquias complexas de objetos em uma única view sem código excessivo. Por exemplo, dado este model:
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :orders
+
+  accepts_nested_attributes_for :orders, :allow_destroy => true
+end
+</ruby>
+
+Você pode escrever esta view no Rails 2.3:
+
+<erb>
+<% form_for @customer do |customer_form| %>
+  <div>
+    <%= customer_form.label :name, 'Customer Name:' %>
+    <%= customer_form.text_field :name %>
+  </div>
+
+  <!-- Aqui nós chamamos fields_for na instância do construtor customer_form.
+   O bloco é chamado para cada membro da coleção orders. -->
+  <% customer_form.fields_for :orders do |order_form| %>
+    <p>
+      <div>
+        <%= order_form.label :number, 'Order Number:' %>
+        <%= order_form.text_field :number %>
+      </div>
+
+  <!-- A opção allow_destroy no model habilita a exclusão dos
+   registros filhos. -->
+      <% unless order_form.object.new_record? %>
+        <div>
+          <%= order_form.label :_delete, 'Remove:' %>
+          <%= order_form.check_box :_delete %>
+        </div>
+      <% end %>
+    </p>
+  <% end %>
+
+  <%= customer_form.submit %>
+<% end %>
+</erb>
+
+* Contribuidor Líder: "Eloy Duran":http://www.superalloy.nl/blog/
+* Mais Informações:
+** "Nested Model Forms":http://weblog.rubyonrails.org/2009/1/26/nested-model-forms
+** "complex-form-examples":http://github.com/alloy/complex-form-examples/tree/nested_attributes
+** "What's New in Edge Rails: Nested Object Forms":http://ryandaigle.com/articles/2009/2/1/what-s-new-in-edge-rails-nested-attributes
+
+h4. Renderização Inteligente de Partials
+
+O método render vem se tornando mais inteligente ao longo dos anos, e ele está ainda mais inteligente agora. Se você tem um objeto ou uma coleção e um partial apropriado, e os nomes casam, agora você pode renderizar somente o objeto e as coisas irão funcionar. Por exemplo, no Rails 2.3, estas chamadas ao render funcionarão na sua view (supondo uma nomeação sensata):
+
+<ruby>
+# Equivalente de render :partial => 'articles/_article',
+# :object => @article
+render @article
+
+# Equivalente de render :partial => 'articles/_article',
+# :collection => @articles
+render @articles
+</ruby>
+
+* Mais Informações: "What's New in Edge Rails: render Stops Being High-Maintenance":http://ryandaigle.com/articles/2008/11/20/what-s-new-in-edge-rails-render-stops-being-high-maintenance
+
+h4. Prompts para Helpers de Seleção de Datas
+
+No Rails 2.3, você pode fornecer prompts customizados para os vários helpers de seleção de data (+date_select+, +time_select+, and +datetime_select+), do mesmo modo que pode com helpers de seleção de coleções. Você pode fornecer uma string ou um hash de strings individuais para os vários componentes. Você também pode definir apenas o +:prompt+ para +true+ para usar o prompt genérico:
+
+<ruby>
+select_datetime(DateTime.now, :prompt => true)
+
+select_datetime(DateTime.now, :prompt => "Choose date and time")
+
+select_datetime(DateTime.now, :prompt =>
+  {:day => 'Choose day', :month => 'Choose month',
+   :year => 'Choose year', :hour => 'Choose hour',
+   :minute => 'Choose minute'})
+</ruby>
+
+* Contribuidor Líder: "Sam Oliver":http://samoliver.com/
+
+h4. AssetTag Timestamp Caching
+
+You're likely familiar with Rails' practice of adding timestamps to static asset paths as a "cache buster." This helps ensure that stale copies of things like images and stylesheets don't get served out of the user's browser cache when you change them on the server. You can now modify this behavior with the +cache_asset_timestamps+ configuration option for Action View. If you enable the cache, then Rails will calculate the timestamp once when it first serves an asset, and save that value. This means fewer (expensive) file system calls to serve static assets - but it also means that you can't modify any of the assets while the server is running and expect the changes to get picked up by clients.
+
+h4. Asset Hosts as Objects
+
+Asset hosts get more flexible in edge Rails with the ability to declare an asset host as a specific object that responds to a call. This allows you to to implement any complex logic you need in your asset hosting.
+
+* Mais Informações: "asset-hosting-with-minimum-ssl":http://github.com/dhh/asset-hosting-with-minimum-ssl/tree/master
+
+h4. Método Helper grouped_options_for_select
+
+O Action View já possui um monte de helpers para auxiliar na geração de controles select, mas agora existe mais um: +grouped_options_for_select+. Este aceita um array ou hash de strings, e os converte em uma string de tags +option+ dentro de tags +optgroup+. Por exemplo:
+
+<ruby>
+grouped_options_for_select([["Hats", ["Baseball Cap","Cowboy Hat"]]],
+  "Cowboy Hat", "Choose a product...")
+</ruby>
+
+retorna
+
+<ruby>
+<option value="">Choose a product...</option>
+<optgroup label="Hats">
+  <option value="Baseball Cap">Baseball Cap</option>
+  <option selected="selected" value="Cowboy Hat">Cowboy Hat</option>
+</optgroup>
+</ruby>
+
+h4. Uma Nota sobre Template Loading
+
+O Rails 2.3 inclui a capacidade de ativar ou desativar templates em cache para qualquer ambiente específico. Templates em cache impulsionam a velocidade porque eles não checam por um novo arquivo de template quando são renderizados - mas também significam que você não pode substituir um template "on the fly" sem reiniciar o servidor.
+
+Na maioria dos casos, você desejará o cache de templates habilitado em produção, o que pode ser feito através de uma configuração no seu arquivo +production.rb+:
+
+<ruby>
+config.action_view.cache_template_loading = true
+</ruby>
+
+Esta linha será gerada para você por padrão em uma nova aplicação com Rails 2.3. Se você tiver atualizado de uma versão mais antiga do Rails, ele irá por padrão fazer o cache de templates em produção e teste mas não em desenvolvimento.
+
+h4. Outras Mudanças do Action View
+
+* Token generation for CSRF protection has been simplified; now Rails uses a simple random string generated by +ActiveSupport::SecureRandom+ rather than mucking around with session IDs.
+* +auto_link+ now properly applies options (such as +:target+ and +:class+) to generated e-mail links.
+* The +autolink+ helper has been refactored to make it a bit less messy and more intuitive.
+* +current_page?+ now works properly even when there are multiple query parameters in the URL.
+
+h3. Active Support
+
+Active Support has a few interesting changes, including the introduction of +Object#try+.
+
+h4. Object#try
+
+A lot of folks have adopted the notion of using try() to attempt operations on objects. It's especially helpful in views where you can avoid nil-checking by writing code like +&lt;%= @person.try(:name) %&gt;+. Well, now it's baked right into Rails. As implemented in Rails, it raises +NoMethodError+ on private methods and always returns +nil+ if the object is nil.
+
+* Mais Informações: "try()":http://ozmm.org/posts/try.html.
+
+h4. Object#tap Backport
+
++Object#tap+ is an addition to "Ruby 1.9":http://www.ruby-doc.org/core-1.9/classes/Object.html#M000309 and 1.8.7 that is similar to the +returning+ method that Rails has had for a while: it yields to a block, and then returns the object that was yielded. Rails now includes code to make this available under older versions of Ruby as well.
+
+h4. Fractional seconds for TimeWithZone
+
+The +Time+ and +TimeWithZone+ classes include an +xmlschema+ method to return the time in an XML-friendly string. As of Rails 2.3, +TimeWithZone+ supports the same argument for specifying the number of digits in the fractional second part of the returned string that +Time+ does:
+
+<ruby>
+>> Time.zone.now.xmlschema(6)
+=> "2009-01-16T13:00:06.13653Z"
+</ruby>
+
+* Contribuidor Líder: "Nicholas Dainty":http://www.workingwithrails.com/person/13536-nicholas-dainty
+
+h4. JSON Key Quoting
+
+If you look up the spec on the "json.org" site, you'll discover that all keys in a JSON structure must be strings, and they must be quoted with double quotes. Starting with Rails 2.3, we do the right thing here, even with numeric keys.
+
+h4. Other Active Support Changes
+
+* You can use +Enumerable#none?+ to check that none of the elements match the supplied block.
+* If you're using Active Support "delegates":http://afreshcup.com/2008/10/19/coming-in-rails-22-delegate-prefixes/, the new +:allow_nil+ option lets you return +nil+ instead of raising an exception when the target object is nil.
+* +ActiveSupport::OrderedHash+: now implements +each_key+ and +each_value+.
+* +ActiveSupport::MessageEncryptor+ provides a simple way to encrypt information for storage in an untrusted location (like cookies).
+* Active Support's +from_xml+ no longer depends on XmlSimple. Instead, Rails now includes its own XmlMini implementation, with just the functionality that it requires. This lets Rails dispense with the bundled copy of XmlSimple that it's been carting around.
+
+h3. Railties
+
+In addition to the Rack changes covered above, Railties (the core code of Rails itself) sports a number of significant changes, including Rails Metal, application templates, and quiet backtraces.
+
+h4. Rails Metal
+
+Rails Metal is a new mechanism that provides superfast endpoints inside of your Rails applications. Metal classes bypass routing and Action Controller to give you raw speed (at the cost of all the things in Action Controller, of course). This builds on all of the recent foundation work to make Rails a Rack application with an exposed middleware stack. Metal endpoints can be loaded from your application or from plugins.
+
+* Mais Informações:
+** "Introducing Rails Metal":http://weblog.rubyonrails.org/2008/12/17/introducing-rails-metal
+** "Rails Metal: a micro-framework with the power of Rails":http://soylentfoo.jnewland.com/articles/2008/12/16/rails-metal-a-micro-framework-with-the-power-of-rails-m
+** "Metal: Super-fast Endpoints within your Rails Apps":http://www.railsinside.com/deployment/180-metal-super-fast-endpoints-within-your-rails-apps.html
+** "What's New in Edge Rails: Rails Metal":http://ryandaigle.com/articles/2008/12/18/what-s-new-in-edge-rails-rails-metal
+
+h4. Application Templates
+
+Rails 2.3 incorporates Jeremy McAnally's "rg":http://github.com/jeremymcanally/rg/tree/master application generator. What this means is that we now have template-based application generation built right into Rails; if you have a set of plugins you include in every application (among many other use cases), you can just set up a template once and use it over and over again when you run the +rails+ command. There's also a rake task to apply a template to an existing application:
+
+<ruby>
+rake rails:template LOCATION=~/template.rb
+</ruby>
+
+This will layer the changes from the template on top of whatever code the project already contains.
+
+* Contribuidor Líder: "Jeremy McAnally":http://www.jeremymcanally.com/
+* More Info:"Rails templates":http://m.onkey.org/2008/12/4/rails-templates
+
+h4. Quieter Backtraces
+
+Building on Thoughtbot's "Quiet Backtrace":http://www.thoughtbot.com/projects/quietbacktrace plugin, which allows you to selectively remove lines from +Test::Unit+ backtraces, Rails 2.3 implements +ActiveSupport::BacktraceCleaner+ and +Rails::BacktraceCleaner+ in core. This supports both filters (to perform regex-based substitutions on backtrace lines) and silencers (to remove backtrace lines entirely). Rails automatically adds silencers to get rid of the most common noise in a new application, and builds a +config/backtrace_silencers.rb+ file to hold your own additions. This feature also enables prettier printing from any gem in the backtrace.
+
+h4. Faster Boot Time in Development Mode with Lazy Loading/Autoload
+
+Quite a bit of work was done to make sure that bits of Rails (and its dependencies) are only brought into memory when they're actually needed. The core frameworks - Active Support, Active Record, Action Controller, Action Mailer and Action View - are now using +autoload+ to lazy-load their individual classes. This work should help keep the memory footprint down and improve overall Rails performance.
+
+You can also specify (by using the new +preload_frameworks+ option) whether the core libraries should be autoloaded at startup. This defaults to +false+ so that Rails autoloads itself piece-by-piece, but there are some circumstances where you still need to bring in everything at once - Passenger and JRuby both want to see all of Rails loaded together.
+
+h4. Outras Mudanças no Rails
+
+* As instruções para atualizar um servidor CI para construir o Rails foram atualizadas e ampliadas.
+* Os testes internos do Rails foram trocados do +Test::Unit::TestCase+ para o +ActiveSupport::TestCase+, e o core Rails requer Mocha para os testes.
+* O arquivo padrão +environment.rb+ foi reorganizado.
+* O script dbconsole permite que você use uma senha totalmente numérica sem falhar.
+* Agora o +Rails.root+ retorna um objeto +Pathname+, o que significa que você pode usá-lo diretamente com o método +join+ para "limpar o código existente":http://afreshcup.com/2008/12/05/a-little-rails_root-tidiness/ que usa +File.join+.
+* Vários arquivos no /public que tratam com dispatch CGI e FCGI não são mais gerados em toda aplicação Rails por padrão (você ainda pode obtê-los se precisar adicionando +--with-dispatches+ quando executar o comando +rails+, ou adicioná-los mais tarde com +rake rails:generate_dispatchers+).
+* Rails Guides foram convertidos da marcação AsciiDoc para Textile.
+* Controllers e Views geradas com o scaffold foram um pouco limpas.
+* +script/server+ aceita agora um argumento <tt>--path</tt> para subir uma aplicação Rails a partir de um caminho específico.
+
+h3. Deprecado
+
+Alguns pedaços de código antigo foram deprecados nesta versão:
+
+* Se você é um dos (bastante raros) desenvolvedores Rails que faz deploy em uma modo que depende dos scripts inspector, reaper, e spawner, você precisa saber que estes scripts não estão mais inclusos no core Rails. Se você precisa deles, você pode obter cópias através do plugin "irs_process_scripts":http://github.com/rails/irs_process_scripts/tree.
+* +render_component+ vai de "deprecado" para "naoexistente" no Rails 2.3. Se você ainda precisa dele, pode instalar o "plugin render_component":http://github.com/rails/render_component/tree/master.
+* O suporte para componentes Rails foi removido.
+* Se você é uma das pessoas que costumava executar +script/performance/request+ para verificar a performance com base nos testes de integração, precisa aprender um novo truque: este script agora foi removido do core Rails. Existe um novo plugin request_profiler que você pode instalar para obter a mesma funcionalidade de volta.
+* +ActionController::Base#session_enabled?+ está deprecado porque as sessões são agora carregadas quando necessário (lazy-load).
+* As opções +:digest+ e +:secret+ para o +protect_from_forgery+ estão deprecadas e não tem efeito.
+* Alguns helpers de testes de integração foram removidos. +response.headers["Status"]+ e +headers["Status"]+ não retornarão mais nada. O Rack não permite "Status" nos seus headers de retorno. Contudo você ainda pode usar os helpers +status+ e +status_message+. +response.headers["cookie"]+ e +headers["cookie"]+ não retornarão nenhum cookie CGI. Você pode inspecionar +headers["Set-Cookie"]+ para ver o header do cookie sem ser processado ou utilizar o helper +cookies+ para obter um hash dos cookies enviados para o cliente.
+* +formatted_polymorphic_url+ está deprecado. Utilize no lugar +polymorphic_url+ com +:format+.
+* A opção +:http_only+ no +ActionController::Response#set_cookie+ foi renomeada para +:httponly+.
+* As opções +:connector+ e +:skip_last_comma+ do método +to_sentence+ foram substituídas pelas opções +:words_connnector+, +:two_words_connector+, e +:last_word_connector+.
+* Postar um form multipart com um controle +file_field+ vazio costumava enviar uma string vazia para o controller. Agora ele envia um nil, devido a diferenças entre o parser multipart do Rack e o antigo parser do Rails.
+
+h3. Créditos
+
+Notas de lançamento compiladas por "Mike Gunderloy":http://afreshcup.com. Esta versão das notas de lançamento do Rails 2.3 foi compilada baseada no RC2 do Rails 2.3.
+
+Tradução para o português das notas de lançamento do Rails 2.3 por "Carlos A. da Silva":translators.html#carlosantoniodasilva
