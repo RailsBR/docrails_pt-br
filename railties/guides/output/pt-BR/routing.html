@@ -401,7 +401,7 @@ map.resources :adminphotos, :controller =&gt; &quot;admin/photos&quot;
 </code></div>
 <p>Se você usa o namespaces do controlador, você precisa ter cuidado com a sutileza no código de roteamento do Rails: ele tenta preservar o máximo do namespace de uma requisição anterior o quanto possível. Por exemplo, se você estiver em uma visão gerada pelo helper <tt>adminphoto_path</tt>, e seguida de um link gerado com <tt><%= link_to "show", adminphoto(1) %></tt> você acabará com a visão gerada por <tt>admin/photos/show</tt> mas você vai acabar no mesmo lugar se você tiver <tt><%= link_to "show", {:controller => "photos", :action => "show"} %></tt> por quê o Rails mostrará a <span class="caps">URL</span> relativa a <span class="caps">URL</span> atual.</p>
 <div class='info'><p>Se você quiser garantir que o link vá para um controlador de nível superior, use uma barra precedendo a âncora para o nome do controlador: <tt><%= link_to "show", {:controller => "/photos", :action => "show"} %></tt></p></div>
-<p>Vcê pode especifícar o namespace do controlador com a opção <tt>:namespace</tt> ao invés do caminho:</p>
+<p>Você pode especifícar o namespace do controlador com a opção <tt>:namespace</tt> ao invés do caminho:</p>
 <div class="code_container"><code class="ruby">
 map.resources :adminphotos, :namespace =&gt; &quot;admin&quot;, :controller =&gt; &quot;photos&quot;
 </code></div>
@@ -427,11 +427,11 @@ map.resources :photos, :requirements =&gt; {:id =&gt; /[A-Z][A-Z][0-9]+/}
 <h5 id="usandoconditions">3.7.3 Usando :conditions</h5>
 <p>Condições no roteamento Rails são usadas atualmente para ajutar o verbo <span class="caps">HTTP</span> para rotas individuais. Apesar de na teoria você poder ajustar isto para as rotas RESTful, na prática não são é uma boa razão para fazê-lo. (Você aprenderá mais sobre condições na discussão de roteamento clássico depois neste guia)</p>
 <h5 id="usandoas">3.7.4 Usando :as</h5>
-<p>The <tt>:as</tt> option lets you override the normal naming for the actual generated paths. For example:</p>
+<p>A opção <tt>:as</tt> permite que você sobrescreva o nomeamento normal para os paths gerados atualmente. Por exemplo:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :as =&gt; &quot;images&quot;
 </code></div>
-<p>will recognize incoming URLs containing <tt>image</tt> but route the requests to the Photos controller:</p>
+<p>reconhecerá <span class="caps">URLS</span> recebidas contendo <tt>image</tt> mas a rota requisita o controlador Photos:</p>
 <table>
 	<tr>
 		<th><span class="caps">HTTP</span> verb  </th>
@@ -445,81 +445,81 @@ map.resources :photos, :as =&gt; &quot;images&quot;
 		<td>/images         </td>
 		<td>Photos      </td>
 		<td>index    </td>
-		<td>display a list of all photos</td>
+		<td>mostra a lista de todas as fotoso</td>
 	</tr>
 	<tr>
 		<td><span class="caps">GET</span>        </td>
 		<td>/images/new     </td>
 		<td>Photos      </td>
 		<td>new      </td>
-		<td>return an <span class="caps">HTML</span> form for creating a new photo</td>
+		<td>retorna um formulário <span class="caps">HTML</span> para criação de uma novo foto</td>
 	</tr>
 	<tr>
 		<td><span class="caps">POST</span>       </td>
 		<td>/images         </td>
 		<td>Photos      </td>
 		<td>create   </td>
-		<td>create a new photo</td>
+		<td>cria uma nova foto</td>
 	</tr>
 	<tr>
 		<td><span class="caps">GET</span>        </td>
 		<td>/images/1       </td>
 		<td>Photos      </td>
 		<td>show     </td>
-		<td>display a specific photo</td>
+		<td>mostra uma foto específica</td>
 	</tr>
 	<tr>
 		<td><span class="caps">GET</span>        </td>
 		<td>/images/1/edit  </td>
 		<td>Photos      </td>
 		<td>edit     </td>
-		<td>return an <span class="caps">HTML</span> form for editing a photo</td>
+		<td>retorna um formulário <span class="caps">HTML</span> para edição de uma foto</td>
 	</tr>
 	<tr>
 		<td><span class="caps">PUT</span>        </td>
 		<td>/images/1       </td>
 		<td>Photos      </td>
 		<td>update   </td>
-		<td>update a specific photo</td>
+		<td>atualiza uma foto específica</td>
 	</tr>
 	<tr>
 		<td><span class="caps">DELETE</span>     </td>
 		<td>/images/1       </td>
 		<td>Photos      </td>
 		<td>destroy  </td>
-		<td>delete a specific photo</td>
+		<td>apaga uma foto específica</td>
 	</tr>
 </table>
-<div class='note'><p>The helpers will be generated with the name of the resource, not the path name. So in this case, you&#8217;d still get <tt>photos_path</tt>, <tt>new_photo_path</tt>, and so on.</p></div>
-<h5 id="usingpath-names">3.7.5 Using :path_names</h5>
-<p>The <tt>:path_names</tt> option lets you override the automatically-generated &#8220;new&#8221; and &#8220;edit&#8221; segments in URLs:</p>
+<div class='note'><p>Os helpers irão ser gerados com o mesmo nome do recurso, não o nome path. Então neste caso, você ainda obterá <tt>photos_path</tt>, <tt>new_photo_path</tt>, e assim por diante.</p></div>
+<h5 id="usandopath-names">3.7.5 Usando :path_names</h5>
+<p>A opção <tt>:path_names</tt> permite que você sobrescreva os segmentos &#8220;new&#8221; e &#8220;edit&#8221; gerados automaticamentes nas URLs:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :path_names =&gt; { :new =&gt; 'make', :edit =&gt; 'change' }
 </code></div>
-<p>This would cause the routing to recognize URLs such as</p>
+<p>Isto causaria o roteamento para URLs reconhecidas como</p>
 <pre>
 /photos/make
 /photos/1/change
 </pre>
-<div class='note'><p>The actual action names aren&#8217;t changed by this option; the two URLs show would still route to the new and edit actions.</p></div>
-<div class='info'><p>If you find yourself wanting to change this option uniformly for all of your routes, you can set a default in your environment:</p></div>
+<div class='note'><p>Os nomes das ações atuais não serão alterados por esta opção; as duas URLs que mostram as rotas para as ações new e edit continuam funcionando.</p></div>
+<div class='info'><p>Se você está querendo mudar esta opção de modo uniforme para todas as suas rotas, você pode definir um padrão em seu environment:</p></div>
 <div class="code_container"><code class="ruby">
 config.action_controller.resources_path_names = { :new =&gt; 'make', :edit =&gt; 'change' }
 </code></div>
-<h5 id="usingpath-prefix">3.7.6 Using :path_prefix</h5>
-<p>The <tt>:path_prefix</tt> option lets you add additional parameters that will be prefixed to the recognized paths. For example, suppose each photo in your application belongs to a particular photographer. In that case, you might declare this route:</p>
+<h5 id="usandopath-prefix">3.7.6 Usando :path_prefix</h5>
+<p>A opção <tt>:path_prefix</tt> permite que você adicione paramêtros adicionais que serão prefixadas para as rotas reconhecidas. Por exemplo, suponha que cada foto na sua aplicação possua a um fotografo em particular. No caso, você deve declarar esta rota:</p>
 <div class="code_container"><code class="ruby">
 map.resources :photos, :path_prefix =&gt; '/photographers/:photographer_id'
 </code></div>
-<p>Routes recognized by this entry would include:</p>
+<p>Rotas reconhecidas por esta entrada incluem:</p>
 <pre>
 /photographers/1/photos/2
 /photographers/1/photos
 </pre>
-<div class='note'><p>In most cases, it&#8217;s simpler to recognize URLs of this sort by creating nested resources, as discussed in the next section.</p></div>
-<div class='note'><p>You can also use <tt>:path_prefix</tt> with non-RESTful routes.</p></div>
-<h5 id="usingname-prefix">3.7.7 Using :name_prefix</h5>
-<p>You can use the :name_prefix option to avoid collisions between routes. This is most useful when you have two resources with the same name that use <tt>:path_prefix</tt> to map differently. For example:</p>
+<div class='note'><p>Na maioria dos casos, é mais simples de reconhecer URLs deste tipo, criando recursos aninhados, como discutido na próxima seção</p></div>
+<div class='note'><p>Você também pode usar <tt>:path_prefix</tt> com rotas não RESTful.</p></div>
+<h5 id="usandoname-prefix">3.7.7 Usando :name_prefix</h5>
+<p>Você pode usar a opção :name_prefix para evitar colisões entre rotas. Isto é mais usando quando você tem dois recursos com o mesmo nome que usam <tt>:path_prefix</tt> para mapear diferentemente. Por exemplo:</p>
 <p>dirty_workaround_for_nontextile_21&gt;</p>
 <p>This combination will give you route helpers such as <tt>photographer_photos_path</tt> and <tt>agency_edit_photo_path</tt> to use in your code.</p>
 <div class='note'><p>You can also use <tt>:name_prefix</tt> with non-RESTful routes.</p></div>
