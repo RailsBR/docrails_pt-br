@@ -165,9 +165,11 @@ mars:
 <p>é considerada código Ruby. Quando esta fixture é carregada, o atributo <tt>size</tt> dos três registros vai receber os valores 20/50, 20/2 e 20-69, respectivamente. O atributo <tt>brightest_on</tt> também será calculado e formatado pelo Rails para ser compatível com a sua base de dados.</p>
 <h5 id="fixturesem-ao">2.3.4 Fixtures em Ação</h5>
 <p>Por padrão, o Rails carrega automaticamente para os testes unitários e funcionais todas as fixtures existentes na pasta &#8216;test/fixtures&#8217;. O carregamento envolve três passos:</p>
-* Remoção de qualquer dado pré-existente na tabela correspondente à fixture
-* Carregamento dos dados da fixture na tabela
-* Cópia dos dados da fixture para uma variável, para o caso de você querer acessá-los diretamente
+<ul>
+	<li>Remoção de qualquer dado pré-existente na tabela correspondente à fixture</li>
+	<li>Carregamento dos dados da fixture na tabela</li>
+	<li>Cópia dos dados da fixture para uma variável, para o caso de você querer acessá-los diretamente</li>
+</ul>
 <h5 id="hashes-com-poderes-especiais">2.3.5 Hashes Com Poderes Especiais</h5>
 <p>As fixtures são basicamente objetos Hash. Como mencionado no tópico #3 acima, é possível acessar o objeto hash diretamente porque ele é automaticamente atribuído como uma variável local do caso de teste. Por exemplo:</p>
 <div class="code_container"><code class="ruby">
