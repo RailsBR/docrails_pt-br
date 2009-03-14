@@ -572,7 +572,6 @@ h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/6
 
-* 14 de Setembro de 2008: versão inical por "Frederick Cheung":../authors.html#fcheung
+* 10 de Novembro de 2008: traduzido por "Cairo Noleto":credits.html#caironoleto
 
-* 10 de Novembro de 2008: tradução por "Cairo Noleto":http://www.caironoleto.com
-
+* 14 de Setembro de 2008: versão inical por "Frederick Cheung":credits.html#fcheung
