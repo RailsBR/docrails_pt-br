@@ -20,7 +20,7 @@ h3. Introdução aos Testes
 
 O suporte a testes está presente no Rails desde o seu início. Isso não foi algo do tipo "opa! vamos fazer o suporte a testes porque isso é uma novidade legal".  Quase toda aplicação Rails interage muito com uma base de dados - e, como resultado, os seus testes também  precisarão de uma base de dados para interagir. Para escrever testes eficientes, você vai precisar entender como configurar e popular esta base com amostras de dados.
 
-h4. Os 3 Ambientes
+h4. Os Três Ambientes
 
 Toda aplicação rails que você constrói tem 3 ambientes: um para produção, um para desenvolvimento e um para testes.
 
@@ -501,7 +501,7 @@ Se você estiver familiarizado com o protocolo HTTP, você saberá que +get+ é 
 
 Todos estes tipos de requisições são métodos que você pode usar, entretanto, você provavelmente vai acabar usando os dois primeiros com mais freqüência.
 
-h4. Os 4 Hashes do Apocalipse
+h4. Os Quatro Hashes do Apocalipse
 
 Depois que uma requisição tiver sido realizada e processada usando um dos 5 métodos (+get+, +post+, etc.), você terá 4 objetos Hash prontos para usar:
 
@@ -728,7 +728,7 @@ Você não precisa configurar e executar os seus testes um a um manualmente. O R
 |+rake test:uncommitted+         |Executa todos os testes que não foram comitados. Só suporta Subversion|
 |+rake test:plugins+             |Executa todos os testes de plugins de +vendor/plugins/*/**/test+ (ou de modo específico com +PLUGIN=_name_+)|
 
-h3. Breve Nota Sobre Test::Unit
+h3. Breve Nota Sobre +Test::Unit+
 
 O Ruby contém um grande número de bibliotecas. Uma pequena gem de uma bibliotea é a +Test::Unit+, um framework para testes unitários em Ruby. Todas as assertions básicas discutidas anteriormente estão na verdade em +Test::Unit::Assertions+. A classe +ActiveSupport::TestCase+ que nós estamos usando em nossos testes unitários e funcionais estendem  +Test::Unit::TestCase+. É desta forma que nós podemos usar todas as assertions básicas em nossos testes.
 

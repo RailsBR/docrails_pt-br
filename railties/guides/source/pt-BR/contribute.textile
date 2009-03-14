@@ -12,7 +12,7 @@ h3. Como contribuir?
 * Todas as imagens estão railties/guides/images directory.
 * Formato de Exemplo : "Active Record Associations":http://github.com/lifo/docrails/blob/3e56a3832415476fdd1cb963980d0ae390ac1ed3/railties/guides/source/association_basics.textile
 * Saída de Exemplo : "Active Record Associations":http://guides.rails.info/association_basics.html
-* Você pode gerar os guias para teste rodando railties/guides/rails_guides.rb.
+* Você pode gerar os guias para teste rodando +rake guides+ na pasta +railties+.
 
 h3. Com o que contribuir?
 
