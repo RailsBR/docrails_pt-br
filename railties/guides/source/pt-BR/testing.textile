@@ -110,9 +110,9 @@ h5. Fixtures em Ação
 
 Por padrão, o Rails carrega automaticamente para os testes unitários e funcionais todas as fixtures existentes na pasta 'test/fixtures'. O carregamento envolve três passos:
 
- * Remoção de qualquer dado pré-existente na tabela correspondente à fixture
- * Carregamento dos dados da fixture na tabela
- * Cópia dos dados da fixture para uma variável, para o caso de você querer acessá-los diretamente
+* Remoção de qualquer dado pré-existente na tabela correspondente à fixture
+* Carregamento dos dados da fixture na tabela
+* Cópia dos dados da fixture para uma variável, para o caso de você querer acessá-los diretamente
 
 h5. Hashes Com Poderes Especiais
 
