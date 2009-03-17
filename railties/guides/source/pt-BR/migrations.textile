@@ -96,9 +96,15 @@ Geralmente, editar migrations existentes não é uma boa idéia: você estará c
 
 h3. Criando uma Migration
 
-h4. Criando um Model ** Parei aqui - Adolfo **
+h4. Criando um Model
 
-Um Modelo e os geradores de scaffold criará migrações apropriadas para criação de um novo Modelo. Esta migration contém instruções prontas para criação de uma tabela relevante. Se você mostrar pro Rails as colunas que você precisa então as declarações já estarão criadas. Por exemplo, rodando +ruby script/generate model Product name:string description:text+ gerará uma migration como esta
+Os models e os geradores de scaffold criarão as migrations apropriadas para a geração de um novo model. Esta migration já terá instruções para a criação da tabela relacionada. Se você disser pro Rails as colunas que você precisa, então as declarações já estarão criadas. Por exemplo, executar 
+
+<shell>
+ruby script/generate model Product name:string description:text
+</shell>
+
+gerará uma migration como esta
 
 <ruby>
 class CreateProducts < ActiveRecord::Migration
@@ -117,17 +123,17 @@ class CreateProducts < ActiveRecord::Migration
 end
 </ruby>
 
-Você pode adicionar quantos nomes/tipo de colunas como você deseja. Por padrão +t.timestamps+ (Que criam as colunas +updated_at+ e +created_at+ que serão populadas automáticamentes pelo Active Record) podem ser adicionadas por você.
+Você pode adicionar quantos pares nomes/tipo de colunas queira. Por padrão +t.timestamps+ (que cria as colunas +updated_at+ e +created_at+ que são populadas automaticamente pelo Active Record) será adicionada por você.
 
-h4. Criando uma migration autônoma
+h4. Criando uma Migration Standalone
 
-Se você criar uma migration para outros propósitos (Por exemplo para adicionar uma coluna em uma tabela já existente) então você pode usar o gerador de migrações:
+Se você está criando migrations para outros propósitos (por exemplo, adicionar uma coluna em uma tabela já existente) então você pode usar o gerador de migrations:
 
 <shell>
 ruby script/generate migration AddPartNumberToProducts
 </shell>
 
-Isto irá criar uma migration vazia mas já apropriada com o nome da migration:
+Isto irá criar uma migration vazia mas já nomeada apropriadamente:
 
 <ruby>
 class AddPartNumberToProducts < ActiveRecord::Migration
@@ -139,13 +145,13 @@ class AddPartNumberToProducts < ActiveRecord::Migration
 end
 </ruby>
 
-Se o nome da migration é na forma AddXXXtoYYY ou RemoveXXXtoYYY e for seguida de uma lista de nomes de colunas e seus tipos então a migration será criada contendo declarações apropriadas para adicionar e remover colunas.
+Se o nome da migration é na forma "AddXXXtoYYY" ou "RemoveXXXtoYYY" e for seguida de uma lista de nomes de colunas e seus tipos então uma migration contendo as declarações +add_column+ e +remove_column+ será criada.
 
 <shell>
 ruby script/generate migration AddPartNumberToProducts part_number:string
 </shell>
 
-Criará
+vai gerar
 
 <ruby>
 class AddPartNumberToProducts < ActiveRecord::Migration
@@ -159,13 +165,13 @@ class AddPartNumberToProducts < ActiveRecord::Migration
 end
 </ruby>
 
-Similarmente,
+Analogamente,
 
 <shell>
 ruby script/generate migration RemovePartNumberFromProducts part_number:string
 </shell>
 
-irá gerar
+gera
 
 <ruby>
 class RemovePartNumberFromProducts < ActiveRecord::Migration
