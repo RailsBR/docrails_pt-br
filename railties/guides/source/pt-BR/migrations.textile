@@ -185,7 +185,7 @@ class RemovePartNumberFromProducts < ActiveRecord::Migration
 end
 </ruby>
 
-E você não está limitado a gerar magicamente apenas uma coluna, por exemplo
+Você não está limitado a uma coluna gerada magicamente, por exemplo
 
 <shell>
 ruby script/generate migration AddDetailsToProducts part_number:string price:decimal
@@ -207,15 +207,15 @@ class AddDetailsToProducts < ActiveRecord::Migration
 end
 </ruby>
 
-E sempre o que foi gerado é apenas um ponto de partida. Você pode adicionar ou remover a partir dele o que você quiser, como você achar melhor.
+Como sempre, o que foi gerado para você é apenas um ponto de partida. Você pode adicionar ou remover o conteúdo gerado caso veja alguma necessidade.
 
-h3. Escrevendo uma migration
+h3. Escrevendo uma Migration
 
-Uma vez que você criou uma migration usando um dos geradores, é a hora de trabalhar!
+Uma vez que você criou a sua migration usando um dos geradores, é hora de trabalhar!
 
-h4. Criando uma tabela
+h4. Criando uma Tabela
 
-+create_table+ será um dos métodos mais usados. Tipicamente pode ser usado assim
+O método +create_table+ da migration será um dos mais usados. Um uso comum seria
 
 <ruby>
 create_table :products do |t|
@@ -223,9 +223,9 @@ create_table :products do |t|
 end
 </ruby>
 
-criará uma tabela +products+ com uma coluna chamada +name+ (e como discutido anteriormente, implicitamente criará uma coluna +id+).
+que cria uma tabela +products+ com uma coluna chamada +name+ (e como discutido anteriormente, implicitamente criará uma coluna +id+).
 
-O objeto "renderizado" (yielded) no bloco permite você criar colunas na tabela. Existe duas formas de se fazer isso. A primeira é algo assim
+O objeto passado para o bloco permite criar colunas na tabela. Existem duas formas de se fazer isso. A primeira (tradicional) é algo assim
 
 <ruby>
 create_table :products do |t|
@@ -233,7 +233,7 @@ create_table :products do |t|
 end
 </ruby>
 
-a segunda forma, que é chamada de migration "sexy", elimina a redundância dos métodos. Em vez de +string+, +integer+, etc os métodos são criados a partir do tipo da coluna, onde os parâmetros subseqüentes são idênticos.
+a segunda forma, que é chamada de "sexy" migration, remove o método redundante +column+. Em vez de +string+, +integer+, etc os métodos criam uma coluna daquele tipo. Parâmetros subseqüentes são idênticos.
 
 <ruby>
 create_table :products do |t|
@@ -241,7 +241,7 @@ create_table :products do |t|
 end
 </ruby>
 
-Por padrão +create_table+ criará uma chave primária chamada +id+. Você pode alterar o nome da chave primária com a opção +:primary_key+ (Não esqueça de atualizar o modelo correspondente) ou se você não precisar de uma chave primária (por exemplo HABTM (has and belongs to many) join table) você pode passar +:id ⇒ false+. Se você precisa passar alguma informação específica, você pode passar um fragmento SQL na opção +:options+. Por exemplo:
+Por padrão, +create_table+ criará uma chave primária chamada +id+. Você pode alterar o nome da chave primária com a opção +:primary_key+ (Não esqueça de atualizar o modelo correspondente) ou se você não precisar de uma chave primária (por exemplo HABTM (has and belongs to many) join table) você pode passar +:id ⇒ false+. Se você precisa passar alguma informação específica, você pode passar um fragmento SQL na opção +:options+. Por exemplo:
 
 <ruby>
 create_table :products, :options => "ENGINE=BLACKHOLE" do |t|
