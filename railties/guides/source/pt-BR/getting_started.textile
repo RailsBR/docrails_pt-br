@@ -21,7 +21,7 @@ Este guia é designado para principiantes que querem iniciar com uma aplicação
 
 É extremamente recomendado que você *se familiarize com o Ruby antes de mergulhar no Rails*. Você achará muito mais fácil seguir o que está acontecendo com uma aplicação Rails se entender a sintaxe básica do Ruby. O Rails não irá revolucionar magicamente o modo como você escreve aplicações web se você não tiver experiência com a linguagem que ele utiliza. Existem alguns bons recursos grátis na Internet para aprender Ruby, incluindo:
 
-* "Mr. Neigborly’s Humble Little Ruby Book":http://www.humblelittlerubybook.com/
+* "Mr. Neighborly’s Humble Little Ruby Book":http://www.humblelittlerubybook.com/
 * "Programming Ruby":http://www.rubycentral.com/book/
 * "Why's (Poignant) Guide to Ruby":http://poignantguide.net/ruby/
 
@@ -115,6 +115,7 @@ Se você quiser mais detalhes sobre REST como um estilo arquitetural, estes recu
 * "A Brief Introduction to REST":http://www.infoq.com/articles/rest-introduction por Stefan Tilkov
 * "An Introduction to REST":http://bitworking.org/news/373/An-Introduction-to-REST (tutorial em vídeo) por Joe Gregorio
 * "Representational State Transfer":http://en.wikipedia.org/wiki/Representational_State_Transfer artigo na Wikipedia
+* "How to GET a Cup of Coffee":http://www.infoq.com/articles/webber-rest-workflow by Jim Webber, Savas Parastatidis & Ian Robinson
 
 h3. Criando um Novo Projeto Rails
 
@@ -309,7 +310,7 @@ Esta linha ilustra um pedacinho da abordagem de "convenção ao invés de config
 
 Agora se você navegar para +http://localhost:3000+ em seu navegador, você verá a view +home/index+.
 
-NOTE: Para mais informações sobre rotas, ver em "Roteamento Rails de Fora para Dentro":routing.
+NOTE: Para mais informações sobre rotas, ver em "Roteamento Rails de Fora para Dentro":routing.html.
 
 h3. Começando e Executando Rapidamente com o Scaffolding
 
@@ -471,7 +472,7 @@ end
 
 Este código define a variável de instância +@posts+ como um array de todos os posts no banco de dados. +Post.find(:all)+ ou +Post.all+ solicita ao model +Post+ para retornar todos os posts que estão no banco de dados atualmente, sem nenhuma condição de limite.
 
-TIP: Para mais informações sobre busca de registros com Active Record, veja "Active Record Finders":finders.html.
+TIP: Para mais informações sobre busca de registros com Active Record, veja "Interface para Queries do Active Record":active_record_querying.html.
 
 O bloco +respond_to+ gerencia ambas as chamadas HTML e XML para esta ação. Se você navegar para +http://localhost:3000/posts.xml+, verá todos os posts em formato XML. O formato HTML busca por uma view em +app/views/posts/+ com um nome que corresponda ao nome da ação. O Rails faz com que todas as variáveis de instância da ação estejam disponíveis para a view. Aqui está o +app/view/posts/index.html.erb+:
 
@@ -1295,3 +1296,4 @@ h3. Changelog
 * October 13, 2008: First complete draft by "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)
 * October 12, 2008: More detail, rearrangement, editing by "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)
 * September 8, 2008: initial version by James Miller (not yet approved for publication)
+
