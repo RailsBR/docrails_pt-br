@@ -55,7 +55,7 @@ end
 
 Esta migration adiciona a coluna +receive_newsletter+ na tabela +users+. Nós queremos que o padrão seja +falso+ para novos usuários, mas para os usuários existentes, consideramos que eles já fizeram a sua opção, então usamos o model User para setar a flag como +true+ para os usuários existentes.
  
-NOTE: Algumas "ressalvas":#using-models-in-your-migrations se aplicam ao utilizar models nas suas migrations.
+NOTE: Algumas "ressalvas":#usando-models-nas-suas-migraes se aplicam ao utilizar models nas suas migrations.
 
 h4. Migrations são classes
 A migration é uma subclasse de ActiveRecord::Migration que implementa dois métodos: up (para realizar as transformações exigidas) e down (reverte o que foi feito).
@@ -72,7 +72,7 @@ O Active Record fornece métodos que executam tarefas comuns para definição do
 * +add_index+
 * +remove_index+
 
-Se você precisa executar tarefas específicas para seu banco de dados (por exemplo, criar uma "foreign key":#active-recordand-referential-integrity) então a função +execute+ permite que você execute SQL arbitrárias. A migration é apenas uma classe comum em Ruby, então você não está limitado a apenas estas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus models).
+Se você precisa executar tarefas específicas para seu banco de dados (por exemplo, criar uma "foreign key":#active-record-e-integridade-referencial) então a função +execute+ permite que você execute SQL arbitrárias. A migration é apenas uma classe comum em Ruby, então você não está limitado a apenas estas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus models).
 
 Em banco de dados que suportam transações com parâmetros para mudar o schema (como o PostreSQL), as migrations entram em uma transação. Se o banco de dados não suporta isso (por exemplo MySQL e SQLite) então quando a migration falhar, as partes que tiveram sucesso não poderão ser revertidas. Você terá que desfazer estas mudanças manualmente.
 
@@ -400,7 +400,7 @@ Nenhuma dessas tarefas Rake fazem qualquer coisa que você não poderia fazer co
 
 Finalmente, a tarefa +db:reset+ irá destruir sua base de dados, recria-la e carregar o schema atual dentro dela.
 
-NOTE: Isto não é o mesmo que você rodar todas as migrações - veja a seção "schema.rb":#armazenandoesquemasevoc
+NOTE: Isto não é o mesmo que você rodar todas as migrações - veja a seção "schema.rb":#armazenando-esquemas-e-voc
 
 h4. Especificando uma migration
 

@@ -107,7 +107,7 @@ This guide describes how to build a test-driven plugin that will:</p>
             <div id="subCol">
         <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
         <ol class="chapters">
-<li><a href="#preparao">Preparação</a><ul><li><a href="#criandoaaplicaobsica">Criando a aplicação básica</a></li><li><a href="#gerandooesqueletodoplugin">Gerando o esqueleto do plugin</a></li><li><a href="#preparandoopluginparaostestes">Preparando o plugin para os testes</a></li><li><a href="#executarostestesdoplugin">Executar os testes do plugin</a></li></ul></li><li><a href="#estendendoasclassesbsicas">Estendendo as classes básicas</a><ul><li><a href="#criandoostestes">Criando os testes</a></li><li><a href="#organizeseusarquivos">Organize seus arquivos</a></li><li><a href="#usandooinitrb">Usando o init.rb</a></li></ul></li></ol></div>
+<li><a href="#preparao">Preparação</a><ul><li><a href="#criando-a-aplicao-bsica">Criando a aplicação básica</a></li><li><a href="#gerando-o-esqueleto-do-plugin">Gerando o esqueleto do plugin</a></li><li><a href="#preparando-o-plugin-para-os-testes">Preparando o plugin para os testes</a></li><li><a href="#executar-os-testes-do-plugin">Executar os testes do plugin</a></li></ul></li><li><a href="#estendendo-as-classes-bsicas">Estendendo as classes básicas</a><ul><li><a href="#criando-os-testes">Criando os testes</a></li><li><a href="#organize-seus-arquivos">Organize seus arquivos</a></li><li><a href="#usando-o-initrb">Usando o init.rb</a></li></ul></li></ol></div>
     </div>
   </div>
 
@@ -115,7 +115,7 @@ This guide describes how to build a test-driven plugin that will:</p>
     <div class="wrapper">
       <div id="mainCol">
         <h3 id="preparao">1 Preparação</h3>
-<h4 id="criandoaaplicaobsica">1.1 Criando a aplicação básica</h4>
+<h4 id="criando-a-aplicao-bsica">1.1 Criando a aplicação básica</h4>
 <p>Os exemplos deste guia requerem que você tenha uma aplicação rails funcional. Para criar uma aplicação rails simples execute:</p>
 <pre>
 gem install rails
@@ -128,7 +128,7 @@ script/server
 <p>Abra o endereço http://localhost:3000/birds no seu browser. Tenha certeza que a aplicação rails está funcionando antes de continuar.</p>
 <p>.Nota do editor:
 <div class='note'><p>Estas instruções irão funcionar para o sqlite3.  Para instruções mais detalhadas sobre como criar uma aplicação rails que utiliza outro banco de dados veja a documentação da <span class="caps">API</span>.</p></div></p>
-<h4 id="gerandooesqueletodoplugin">1.2 Gerando o esqueleto do plugin</h4>
+<h4 id="gerando-o-esqueleto-do-plugin">1.2 Gerando o esqueleto do plugin</h4>
 <p>O Rails vem com um gerador de plugin que cria um esqueleto básico de plugin. Informe o nome do plugin, em &#8216;CamelCase&#8217; ou
 &#8216;under_scored&#8217;, como argumento. Passe <tt>\--with-generator</tt> para também adicionar um gerador de exemplo.</p>
 <p>Um plugin será criado em &#8216;vendor/plugins&#8217;, incluindo um &#8216;init.rb&#8217; e &#8216;<span class="caps">README</span>&#8217;, assim como diretórios &#8216;lib&#8217;, &#8216;task&#8217;, e &#8216;test&#8217; padrões.</p>
@@ -163,7 +163,7 @@ create  vendor/plugins/yaffle/generators/yaffle/templates
 create  vendor/plugins/yaffle/generators/yaffle/yaffle_generator.rb
 create  vendor/plugins/yaffle/generators/yaffle/USAGE
 </pre>
-<h4 id="preparandoopluginparaostestes">1.3 Preparando o plugin para os testes</h4>
+<h4 id="preparando-o-plugin-para-os-testes">1.3 Preparando o plugin para os testes</h4>
 <p>Neste guia você irá aprender como testar seu plugin com vários adaptadores diferentes usando o Active Record.
 Este guia não irá cobrir o uso de fixtures nos testes do plugin.</p>
 <p>Para preparar seu plugin para permitir que os testes sejam executados facilmente você precisa adicionar 3 arquivos:</p>
@@ -248,7 +248,7 @@ load(File.dirname(__FILE__) + &quot;/schema.rb&quot;)
 
 require File.dirname(__FILE__) + '/../init.rb'
 </code></div>
-<h4 id="executarostestesdoplugin">1.4 Executar os testes do plugin</h4>
+<h4 id="executar-os-testes-do-plugin">1.4 Executar os testes do plugin</h4>
 <p>Depois de ter preparado estes arquivos, você pode escrever seu primeiro teste para ter certeza que seu setup de testes
 para os plugins estão corretos. Por default, o rails gera um arquivo em &#8216;vendor/plugins/yaffle/test/yaffle_test.rb&#8217;
 com um teste simples. Mude o conteúdo deste arquivo para:</p>
@@ -303,14 +303,14 @@ rake DB=mysql
 rake DB=postgresql
 </pre>
 <p>Agora você está pronto para testar seu plugin!</p>
-<h3 id="estendendoasclassesbsicas">2 Estendendo as classes básicas</h3>
+<h3 id="estendendo-as-classes-bsicas">2 Estendendo as classes básicas</h3>
 <p>Esta seção irá explicar como adicionar um método na classe String que estará disponível em qualquer local
 da sua aplicação rails. Para isto iremos:</p>
 <ul>
 	<li>Escrever testes para o comportamento desejado</li>
 	<li>Criar e adicionar os arquivos corretos</li>
 </ul>
-<h4 id="criandoostestes">2.1 Criando os testes</h4>
+<h4 id="criando-os-testes">2.1 Criando os testes</h4>
 <p>Neste exemplo você irá adicionar um método à classe String chamado <tt>to_squawk</tt>. Para começar, crie um novo arquivo de teste
 com algumas assertions:</p>
 <p><strong>vendor/plugins/yaffle/test/core_ext_test.rb</strong></p>
@@ -336,7 +336,7 @@ NoMethodError: undefined method `to_squawk' for "Hello World":String
     ./test/core_ext_test.rb:5:in `test_to_squawk_prepends_the_word_squawk'
 </pre>
 <p>Ótimo &#8211; agora você está pronto para começar o desenvolvimento.</p>
-<h4 id="organizeseusarquivos">2.2 Organize seus arquivos</h4>
+<h4 id="organize-seus-arquivos">2.2 Organize seus arquivos</h4>
 <p>Um padrão comum para plugins do rails é preparar a estrutura de arquivos dessa maneira:</p>
 <pre>
 |-- init.rb
@@ -371,7 +371,7 @@ $ ./script/console
 &gt;&gt; "Hello World".to_squawk
 =&gt; "squawk! Hello World"
 </pre>
-<h4 id="usandooinitrb">2.3 Usando o init.rb</h4>
+<h4 id="usando-o-initrb">2.3 Usando o init.rb</h4>
 <p>Quando o rails lê os plugins ele procura pelo arquivo init.rb. Entretanto, quando o plugin é inicializado, &#8216;init.br&#8217; é
 chamado via <tt>eval</tt> (e não <tt>require</tt>), tendo então um comportamento diferente.</p>
 <p>Sobre certas cinscunstâncias se você reabrir classes ou módulos no <tt>init.rb</tt> você pode inadvertidamente criar uma nova

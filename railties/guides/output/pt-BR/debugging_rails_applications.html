@@ -87,14 +87,14 @@
             <div id="subCol">
         <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
         <ol class="chapters">
-<li><a href="#view-helperspara-depurao">View Helpers para Depuração</a><ul><li><a href="#debug">debug</a></li><li><a href="#to-yaml">to_yaml</a></li><li><a href="#inspect">inspect</a></li><li><a href="#depurando-javascript">Depurando Javascript</a></li></ul></li><li><a href="#o-logger">O Logger</a><ul><li><a href="#oqueo-logger">O que é o Logger?</a></li><li><a href="#nveisde-log">Níveis de Log</a></li><li><a href="#enviando-mensagens">Enviando Mensagens</a></li></ul></li><li><a href="#depurandocomruby-debug">Depurando com ruby-debug</a><ul><li><a href="#configurao">Configuração</a></li><li><a href="#a-interface">A Interface</a></li><li><a href="#o-contexto">O Contexto</a></li><li><a href="#threads">Threads</a></li><li><a href="#inspecionando-variveis">Inspecionando Variáveis</a></li><li><a href="#passoa-passo">Passo a Passo</a></li><li><a href="#breakpoints">Breakpoints</a></li><li><a href="#capturando-excees">Capturando Exceções</a></li><li><a href="#continuandoa-execuo">Continuando a Execução</a></li><li><a href="#editando">Editando</a></li><li><a href="#saindo">Saindo</a></li><li><a href="#configuraes">Configurações</a></li></ul></li><li><a href="#depurando-estourosde-memria">Depurando Estouros de Memória</a><ul><li><a href="#bleak-house">BleakHouse</a></li><li><a href="#valgrind">Valgrind</a></li></ul></li><li><a href="#pluginspara-depurao">Plugins para Depuração</a><ul></ul></li><li><a href="#referncias">Referências</a><ul></ul></li><li><a href="#logde-alteraes">Log de Alterações</a><ul></ul></li></ol></div>
+<li><a href="#view-helpers-para-depurao">View Helpers para Depuração</a><ul><li><a href="#debug">debug</a></li><li><a href="#to-yaml">to_yaml</a></li><li><a href="#inspect">inspect</a></li><li><a href="#depurando-javascript">Depurando Javascript</a></li></ul></li><li><a href="#o-logger">O Logger</a><ul><li><a href="#o-que--o-logger">O que é o Logger?</a></li><li><a href="#nveis-de-log">Níveis de Log</a></li><li><a href="#enviando-mensagens">Enviando Mensagens</a></li></ul></li><li><a href="#depurando-com-ruby-debug">Depurando com ruby-debug</a><ul><li><a href="#configurao">Configuração</a></li><li><a href="#a-interface">A Interface</a></li><li><a href="#o-contexto">O Contexto</a></li><li><a href="#threads">Threads</a></li><li><a href="#inspecionando-variveis">Inspecionando Variáveis</a></li><li><a href="#passo-a-passo">Passo a Passo</a></li><li><a href="#breakpoints">Breakpoints</a></li><li><a href="#capturando-excees">Capturando Exceções</a></li><li><a href="#continuando-a-execuo">Continuando a Execução</a></li><li><a href="#editando">Editando</a></li><li><a href="#saindo">Saindo</a></li><li><a href="#configuraes">Configurações</a></li></ul></li><li><a href="#depurando-estouros-de-memria">Depurando Estouros de Memória</a><ul><li><a href="#bleakhouse">BleakHouse</a></li><li><a href="#valgrind">Valgrind</a></li></ul></li><li><a href="#plugins-para-depurao">Plugins para Depuração</a><ul></ul></li><li><a href="#referncias">Referências</a><ul></ul></li><li><a href="#log-de-alteraes">Log de Alterações</a><ul></ul></li></ol></div>
     </div>
   </div>
 
   <div id="container">
     <div class="wrapper">
       <div id="mainCol">
-        <h3 id="view-helperspara-depurao">1 View Helpers para Depuração</h3>
+        <h3 id="view-helpers-para-depurao">1 View Helpers para Depuração</h3>
 <p>Uma tarefa comum é inspecionar os conteúdos de uma variável. No Rails, você pode fazer isto de três formas:</p>
 <ul>
 	<li><tt>debug</tt></li>
@@ -177,7 +177,7 @@ ActionView::Base.debug_rjs = true
 <div class='info'><p>Para mais informações ao depurar javascript visite a página do <a href="http://getfirebug.com/">Firebug</a>, uma popular extensão de depuração para o Firefox.</p></div>
 <h3 id="o-logger">2 O Logger</h3>
 <p>Também pode ser útil guardar informações em arquivos de log durante a execução de sua aplicação. O Rails mantém um arquivo de log separado para cada ambiente de execução.</p>
-<h4 id="oqueo-logger">2.1 O que é o Logger?</h4>
+<h4 id="o-que--o-logger">2.1 O que é o Logger?</h4>
 <p>O Rails utiliza o <tt>logger</tt> padrão do Ruby para escrever informações de log. Você pode substituí-lo por outros loggers, como o <tt>Log4R</tt> se você preferir.</p>
 <p>Você pode especificar um logger alternativo em seu <tt>environment.rb</tt> ou em qualquer arquivo de ambiente:</p>
 <div class="code_container"><code class="ruby">
@@ -190,7 +190,7 @@ config.logger = Logger.new(STDOUT)
 config.logger = Log4r::Logger.new(&quot;Log da Aplicação&quot;)
 </code></div>
 <div class='info'><p>Por padrão, cada log é criado em <tt>RAILS_ROOT/log/</tt> e o nome do arquivo de log é <tt>environment_name.log</tt>.</p></div>
-<h4 id="nveisde-log">2.2 Níveis de Log</h4>
+<h4 id="nveis-de-log">2.2 Níveis de Log</h4>
 <p>Quando uma mensagem é enviada para o log, ela é impressa no arquivo de log correspondente se o nível de log da mensagem é igual ou maior do que o nível configurado para o log. Para saber o nível configurado atual de um log, você pode chamar o método <tt>ActiveRecord::Base.logger.level</tt>.</p>
 <p>Os níveis de log disponíveis são: <tt>:debug</tt>, <tt>:info</tt>, <tt>:warn</tt>, <tt>:error</tt> e <tt>:fatal</tt>, correspondendo aos níveis de log dos número de 0 até 4 respectivamente. Para alterar o nível de log, utilize:</p>
 <div class="code_container"><code class="ruby">
@@ -247,7 +247,7 @@ Redirected to #&lt;Post:0x20af760&gt;
 Completed in 0.01224 (81 reqs/sec) | DB: 0.00044 (3%) | 302 Found [http://localhost/posts]
 </code></div>
 <p>Adicionar informações de logs extras como estas torna mais simples a busca por comportamentos inexperados ou incomuns em seus logs. Se você adicionar informações extras de log, certifique-se de utilizar corretamente os níveis de log, para evitar encher seu log de produção com informações não-úteis.</p>
-<h3 id="depurandocomruby-debug">3 Depurando com ruby-debug</h3>
+<h3 id="depurando-com-ruby-debug">3 Depurando com ruby-debug</h3>
 <p>Quando o seu código estiver comportando-se de forma diferente do esperado, você pode tentar imprimir mensagem nos logs ou no console para diagnosticar o problema. Infelizmente, pode acontecer de haver situações em que este tipo de análise de erro não ser efetivo para encontrar a raiz de um problema. Quando você precisar analisar mais profundamente seu código durante sua execução, o depurador será seu melhor amigo.</p>
 <p>O depurador também poderá lhe ajudar caso você deseje aprender sobre o código fonte do Rails e não souber por onde começar. Simplesmente depure qualquer requisição em sua aplicação e utilize este guia para aprender como se aprofundar a partir de seu código para o código do Rails.</p>
 <h4 id="configurao">3.1 Configuração</h4>
@@ -419,7 +419,7 @@ var
 1: @recent_comments =
 </code></div>
 <p>As variáveis dentro da lista de observações serão impressas com seus valores assim que você avançar na pilha de execução. Para parar a observação de uma variável, utilize <tt>undisplay <em>n</em></tt>, onde <em>n</em> é o número da variável (1 no último exemplo).</p>
-<h4 id="passoa-passo">3.6 Passo a Passo</h4>
+<h4 id="passo-a-passo">3.6 Passo a Passo</h4>
 <p>Você já deve se situar na pilha de execução e também deve ser capaz de imprimir os valores de variáveis. Agora, vamos continuar com a execução da aplicação.</p>
 <p>Utilize o comando <tt>step</tt> (abreviação <tt>s</tt>) para continuar a execução de seu programa até o próximo ponto lógico de parada, quando o controle voltará ao ruby-debug.</p>
 <div class='info'><p>Você também pode utilizar <tt>step <em>n</em></tt> e <tt>step- <em>n</em></tt> para andar para frente ou para trás <em>n</em> passos respectivamente.</p></div>
@@ -517,7 +517,7 @@ No breakpoints.
 <h4 id="capturando-excees">3.8 Capturando Exceções</h4>
 <p>O comando <tt>catch nome-da-exceção</tt> (ou somente <tt>cat exception-name</tt>) pode ser utilizado para interceptar uma exceção do tipo <em>nome-da-exceção</em> quando não houver tratamento para a exceção.</p>
 <p>Para listar os pontos de captura ativos utilize o comando <tt>catch</tt>.</p>
-<h4 id="continuandoa-execuo">3.9 Continuando a Execução</h4>
+<h4 id="continuando-a-execuo">3.9 Continuando a Execução</h4>
 <p>Existem duas formas de continuar a execução de uma aplicação que está parada no depurador:</p>
 <ul>
 	<li><tt>continue</tt> [especificação-da-linha] (ou <tt>c</tt>): continua a execução do programa a partir do local onde o seu script parou; quaisquer outros breakpoints posicionados no local são ignorados. O argumento opcional especificação-da-linha permite a você especificar o número de uma linha para criar um breakpoint temporário que será removido assim que o breakpoint for alcançado.</li>
@@ -548,10 +548,10 @@ set autolist
 set forcestep
 set listsize 25
 </pre>
-<h3 id="depurando-estourosde-memria">4 Depurando Estouros de Memória</h3>
+<h3 id="depurando-estouros-de-memria">4 Depurando Estouros de Memória</h3>
 <p>Uma aplicação Ruby (seja ela Rails ou não), pode estourar a memória &#8211; seja no nível de código Ruby ou C.</p>
 <p>Nesta seção, você aprenderá como fazer para encontrar e corrigir estouros utilizando as ferramentas de depuração Bleak House e Valgrind.</p>
-<h4 id="bleak-house">4.1 BleakHouse</h4>
+<h4 id="bleakhouse">4.1 BleakHouse</h4>
 <p><a href="http://github.com/fauna/bleak_house/tree/master">BleakHouse</a> é uma biblioteca para encontrar estouros de memória.</p>
 <p>Se um objeto Ruby não ficar fora de escopo, o Ruby Garbage Collector não irá limpá-lo já que ele estará sendo referenciado em algum lugar. Estouros deste tipo podem crescer lentamente e sua aplicação irá consumir mais e mais memória, gradualmente afetando a performance geral do sistema. Esta ferramenta irá ajudá-lo a encontrar estouros na heap do Ruby.</p>
 <p>Para instalá-lo, execute:</p>
@@ -590,7 +590,7 @@ Para analisá-lo, execute o comando listado. As 20 linhas com maior probabilidad
 <p><a href="http://valgrind.org/">Valgrind</a> é uma aplicação para Linux para detectar estouros de memória e condições de disputa em programas C.</p>
 <p>Existem ferramentas Valgrind que podem detectar automaticamente bugs de gerenciamento de memória e de threads, e detalhar o perfil de seu programa. Por exemplo, uma extensão C no interpretador chama <tt>malloc()</tt> mas não chama <tt>free()</tt>, esta memória não ficará disponível até que a aplicação termine.</p>
 <p>Para mais informações de como instalar o Valgrind e utilizá-lo com Ruby, visite <a href="http://blog.evanweaver.com/articles/2008/02/05/valgrind-and-ruby/">Valgrind e Ruby</a> por Evan Weaver.</p>
-<h3 id="pluginspara-depurao">5 Plugins para Depuração</h3>
+<h3 id="plugins-para-depurao">5 Plugins para Depuração</h3>
 <p>Existem alguns plugins para o Rails que podem auxiliá-lo a encontrar erros e depurar a sua aplicação. Aqui está uma lista de plugins que podem ser úteis para este propósito:</p>
 <ul>
 	<li><a href="http://github.com/drnic/rails-footnotes/tree/master">Footnotes</a>: Cada página no Rails recebe notas de rodapé com informações sobre a requisição e com atalhos para seu código fonte via TextMate.</li>
@@ -613,7 +613,7 @@ Para analisá-lo, execute o comando listado. As 20 linhas com maior probabilidad
 	<li><a href="http://wiki.rubyonrails.org/rails/pages/HowtoConfigureLogging">Ruby on Rails Wiki: How to Configure Logging</a></li>
 	<li><a href="http://blog.evanweaver.com/files/doc/fauna/bleak_house/files/README.html">Bleak House Documentation</a></li>
 </ul>
-<h3 id="logde-alteraes">7 Log de Alterações</h3>
+<h3 id="log-de-alteraes">7 Log de Alterações</h3>
 <p><a href="http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/5">Lighthouse ticket</a></p>
 <ul>
 	<li>Março 3, 2008: Revisão da tradução por <a href="translators.html#danielvlopes">Daniel Lopes</a></li>

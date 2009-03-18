@@ -189,25 +189,25 @@ h5. Memória
 
 Mede o consumo de memória de cada teste de performance.
 
-Modo: Benchmarking, Profiling requer a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
+Modo: Benchmarking, Profiling requer a utilização do "Ruby com GC modificado":#instalando-o-ruby-com-o-gc-modificado
 
 h5. Objetos
 
 Mede o número de objetos alocados para cada teste de performance.
 
-Modo: Benchmarking, Profiling requer a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
+Modo: Benchmarking, Profiling requer a utilização do "Ruby com GC modificado":#instalando-o-ruby-com-o-gc-modificado
 
 h5. Execuções do GC (Garbage Collector)
 
 Mede quantas vezes o GC foi executado para cada teste de performance.
 
-Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
+Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#instalando-o-ruby-com-o-gc-modificado
 
 h5. Tempo de execução do GC
 
 Mede quanto tempo foi gasto com a execução do GC para cada teste de performance.
 
-Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#instalandoo-rubycomo-g-cmodificado
+Modo: No modo Benchmarking exige a utilização do "Ruby com GC modificado":#instalando-o-ruby-com-o-gc-modificado
 
 h4. Entendo as informações obtidas
 
