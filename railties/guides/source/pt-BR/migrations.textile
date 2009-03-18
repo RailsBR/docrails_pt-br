@@ -241,7 +241,7 @@ create_table :products do |t|
 end
 </ruby>
 
-Por padrão, +create_table+ criará uma chave primária chamada +id+. Você pode alterar o nome da chave primária com a opção +:primary_key+ (Não esqueça de atualizar o modelo correspondente) ou se você não precisar de uma chave primária (por exemplo HABTM (has and belongs to many) join table) você pode passar +:id ⇒ false+. Se você precisa passar alguma informação específica, você pode passar um fragmento SQL na opção +:options+. Por exemplo:
+Por padrão, +create_table+ criará uma chave primária chamada +id+. Você pode alterar o nome da chave primária com a opção +:primary_key+ (não esqueça de atualizar o modelo correspondente) ou se você não quiser uma chave primária (por exemplo para uma tabela join HABTM) você pode passar +:id ⇒ false+. Se você precisa passar alguma informação específica do banco de dados, você pode passar um fragmento SQL na opção +:options+. Por exemplo:
 
 <ruby>
 create_table :products, :options => "ENGINE=BLACKHOLE" do |t|
@@ -249,7 +249,7 @@ create_table :products, :options => "ENGINE=BLACKHOLE" do |t|
 end
 </ruby>
 
-Irá anexar +ENGINE=BLACKHOLE+ na sql usada para criar a tabela (Quando se usa MySQL por padrão é usado "ENGINE=InnoDB".
+vai concatenar +ENGINE=BLACKHOLE+ na sql usada para criar a tabela (quando se usa MySQL por padrão é usado "ENGINE=InnoDB".
 
 Os tipos que o Active Record suporta são +:primary_key+, +:string+, +:text+, +:integer+, +:float+, +:decimal+, +:datetime+, +:timestamp+, +:time+, +:date+, +:binary+, +:boolean+.
 
