@@ -366,17 +366,6 @@ Você pode escrever esta view no Rails 2.3:
 <% end %>
 </erb>
 
-Quando aninhar através de uma relação +has_one+ você precisará criar um novo objeto em branco para o objeto aninhado antes de chamar o +fields_for+ na view.
-
-Um método +build_&lt;model_name&gt;+ foi criado para este propósito:
-
-<erb>
-	<% @customer.build_order unless @customer.order %>
-	<% customer_form.fields_for :orders do |order_form| %>
-</erb>
-
-Caso contrário +@customer.order+ retornará +nil+ e seu formulário irá falhar. As relações +has_many+ não precisam deste passo extra.
-
 * Contribuidor Líder: "Eloy Duran":http://www.superalloy.nl/blog/
 * Mais Informações:
 ** "Nested Model Forms":http://weblog.rubyonrails.org/2009/1/26/nested-model-forms
