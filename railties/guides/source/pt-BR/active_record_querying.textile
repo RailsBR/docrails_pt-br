@@ -1,0 +1,970 @@
+h2. Interface de consulta do Active Record
+
+Este guia cobre diferente maneiras de recuperar dados do bando de dados usando o Active Record. Usando este guia como referência, você será capaz de:
+
+* Encontrar registros usando uma variedade de métodos e condições
+* Especificar a ordenação, atributos retornados, agrupamento e outras propriedades dos registros encontrados
+* Utilizar eager loading para reduzir o número de consultas ao banco de dados necessárias para recuperar os dados
+* Utilizar dynamic finders
+* Criar named scopes para adicionar comportamento de pesquisa personalizado aos seus models
+* Verificar a existência de registros específicos
+* Realaizar diversos cálculos sobre models Active Record
+
+endprologue.
+
+Se você estiver acostumado a utilizar SQL puro para encontrar registros no banco de dados então, de forma geral, você descobrirá que existem maneiras melhores de realizar as mesmas operações no Rails. O Active Record evita a necessidade de utilizar SQL na maioria dos casos.
+
+Os exemplos de código por todos este guia irão se referir a um ou mais dos seguintes models:
+
+TIP: Todos os models a seguir utilizar +id+ como chave primária, a não ser quando específicado diferentemente.
+
+<br />
+
+<ruby>
+class Client < ActiveRecord::Base
+  has_one :address
+  has_one :mailing_address
+  has_many :orders
+  has_and_belongs_to_many :roles
+end
+</ruby>
+
+<ruby>
+class Address < ActiveRecord::Base
+  belongs_to :client
+end
+</ruby>
+
+<ruby>
+class MailingAddress < Address
+end
+</ruby>
+
+<ruby>
+class Order < ActiveRecord::Base
+  belongs_to :client, :counter_cache => true
+end
+</ruby>
+
+<ruby>
+class Role < ActiveRecord::Base
+  has_and_belongs_to_many :clients
+end
+</ruby>
+
+O Active Record irá realizar consultas ao banco de dados para você e é compativel com a maioria dos sistemas de bancos de dados (MySQL, PostgreSQL e SQLite, entre outros). Independentemente de qual sistema de banco de dados você está usando, o formato dos métodos do Active Record será sempre o mesmo.
+
+h3. Recuperando Objetos do Banco de Dados
+
+Para recuperar objetos do banco de dados, o Active Record fornece um método de classe chamado +Model.find+. Este método permite que você passe argumentos para realizar determinadas consultas ao seu banco de dados sem a necessidade de escrever SQL puro.
+
+A operação primária do método <tt>Model.find(options)</tt> pode ser resumida como:
+
+* Converter as opções fornecidas para uma consulta SQL equivalente.
+* Disparar a consulta e recuperar os respectivos resultados do banco de dados.
+* Instanciar o objeto Ruby equivalente do model apropriado para cada linha resultante.
+* Executar callbacks +after_find+ caso exista algum.
+
+h4. Recuperando um Único Objeto
+
+O Active Record permite que você recupere um único objeto de três formas diferentes.
+
+h5. Utilizando uma Chave Primária
+
+Utilizando <tt>Model.find(primary_key, options = nil)</tt>, você pode recuperar o objeto que corresponde à chave primária fornecida. Por exemplo:
+
+<ruby>
+# Encontrar o cliente com chave primária (id) 10
+client = Client.find(10)
+=> #<Client id: 10, name: => "Ryan">
+</ruby>
+
+O SQL equivalente para o código acima é:
+
+<sql>
+SELECT * FROM clients WHERE (clients.id = 10)
+</sql>
+
+<tt>Model.find(primary_key)</tt> irá lançar uma exceção +ActiveRecord::RecordNotFound+ caso nenhum registro seja encontado.
+
+h5. +first+
+
+<tt>Model.first(options = nil)</tt> encontra o primeiro registro que case com as opções fornecidas. Se +options+ não for informado, o primeiro registro encontrado será retornado. Por exemplo:
+
+<ruby>
+client = Client.first
+=> #<Client id: 1, name: => "Lifo">
+</ruby>
+
+O SQL equivalente para o código acima é:
+
+<sql>
+SELECT * FROM clients LIMIT 1
+</sql>
+
+<tt>Model.first</tt> retorna +nil+ se nenhum registro for encontrado. Não será lançada uma exceção.
+
+NOTE: +Model.find(:first, options)+ é equivalente a +Model.first(options)+
+
+h5. +last+
+
+<tt>Model.last(options = nil)</tt> encontra o último registro que case com as opções fornecidas. Se +options+ não for informado, o último registro encontrado seŕa retornado. Por exemplo:
+
+<ruby>
+client = Client.last
+=> #<Client id: 221, name: => "Russel">
+</ruby>
+
+O SQL equivalente para o código acima é:
+
+<sql>
+SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
+</sql>
+
+<tt>Model.last</tt> retorna +nil+ se nenhum registro for encontrado. Nenhuma exceção será lançada.
+
+NOTE: +Model.find(:last, options)+ é equivalente a +Model.last(options)+
+
+h4. Recuperando Vários Objetos
+
+h5. Utilizando Várias Chaves Primárias
+
+<tt>Model.find(array_of_primary_key, options = nil)</tt> aceita um array de chaves primárias. Será retornado um array com todos os registros que possuam as chaves primárias fornecidas. Por exemplo:
+
+<ruby>
+# Encontra os clientes com chaves primárias 1 e 10.
+client = Client.find(1, 10) # Or even Client.find([1, 10])
+=> [#<Client id: 1, name: => "Lifo">, #<Client id: 10, name: => "Ryan">]
+</ruby>
+
+O SQL equivalente para o código acima é:
+
+<sql>
+SELECT * FROM clients WHERE (clients.id IN (1,10))
+</sql>
+
+<tt>Model.find(array_of_primary_key)</tt> lançara uma exceção +ActiveRecord::RecordNotFound+ a não ser que seja encontrado um registro para <strong>todas</strong> as chaves primárias informadas.
+
+h5. Encontrar todos
+
+<tt>Model.all(options = nil)</tt> encontra todos os registros que casem com as opções fornecidas. Se +options+ não for informado, todas as linhas da tabela serão retornadas
+
+<ruby>
+# Encontra todos os clientes
+clients = Client.all
+=> [#<Client id: 1, name: => "Lifo">, #<Client id: 10, name: => "Ryan">, #<Client id: 221, name: => "Russel">]
+</ruby>
+
+E o SQL equivalente é:
+
+<sql>
+SELECT * FROM clients
+</sql>
+
+<tt>Model.all</tt> retorna um array vazio +[]+ se nenhum registro for encontrado. Nenhuma exceção será lançada.
+
+NOTE: +Model.find(:all, options)+ é equivalente a +Model.all(options)+
+
+h4. Recuperando Vários Objetos em Lotes
+
+Às vezes você precisa iterar sobre um grande conjunto de registros. Por exemplo para enviar uma newsletter a todos os usuários, para exportar alguns dados, etc.
+
+O código a seguir pode parecer bastante simples em um primeiro momento:
+
+<ruby>
+# Muito ineficiente quando a tabela users tem milhares de linhas.
+User.all.each do |user|
+  NewsLetter.weekly_deliver(user)
+end
+</ruby>
+
+Mas se o número total de linhas na tabela é muito grande, a abordagem acima pode variar entre ineficiente e praticamente impossível.
+
+Isso acontece porque +User.all+ recupera _toda a tabela_, constrói um objeto por linha, e mantém o array inteiro na memória. Algumas vezes isso pode significar objetos demais e exige memória demais.
+
+h5. +find_each+
+
+Para iterar efientemente sobre uma grande tabela, o Active Record fornece um método para pesquisa em lote chamado  +find_each+:
+
+<ruby>
+User.find_each do |user|
+  NewsLetter.weekly_deliver(user)
+end
+</ruby>
+
+*Configurando o tamanho do lote*
+
+Por baixo dos panos +find_each+ recupera linhas em lotes de +1000+ e retorna-os um por um.
+
+Para recuperar registros da classe +User+ em lotes de +5000+:
+
+<ruby>
+User.find_each(:batch_size => 5000) do |user|
+  NewsLetter.weekly_deliver(user)
+end
+</ruby>
+
+*Iniciando uma consulta em lote a partir de uma chave primária específica*
+
+Os registros são retornados em ordem crescente de chave primária, a qual deve ser um inteiro. A opção +:start+ permite que você configure o primeiro ID da sequência caso o menor não seja aquele que você precisa. Isso pode ser ũtil por exemplo para reiniciar um processo em lote interrompido caso ele salve o último ID processado.
+
+Para enviar newsletters apenas para usuários cuja chave primária seja maior ou igual a +2000+:
+
+<ruby>
+User.find_each(:batch_size => 5000, :start => 2000) do |user|
+  NewsLetter.weekly_deliver(user)
+end
+</ruby>
+
+*Opções adicionais*
+
++find_each+ aceita as mesmas opções que o método +find+ comum. Entretanto, +:order+ e +:limit+ são utilizados internamente, não sendo permitido passá-las explicitamente.
+
+h5. +find_in_batches+
+
+
+Você também pode trabalhar por grupos ao invés de linha por linha usando +find_in_batches+. Este método é análogo ao +find_each+, mas retorna arrays de models ao invés de registros únicos:
+
+<ruby>
+# Trabalha sobre grupos de 1000 invoices por vez.
+Invoice.find_in_batches(:include => :invoice_lines) do |invoices|
+  export.add_invoices(invoices)
+end
+</ruby>
+
+O código acima irá chamar o bloco fornecido com +1000+ invoices por vez.
+
+h3. Condições
+
+O método +find+ permite que você especifique condições para limitar os registros retornados, representante a cláusula WHERE da declaração SQL. Condições podem ser especificadas como uma string, array ou hash.
+
+h4. Condições em Strings Puras
+
+Se você quiser adicionar condições ao seu +find+, você pode simplesmente especificá-las ali, como em +Client.first(:conditions => "orders_count = '2'")+. Isso irá encontrar todos os clientes onde o valod do campo +orders_count+ for igual a 2.
+
+WARNING: Construir suas condições como strings puras pode torná-lo vulnerável a ataques por SQL injection. Por exemplo, +Client.first(:conditions => "name LIKE '%#{params[:name]}%'")+ não é seguro. Veja a próxima seção para a forma ideal de manipular condições, utilizando um array.
+
+h4. Condições em Arrays
+
+Agora, o que fazer caso aquele número possa variar, como um argumento vindo de algum outro lugar? O +find+ então se transforma em algo como:
+
+<ruby>
+Client.first(:conditions => ["orders_count = ?", params[:orders]])
+</ruby>
+
+O Active Record irá avaliar o primeiro elemento no array de condições e quaisquer elementos adicionais irão substituir os pontos de interrogação +(?)+ presentes no primeiro elemento.
+
+Caso você queira especificar duas condições, você pode fazê-lo assim:
+
+<ruby>
+Client.first(:conditions => ["orders_count = ? AND locked = ?", params[:orders], false])
+</ruby>
+
+Neste exemplo, o primeiro ponto de interrogação será substituído com o valor em +params[:orders]+ e o segundo será substituído com a representação SQL de +false+, a qual depende do adapter sendo utilizado.
+
+A razão de escrever código como:
+
+<ruby>
+Client.first(:conditions => ["orders_count = ?", params[:orders]])
+</ruby>
+
+ao invés de:
+
+<ruby>
+Client.first(:conditions => "orders_count = #{params[:orders]}")
+</ruby>
+
+deve-se à segurança de argumentos. Colocar a variável diretamente dentro da string de condições irá passar o conteúdo da variável para o banco de dados *sem qualquer alteração*. Isso significa que a variável será diretamente informada por um usuário (possivelmente) mal intencionado e não será tratada. Se você fizer isso, você estará colocando toda a sua base de dados em risco porque uma vez que um usuário descubra que ele pode atacar seu banco de dados ele pode fazer praticamente qualquer coisa com isso. Nunca, jamais, coloque seus argumentos diretamente dentro de uma string de condições.
+
+TIP: Para mais informações sobre os perigos do SQL injection, veja o "Guia de Segurança do Ruby on Rails":security.html#injection-de-sql.
+
+h5. Condições por Placeholders
+
+De forma similar ao estilo de substituição de parâmetros utilizando +(?)+, você também pode especifiar hashes com chaves/valores no seu array de condições:
+
+<ruby>
+Client.all(:conditions =>
+  ["created_at >= :start_date AND created_at <= :end_date", { :start_date => params[:start_date], :end_date => params[:end_date] }])
+</ruby>
+
+Isso ajuda a tornar o código mais claro se você tiver um grande número de condições variáveis.
+
+h5. Condições de intervalo
+
+Se você estiver procurando por um intervalo dentro de um tabela (por exemplo, usuários criados dentro de um determinado intervalo de tempo) você pode usar a opção de condições acoplada com a declaração SQL +IN+. Se você tiver duas datas vindas de um controller você pode algo como isso para procurar por um intervalo:
+
+<ruby>
+Client.all(:conditions => ["created_at IN (?)",
+  (params[:start_date].to_date)..(params[:end_date].to_date)])
+</ruby>
+
+Isso irá gerar a consulta apropriada a qual é ótima para pequenos intervalos mas não tão boa para intervalos maiores. Por exemplo se você passar uma sequência de datas que completem um ano serão 365 (ou possivelmente 366 dependendo do ano) strings com as quais seu campo serã comparado.
+
+<sql>
+SELECT * FROM users WHERE (created_at IN
+  ('2007-12-31','2008-01-01','2008-01-02','2008-01-03','2008-01-04','2008-01-05',
+  '2008-01-06','2008-01-07','2008-01-08','2008-01-09','2008-01-10','2008-01-11',
+  '2008-01-12','2008-01-13','2008-01-14','2008-01-15','2008-01-16','2008-01-17',
+  '2008-01-18','2008-01-19','2008-01-20','2008-01-21','2008-01-22','2008-01-23',...
+  ‘2008-12-15','2008-12-16','2008-12-17','2008-12-18','2008-12-19','2008-12-20',
+  '2008-12-21','2008-12-22','2008-12-23','2008-12-24','2008-12-25','2008-12-26',
+  '2008-12-27','2008-12-28','2008-12-29','2008-12-30','2008-12-31'))
+</sql>
+
+h5. Condições de Tempo de Data
+
+As coisas podem ficar *realmente* ruins se você fornecer objetos Time pois isso irá comparar o seu campo com *cada segundo* naquele intervalo:
+
+<ruby>
+Client.all(:conditions => ["created_at IN (?)",
+  (params[:start_date].to_date.to_time)..(params[:end_date].to_date.to_time)])
+</ruby>
+
+<sql>
+SELECT * FROM users WHERE (created_at IN
+  ('2007-12-01 00:00:00', '2007-12-01 00:00:01' ...
+  '2007-12-01 23:59:59', '2007-12-02 00:00:00'))
+</sql>
+
+Isso poderia fazer com que seu servidor de banco de dados lance um erro inesperado, por exemplo o MySQL irá devolver este erro:
+
+<shell>
+Got a packet bigger than 'max_allowed_packet' bytes: _query_
+</shell>
+
+Onde _query_ é a consulta utilizada para provocar o erro.
+
+Neste exemplo seria melhor utilizar operadores maior-que e menor-que no SQL, como em:
+
+<ruby>
+Client.all(:conditions =>
+  ["created_at > ? AND created_at < ?", params[:start_date], params[:end_date]])
+</ruby>
+
+Você também pode utilizar maior-ou-igual-que e menor-ou-igual-que, assim:
+
+<ruby>
+Client.all(:conditions =>
+  ["created_at >= ? AND created_at <= ?", params[:start_date], params[:end_date]])
+</ruby>
+
+Da mesma forma que em Ruby. Se você quiser um sintaxe mais curta dê uma olhada na seção "Condições em Hash":#condies-em-hash mais a frente neste guia.
+
+h4. Condições em Hash
+
+O Active Record também permite que você forneça um hash de condições que pode tornar sua sintaxe de condições mais clara. Com condições em hash, você fornece um hash com chaves para os campos sobre os quais você deseja aplicar condições e os valores com os quais essas condições devem ser aplicadas:
+
+NOTE: Apenas verificações de igualdade, intervalo e subconjunto são possíveis com condições em hash.
+
+h5. Condições de igualdade
+
+<ruby>
+Client.all(:conditions => { :locked => true })
+</ruby>
+
+O nome do campo não precisa ser um symbol, ele também pode ser uma string:
+
+<ruby>
+Client.all(:conditions => { 'locked' => true })
+</ruby>
+
+h5. Condições de intervalo
+
+A coisa boa disso é que podemos passar um intervalo para nossos campos sem que isso gere uma consulta muito grande, como visto no preâmbulo dessa seção.
+
+<ruby>
+Client.all(:conditions => { :created_at => (Time.now.midnight - 1.day)..Time.now.midnight})
+</ruby>
+
+Isso irá encontrar todos os clientes criados ontem utilizando uma declaração SQL +BETWEEN+:
+
+<sql>
+SELECT * FROM clients WHERE (clients.created_at BETWEEN '2008-12-21 00:00:00' AND '2008-12-22 00:00:00')
+</sql>
+
+Isso demonstra uma sintaxe mais curta para os exemplos em "Condições em Arrays":#condies-em-arrays
+
+h5. Condições de subconjunto
+
+Se você quiser encontrar registros utilizando a expressão +IN+ você pode passar um array para o hash de condições:
+
+<ruby>
+Client.all(:conditions => { :orders_count => [1,3,5] })
+</ruby>
+
+Este código irá gerar SQL como esse:
+
+<sql>
+SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
+</sql>
+
+h3. Opções para +Find+
+
+Além de +:conditions+, +Model.find+ aceita uma variedade de outras opções através de um hash, tornando possível personalizar o conjunto de registros resultante.
+
+<ruby>
+Model.find(id_or_array_of_ids, options_hash)
+Model.find(:last, options_hash)
+Model.find(:first, options_hash)
+
+Model.first(options_hash)
+Model.last(options_hash)
+Model.all(options_hash)
+</ruby>
+
+As seções a seguir fornecem uma visão geral de todas as chaves possíveis para +options_hash+.
+
+h4. Ordenação
+
+Para recuperar registros do banco de dados em um ordem específica, você pode especificar a opção +:order+ para a chamada +find+.
+
+Por exemplo, se você estiver pegando um conjunto de registros e quiser ordená-los em ordem crescente pelo campo +created_at+ na sua tabela:
+
+<ruby>
+Client.all(:order => "created_at")
+</ruby>
+
+Você poderia especificar também +ASC+ ou +DESC+:
+
+<ruby>
+Client.all(:order => "created_at DESC")
+# OR
+Client.all(:order => "created_at ASC")
+</ruby>
+
+Ou ordenar por vários campos:
+
+<ruby>
+Client.all(:order => "orders_count ASC, created_at DESC")
+</ruby>
+
+h4. Selecionando campos específicos
+
+Por padrão, <tt>Model.find</tt> seleciona todos os campos do conjunto resultante usando +select *+.
+
+Para selecionar apenas um subconjunto dos campos do conjunto resultante, você pode especificar o subconjunto através da opção +:select+ no +find+.
+
+NOTE: Se a opção +:select+ for usada, todos os objetos retornados serão "somente para leitura":objetos-somente-para-leitura.
+
+<br />
+
+Por exemplo, para selecionar apenas as colunas +viewable_by+ e +locked+:
+
+<ruby>
+Client.all(:select => "viewable_by, locked")
+</ruby>
+
+A consulta SQL utilizada por essa chamada ao método +find+ será algo como:
+
+<sql>
+SELECT viewable_by, locked FROM clients
+</sql>
+
+Seja cuidadoso porque isso também significa que você está inicializando uma instância de um model com apenas os campos que você selecionou. Se você tentar acessar um campo que não esteja no registro inicializado você receberá:
+
+<shell>
+ActiveRecord::MissingAttributeError: missing attribute: <attribute>
+</shell>
+
+Onde +<attribute>+ é o atributo que você tentou acessar. O método +id+ não lancára +ActiveRecord::MissingAttributeError+, então tome cuidado ao trabalhar com associações porque elas precisam do método +id+ para funcionar corretamente.
+
+Você também pode chamar funçõeas SQL dentro da opção select. Por exemplo, se você quiser pegar somente um único registro para cada valor único em um determinado campo utilizando a função +DISTINCT+, você pode fazer:
+
+<ruby>
+Client.all(:select => "DISTINCT(name)")
+</ruby>
+
+h4. Limit e Offset
+
+Para aplicar +LIMIT+ ao SQL disparado por +Model.find+, você pode especificar o +LIMIT+ utilizando as opções +:limit+ e +:offset+ sobre o +find+.
+
+Se você quiser limitar o total de registros a um certo subconjunto de registros retornado você geralmente utiliza a opção +:limit+, às vezes em conjunto com +:offset+. Limit é o número máximo de registros que serão recuperados de uma consulta, e offset é o número de registros a partir do qual ele começará a ler, em relação ao primeiro registro no conjunto. Por exemplo:
+
+<ruby>
+Client.all(:limit => 5)
+</ruby>
+
+Este código irá retornar no máximo 5 clientes e já que não foi específicado um offset ele retornará os 5 primeiros registros na tabela. O SQL executado será algo como isso:
+
+<sql>
+SELECT * FROM clients LIMIT 5
+</sql>
+
+Ou especificando +:limit+ e +:offset+:
+
+<ruby>
+Client.all(:limit => 5, :offset => 5)
+</ruby>
+
+Este código irá retornar no máximo 5 clientes e como dessa vez ele especificou um offset, ele retornará estes registros começando do quinto cliente na tabela clients. O SQL se parecerá com isso:
+
+<sql>
+SELECT * FROM clients LIMIT 5, 5
+</sql>
+
+h4. Agrupamento
+
+Para aplicar a cláusula +GROUP BY+ ao SQL disparado pelo método +Model.find+, você pode especificar a opção +:group_by+ sobre o +find+.
+
+Por exemplo, se você quiser encontrar uma coleção das datas nas quais pedidos foram feitos:
+
+<ruby>
+Order.all(:group => "date(created_at)", :order => "created_at")
+</ruby>
+
+E isso lhe dará um único objeto +Order+ para cada data onde existam pedidos no banco de dados.
+
+O SQL que seria executado seria algo mais ou menos assim:
+
+<sql>
+SELECT * FROM orders GROUP BY date(created_at)
+</sql>
+
+h4. Having
+
+O SQL usa a cláusula +HAVING+ para especificar condições para os campos +GROUP BY+. Você pode especificar a cláusula +HAVING+ para o SQL disparado pelo método +Model.find+ utilizando a opção +:having+ sobre o +find+.
+
+Por exemplo:
+
+<ruby>
+Order.all(:group => "date(created_at)", :having => ["created_at > ?", 1.month.ago])
+</ruby>
+
+O SQL que seria executado seria algo mais ou menos assim:
+
+<sql>
+SELECT * FROM orders GROUP BY date(created_at) HAVING created_at > '2009-01-15'
+</sql>
+
+Isso irá retornar um único objeto para cada dia, mas somente para o último mês.
+
+h4. Objetos Somente Para Leitura
+
+Para explicitamente desabilitar alterações/destruição dos registros retornados pelo método +Model.find+, você poderia especificar a opção :readonly+ como +true+ para a chamada +find+.
+
+Qualquer tentativa de alterar ou destruir os registros somente para leitura não terá sucesso, lançando uma exceção +ActiveRecord::ReadOnlyRecord+. Para definir essa opção, especifique-a assim:
+
+<ruby>
+Client.first(:readonly => true)
+</ruby>
+
+Se você associar este registro com uma variável client, chamar o código a seguir irá lançar uma exceção +ActiveRecord::ReadOnlyRecord+:
+
+<ruby>
+client = Client.first(:readonly => true)
+client.locked = false
+client.save
+</ruby>
+
+h4. Travando Registros para Atualização
+
+Travar registros é útil para prevenir race conditions quando estivermos atualizando registros no banco de dados e garantindo atualizações atomicas. O Active Record fornece dois mecanismos de locking:
+
+* Optimistic Locking
+* Pessimistic Locking
+
+h5. Optimistic Locking
+
+Optimistic locking permite que multiplos usuários acessem o mesmo registro para edição e assume que ocorram poucos conflitos com os dados. Ele faz isso verificando se outro processo realizou mudanças a um registro desde de que ele foi aberto. Uma exceção +ActiveRecord::StaleObjectError+ é lançada caso isso tenha acontecida e a atualização é ignorada.
+
+<strong>Coluna para o Optimistic locking</strong>
+
+Para utilizar o optimistic locking, a tabela precisar ter uma coluna chamada +lock_version+. Cada vez que o registro é atualizado, o Active Record incrementa a coluna +lock_version+ e os recursos de locking garantem que caso um registro seja instanciado duas vezes, o segundo será salvo e uma exceção +ActiveRecord::StaleObjectError+ será lançada caso o primeiro registro também tenha sido atualizado. Exemplo:
+
+<ruby>
+c1 = Client.find(1)
+c2 = Client.find(1)
+
+c1.name = "Michael"
+c1.save
+
+c2.name = "should fail"
+c2.save # Lança ActiveRecord::StaleObjectError
+</ruby>
+
+Você é portanto responsável por lidar com o conflito resgatando a exceção e desfazendo as alterações, mesclando ou então aplicando a lógica de negócio necessária para resolver o conflito.
+
+NOTE: Você deve garantir que o esquema do seu banco de dados defina a coluna +lock_version+ para +0+ por padrão.
+
+<br />
+
+Este comportamento pode ser desligado definindo-se <tt>ActiveRecord::Base.lock_optimistically = false</tt>.
+
+Para sobrescrever o nome da coluna +lock_version+, o +ActiveRecord::Base+ fornece um método de classe chamado +set_locking_column+:
+
+<ruby>
+class Client < ActiveRecord::Base
+  set_locking_column :lock_client_column
+end
+</ruby>
+
+h5. Pessimistic Locking
+
+O pessimistic locking utiliza mecanismos de travamento fornecidos pelo próprio banco de dados. Passando +:lock => true+ para +Model.find+ obtém um travamento exclusivo sobre as linhas selecionadas. +Model.find+ utilizando +:lock+ é geralmente colocado dentro de uma transação para prevenir condições de deadlock.
+
+Por exemplo:
+
+<ruby>
+Item.transaction do
+  i = Item.first(:lock => true)
+  i.name = 'Jones'
+  i.save
+end
+</ruby>
+
+A sessão acima produz o seguinte SQL para uma base MySQL:
+
+<sql>
+SQL (0.2ms)   BEGIN
+Item Load (0.3ms)   SELECT * FROM `items` LIMIT 1 FOR UPDATE
+Item Update (0.4ms)   UPDATE `items` SET `updated_at` = '2009-02-07 18:05:56', `name` = 'Jones' WHERE `id` = 1
+SQL (0.8ms)   COMMIT
+</sql>
+
+Você também pode passar SQL puro para a opção +:lock+ para permitir diferentes tipos de travamentos. Por exemplo, MySQL possui uma expressão chamada +LOCK IN SHARE MODE+ onde você pode travar um registro mas ainda permitir que outras consultas o leiam. Para especificar essa expressão apenas passe-a como a opção +lock+:
+
+<ruby>
+Item.transaction do
+  i = Item.find(1, :lock => "LOCK IN SHARE MODE")
+  i.increment!(:views)
+end
+</ruby>
+
+h3. Realizando Joins Entre Tabelas
+
+<tt>Model.find</tt> fornece uma opção +:joins+ para especificar cláusulas +JOIN+ no SQL resultante. Existem diversas formas diferentes de especificar a opção +:joins+:
+
+h4. Utilizando uma String com um Fragmento de SQL
+
+Você pode simplesmente fornecer SQL puro para especificar a cláusula +JOIN+ para a opção +:joins+. Por exemplo:
+
+<ruby>
+Client.all(:joins => 'LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
+</ruby>
+
+Isso resultará no seguinte SQL:
+
+<sql>
+SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
+</sql>
+
+h4. Utilizando Arrays/Hashes de Associações Nomeadas
+
+WARNING: Este método funciona apenas com +INNER JOIN+,
+
+<br />
+
+O Active Record permite que você utilize o nome das "associações":association_basics.html definidas no model como um atalho para especificar a opção +:joins+.
+
+Por exemplo, considere os seguintes models +Category+, +Post+, +Comment+ and +Guest+:
+
+<ruby>
+class Category < ActiveRecord::Base
+  has_many :posts
+end
+
+class Post < ActiveRecord::Base
+  belongs_to :category
+  has_many :comments
+  has_many :tags
+end
+
+class Comment < ActiveRecord::Base
+  belongs_to :post
+  has_one :guest
+end
+
+class Guest < ActiveRecord::Base
+  belongs_to :comment
+end
+</ruby>
+
+Agora todos os exemplos a seguir produzirão as consultas por join esperadas usando +INNER JOIN+:
+
+h5. Realizando Join Com Uma Única Associação
+
+<ruby>
+Category.all :joins => :posts
+</ruby>
+
+Isso produz:
+
+<sql>
+SELECT categories.* FROM categories
+  INNER JOIN posts ON posts.category_id = categories.id
+</sql>
+
+h5. Realizando Join Com Diversas Associações
+
+<ruby>
+Post.all :joins => [:category, :comments]
+</ruby>
+
+Isso produz:
+
+<sql>
+SELECT posts.* FROM posts 
+  INNER JOIN categories ON posts.category_id = categories.id
+  INNER JOIN comments ON comments.post_id = posts.id
+</sql>
+
+h5. Realizando Join com Associações Aninhadas (Um Único Nível)
+
+<ruby>
+Post.all :joins => {:comments => :guest}
+</ruby>
+
+h5. Realizando Join Com Associações Aninhadas (Diversos Níveis)
+
+<ruby>
+Category.all :joins => {:posts => [{:comments => :guest}, :tags]}
+</ruby>
+
+h4. Especificando Condições nas Tabelas Associadas 
+
+Você pode especificar condições nas tabelas associadas usando "Array":#condies-em-arrays e "String":#condies-em-strings-puras comuns. "Hash conditions":#condies-em-hash fornecem uma sintaxe especial para especificar condições para asa tabelas associadas:
+
+<ruby>
+time_range = (Time.now.midnight - 1.day)..Time.now.midnight
+Client.all :joins => :orders, :conditions => {'orders.created_at' => time_range}
+</ruby>
+
+Uma sintaxe alternativa e mais clara para isso é aninhar os hashes de condição:
+
+<ruby>
+time_range = (Time.now.midnight - 1.day)..Time.now.midnight
+Client.all :joins => :orders, :conditions => {:orders => {:created_at => time_range}}
+</ruby>
+
+Isso irá encontrar todos os clientes que foram criados ontem, novamente utilizando uma expressão SQL +BETWEEN+.
+
+
+h3. Usando Eager Loading em Associações
+
+Eager loading é o mecanismo para carregar registros associados dos objetos retornados por +Model.find+ utilizando o mínimo de consultas possível.
+
+<strong>O problema das N <plus> 1 consultas</strong>
+
+Considere o código a seguir, o qual encontra 10 clientes e imprime seus códigos postais:
+
+<ruby>
+clients = Client.all(:limit => 10)
+
+clients.each do |client|
+  puts client.address.postcode
+end
+</ruby>
+
+Este código parece bom à primeira vista. Mas o problema está no total de consultas executadas. O código acima executa 1 (para encontrar o cliente) <plus> 10 (uma para cada cliente para carregar o endereço) = <strong>11</strong> consultas no total.
+
+<strong>Solução para o problema das N <plus> 1 consultas</strong>
+
+O Active Record permite que você especifique previamente todas as associações que serão carregadas. Isso é possível especificando-se a opção +:include+ da chamada ao método +Model.find+. Usando +:include+ o Active Record garante que todas as associações especificadas são carregadas utilizando o menor número de consultas possível.
+
+Revisitando o caso acima, nós poderiamos reescrever +Client.all+ para utilizar eager loading para carregar os endereços:
+
+<ruby>
+clients = Client.all(:include => :address, :limit => 10)
+
+clients.each do |client|
+  puts client.address.postcode
+end
+</ruby>
+
+O código acima irá executar apenas <strong>2</strong> consultas, ao invés de <strong>11</strong> consultas no caso anterior:
+
+<sql>
+SELECT * FROM clients
+SELECT addresses.* FROM addresses
+  WHERE (addresses.client_id IN (1,2,3,4,5,6,7,8,9,10))
+</sql>
+
+h4. Eager Loading Para Associações Múltiplas
+
+O Active Record permite que você carregue previamente qualquer número possível de associações com uma única chamada a +Model.find+ utilizando um array, hash ou hash aninhado de array/hash com a opção +:include+.
+
+h5. Array de Associações Múltiplas
+
+<ruby>
+Post.all :include => [:category, :comments]
+</ruby>
+
+Isso carrega todos os posts e a categoria e comentários associados para cada post.
+
+h5. Hash Aninhado de Associações
+
+<ruby>
+Category.find 1, :include => {:posts => [{:comments => :guest}, :tags]}
+</ruby>
+
+O código acima encontra a categoria com id 1 e carrega previamente todos os posts associados com a categoria encontrada. Adicionalmente, irá carregar previamente as tags e comentários de cada post. Cada associação entre um comentários e um visitante (guest) será também carregada previamente.
+
+h4. Especificando Condições em Associações Carregadas Previamente
+
+Ainda que o Active Record permita que você especifique condições sobre as associações carregadas previamente assim como ocorre com +:joins+, a forma recomendada é utilizar ":joins":#realizando-joins-entre-tabelas
+
+h3. Finders Dinâmicos
+
+Para cada campo (também conhecido como atributo) que você define em sua tabela, o Active Record fornece um método finder. Se por exemplo você tiver um campo chamado +name+ em seu model +Client+, você ganha do Active Record os métodos +find_by_name+_ e +find_all_by_name+. Se você também tiver um campo +locked+ no model +Client+, você também ganha os métodos +find_by_locked+ e +find_all_by_locked+.
+
+Você também pode chamar o método +find_last_by_*+ o qual irá encontra o último registro que case com seu argumento.
+
+Você pode especificar um ponto de exclamação (!) ao final do finder dinâmico para fazer com que ele lance uma exceção +ActiveRecord::RecordNotFound+ caso ele não encontre nenhum registro, como em +Client.find_by_name!("Ryan")+
+
+Se você quiser pesquisar por +name+ e +locked+, você pode encadear estes finders juntos simplesmente digitando +and+ entre os campos, como por exemplo em +Client.find_by_name_and_locked("Ryan", true)+.
+
+Existe outro conjunto de finders dinâmicos que permite que você encontre ou crie/inicialize objetos caso eles não sejam encontrados. Estes trabalham de forma similar aos outros finders e podem ser usados como em +find_or_create_by_name(params[:name])+. Usar este finder primeiro irá realizar uma busca e em seguida irá criar um novo registro caso a busca retorne +nil+. Para +Client.find_or_create_by_name("Ryan")+ o SQL gerado é do tipo:
+
+<sql>
+SELECT * FROM clients WHERE (clients.name = 'Ryan') LIMIT 1
+BEGIN
+INSERT INTO clients (name, updated_at, created_at, orders_count, locked)
+  VALUES('Ryan', '2008-09-28 15:39:12', '2008-09-28 15:39:12', 0, '0')
+COMMIT
+</sql>
+
+O irmão do +find_or_create+, +find_or_initialize+, irá buscar por um objeto e caso este não exista irá funcionar de forma similar a chamar +new+ com os argumentos que você tiver fornecido. Por exemplo:
+
+<ruby>
+client = Client.find_or_initialize_by_name('Ryan')
+</ruby>
+
+irá associar um objeto cliente existente com o nome "Ryan" com a variável local +client+  ou irá inicializar um novo objeto de forma similar a chamar +Client.new(:name => 'Ryan')+. A partir daqui, você pode modificar outros campos no cliente chamando os setters de atributos: +client.locked = true+ e quando você quiser salvá-lo no banco de dados você só precisa chamar +save+.
+
+h3. Pesquisando com SQL
+
+Se você quiser usar seu próprio SQL para encontrar registros em uma tabela você pode utilizar o método +find_by_sql+. O método +find_by_sql+ irá retornar um array de objetos mesmo que a consulta realizada retorne somente um objeto. Por exemplo você poderia executar esta consulta:
+
+<ruby>
+Client.find_by_sql("SELECT * FROM clients 
+  INNER JOIN orders ON clients.id = orders.client_id 
+  ORDER clients.created_at desc")
+</ruby>
+
++find_by_sql+ fornece a você uma forma simples de realizar chamadas personalizadas ao banco de dados e recuperar objetos instanciados.
+
+h3. +select_all+
+
+<tt>find_by_sql</tt> possui um parente próximo chamado +connection#select_all+. +select_all+ irá recuperar objetos do banco de dados utilizando SQL personalizado assim como +find_by_sql+ mas não irá instanciá-los. Ao invés disso, você receberá um array de hashes onde cada hash indica um registro.
+
+<ruby>
+Client.connection.select_all("SELECT * FROM clients WHERE id = '1'")
+</ruby>
+
+h3. Existência de Objetos
+
+Se você quiser apenas verificar a existência de um objeto, há uma método chamado +exists?+. Este método irá consultar o banco de dados usando a mesma consulta que +find+, mas oa invés de retornar um objeto ou uma coleção de objetos ele retornará +true+ ou +false+.
+
+<ruby>
+Client.exists?(1)
+</ruby>
+
+O método +exists?+ também aceita múltiplos ids, mas o detalhe é que ele retornará +true+ caso qualquer um destes registros exista.
+
+<ruby>
+Client.exists?(1,2,3)
+# ou
+Client.exists?([1,2,3])
+</ruby>
+
+Além disso, +exists+ aceita uma opção +conditions+ de forma semelhante ao +find+:
+
+<ruby>
+Client.exists?(:conditions => "first_name = 'Ryan'")
+</ruby>
+
+É possível até usar +exists?+ sem nenhum argumento:
+
+<ruby>
+Client.exists?
+</ruby>
+
+O código acima retorna +false+ caso a tabela +clients+ esteja vazia e +true+ caso contrário.
+
+h3. Cálculos
+
+Esta seção utiliza +count+ como um exemplo neste preâmbulo, mas asa opções descritas são aplicáveis à todas as sub-seções.
+
+<tt>count</tt> recebe condições de forma bastante parecida com o método +exists?+:
+
+<ruby>
+Client.count(:conditions => "first_name = 'Ryan'")
+</ruby>
+
+que irá executar:
+
+<sql>
+SELECT count(*) AS count_all FROM clients WHERE (first_name = 'Ryan')
+</sql>
+
+Você pode também utilizar +:include+ ou +:joins+ para que seja feito algo um pouco mais complexo:
+
+<ruby>
+Client.count(:conditions => "clients.first_name = 'Ryan' AND orders.status = 'received'", :include => "orders")
+</ruby>
+
+que irá executar:
+
+<sql>
+SELECT count(DISTINCT clients.id) AS count_all FROM clients
+  LEFT OUTER JOIN orders ON orders.client_id = client.id WHERE
+  (clients.first_name = 'Ryan' AND orders.status = 'received')
+</sql>
+
+Este código especifica +clients.first_name+ apenas no caso de que uma das tabelas com as quais foi feito join tenha um campo chamado +first_name+ e usa +orders.status+ porque este é o nome da tabela com a qual foi feito o join.
+
+h4. Contagem
+
+Se você quiser ver quantos registros existem na tabela do seu modelo você pode chamar o método +Client.count+ e isso irá retornar esse número. Se você quiser ser mais específico e encontrar todos os clientes cuja idade esteja presente no banco de dados você pode usar +Client.count(:age)+.
+
+Para opções, por favor veja a seção principal, "Cálculos":#clculos.
+
+h4. Média
+
+Se vocêe quiser ver qual a média de um certo número em uma de suas tabelas você pode chamar o método +average+ sobre a classe relativa à tabela. Essa chamada de método irá se parecer com isso:
+
+<ruby>
+Client.average("orders_count")
+</ruby>
+
+Isso irá retornar um número (possivelmente um número de ponto flutuante como 3.14159265) representando o valor médio do campo.
+
+Para opções, por favor veja a seção principal, "Cálculos":#clculos.
+
+h4. Mínimo
+
+Se você quiser encontrar o valor mínimo de um campo da sua tabela você pode chamar o método +minimum+ sobre a classe relativa à sua tabela. Essa chamada de método irá se parecer com isso:
+
+<ruby>
+Client.minimum("age")
+</ruby>
+
+Para opções, por favor veja a seção principal, "Cálculos":#clculos.
+
+h4. Máximo 
+
+Se você quiser encontrar o valor máximo de um campo da sua tabela você pode chamar o método +maximum+ sobre a classe relativa à sua tabela. Essa chamada de método irá se parecer com isso:
+
+<ruby>
+Client.maximum("age")
+</ruby>
+
+Para opções, por favor veja a seção principal, "Cálculos":#clculos.
+
+h4. Somatório
+
+Se você quiser encontrar o somatório de uma campo para todos os registros da sua tabela você pode chamar o método +sum+ sobre a classe relativa à sua tabela. Essa chamada de método irá se parecer com isso:
+
+<ruby>
+Client.sum("orders_count")
+</ruby>
+
+Para opções, por favor veja a seção principal, "Cálculos":#clculos.
+
+h3. Changelog
+
+"Ticket no Lighhouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/16
+
+* Março 21, 2009: Primeira versão da tradução para Português por "Cássio Marques":translators.html#cassiomarques
+* Fevereiro 7, 2009: Segunda versão por "Pratik":credits.html#lifo
+* Dezembro 29 2008: Versão inicial por "Ryan Bigg":credits.html#radar
