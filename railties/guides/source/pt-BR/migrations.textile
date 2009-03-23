@@ -249,11 +249,11 @@ create_table :products, :options => "ENGINE=BLACKHOLE" do |t|
 end
 </ruby>
 
-vai concatenar +ENGINE=BLACKHOLE+ na sql usada para criar a tabela (quando se usa MySQL por padrão é usado "ENGINE=InnoDB".
+vai concatenar +ENGINE=BLACKHOLE+ na sql usada para criar a tabela (quando se usa MySQL por padrão é usado "ENGINE=InnoDB").
 
 Os tipos que o Active Record suporta são +:primary_key+, +:string+, +:text+, +:integer+, +:float+, +:decimal+, +:datetime+, +:timestamp+, +:time+, +:date+, +:binary+, +:boolean+.
 
-Eles vão ser mapeados apropriadamente para cada banco de dados, por exemplo com MySQL +:string+ é mapeada para +VARCHAR(255)+. Você pode criar colunas e tipos não suportados pelo Active Record usando uma sintaxe não sexy, por exemplo:
+Eles vão ser mapeados apropriadamente para cada banco de dados, por exemplo com MySQL +:string+ é mapeada para +VARCHAR(255)+. Você pode criar colunas e tipos não suportados pelo Active Record usando a sintaxe não-sexy, por exemplo:
 
 <ruby>
 create_table :products do |t|
@@ -261,11 +261,11 @@ create_table :products do |t|
 end
 </ruby>
 
-Desta forma, no entanto, dificulta a portabilidade para outros banco de dados.
+Isto, no entanto, pode dificultar a portabilidade para outros bancos de dados.
 
-h4. Mudando tabelas
+h4. Alterando Tabelas
 
-O primo mais próximo de +create_table+ é +change_table+. Usado para alterar tabelas existentes, é similarmente usada como o +create_table+ mas o objeto "rendenrizado" (yielded) para o bloco conhece mais truques. Por exemplo
+Um primo próximo de +create_table+ é +change_table+, usado para alterar tabelas existentes. É usado de um modo parecido com o  +create_table+ mas o objeto passado para o bloco conhece mais truques. Por exemplo
 
 <ruby>
 change_table :products do |t|
@@ -276,7 +276,7 @@ change_table :products do |t|
 end
 </ruby>
 
-remove a coluna +description+ e +name+, adiciona a coluna +part_number+ e adiciona um index nesta mesma coluna. E por ultimo altera o nome da coluna +upccode+. É o mesmo que fazer
+remove as colunas +description+ e +name+, adiciona a coluna +part_number+ e adiciona um index nesta mesma coluna. E por ultimo altera o nome da coluna +upccode+. É o mesmo que fazer
 
 <ruby>
 remove_column :products, :description
@@ -286,9 +286,9 @@ add_index :products, :part_number
 rename_column :products, :upccode, :upc_code
 </ruby>
 
-Você não deve manter repetindo o nome da tabela e de todos os grupos de declarações relatados para modificar uma tabela em particular. Em uma transformação individual os nomes são curtos, por exemplo +remove_column+ torna-se +remove+ e +add_index+ torna-se +index+.
+Você não precisa ficar repetindo o nome da tabela e de seus grupos em todas as expressões relacionadas à alteração de uma tabela em particular. Os nomes individuais de alteração são também mais curtos, por exemplo, +remove_column+ se torna somente +remove+ e +add_index+ se torna +index+.
 
-h4. Helpers especiais
+h4. Helpers Especiais  *** PAREI AQUI - Adolfo ***
 
 O Active Record fornece alguns atalhos para as funcionalidades mais comuns. Por exemplo, é muito comum adicionar as colunas +created_at+ e +updated_at+ e o método que faz exatamente isso é:
 
