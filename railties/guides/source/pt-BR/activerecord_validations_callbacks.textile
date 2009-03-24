@@ -154,7 +154,7 @@ end
 >> Person.create.errors.invalid?(:name) # => true
 </ruby>
 
-Analisaremos os erros de validação mais a fundo na seção "Trabalhando com os Erros de Validação":#workingwith-validation-errors. Por enquanto, vamos analisar os helpers disponibilizados pelo Rails.
+Analisaremos os erros de validação mais a fundo na seção "Trabalhando com os Erros de Validação":#trabalhando-com-os-erros-de-validao. Por enquanto, vamos analisar os helpers disponibilizados pelo Rails.
 
 h3. Helpers de Validação
 
@@ -419,7 +419,7 @@ O bloco recebe três atributos: o modelo, o nome do atributo e o valor do atribu
 
 h3. Opções Comuns às Validações
 
-Existem algumas opções que são comuns à todas os helpers de validação. A seguir explicaremos todas elas, exceto pelas opções +:if+ e +:unless+, que serão discutidas mais adiante na seção "Validações Condicionais":#validacao-condicional.
+Existem algumas opções que são comuns à todas os helpers de validação. A seguir explicaremos todas elas, exceto pelas opções +:if+ e +:unless+, que serão discutidas mais adiante na seção "Validações Condicionais":#validao-condicional.
 
 h4. +:allow_nil+
 
@@ -548,7 +548,7 @@ class Movie < ActiveRecord::Base
 end
 </ruby>
 
-h3. Manipulando os Erros de Validação
+h3. Trabalhando com os Erros de Validação
 
 Além dos métodos +valid?+ e +invalid?+ já tratados, o Rails fornece uma série de métodos para manipular a coleção +errors+ e tratar a validade dos objetos.
 
