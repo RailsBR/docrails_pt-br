@@ -288,9 +288,9 @@ rename_column :products, :upccode, :upc_code
 
 Você não precisa ficar repetindo o nome da tabela e de seus grupos em todas as expressões relacionadas à alteração de uma tabela em particular. Os nomes individuais de alteração são também mais curtos, por exemplo, +remove_column+ se torna somente +remove+ e +add_index+ se torna +index+.
 
-h4. Helpers Especiais  *** PAREI AQUI - Adolfo ***
+h4. Helpers Especiais
 
-O Active Record fornece alguns atalhos para as funcionalidades mais comuns. Por exemplo, é muito comum adicionar as colunas +created_at+ e +updated_at+ e o método que faz exatamente isso é:
+O Active Record fornece alguns atalhos para as funcionalidades mais comuns. Por exemplo, é muito comum adicionar as colunas +created_at+ e +updated_at+ e há um método que faz exatamente isso:
 
 <ruby>
 create_table :products do |t|
@@ -304,10 +304,16 @@ change_table :products do |t|
   t.timestamps
 end
 </ruby>
+vai criar uma nova tabela products com aquelas duas colunas (mais a coluna +id+) enquanto
 
-Adiciona essas duas colunas a uma tabela existente.
+<ruby>
+change_table :products do |t|
+  t.timestamps
+end
+</ruby>
+adiciona as colunas em uma tabela existente.
 
-Outro helper é chamado de +references+ (Também disponível como +belongs_to+). Na sua forma mais simples adiciona alguma habilidade de reutilização.
+O outro helper é chamado de +references+ (também disponível como +belongs_to+). Na sua forma mais simples, adiciona alguma legibilidade
 
 <ruby>
 create_table :products do |t|
@@ -315,23 +321,22 @@ create_table :products do |t|
 end
 </ruby>
 
-então criará a coluna +category_id+ com o tipo apropriado. Note que você deve passar o nome do modelo e não da coluna. O Active Record adicionará o sufixo +_id+ para você. Se você tiver uma associação belongs_to polimórfica então +references+ irá adicionar as colunas referidas:
+criará uma coluna +category_id+ do tipo apropriado. Note que você passa o nome do model, não o nome da coluna. O Active Recorde adiciona o +_id+ pra você. Se você tem associações polimórficas +belongs_to+, então +references+ irá adicionar as duas colunas necessárias:
 
 <ruby>
 create_table :products do |t|
   t.references :attachment, :polymorphic => {:default => 'Photo'}
 end
 </ruby>
+irá adicionar a coluna +attachment_id+ e a coluna +attachment_type+ do tipo string com o valor padrão 'Photo'.
 
-irá adicionar a coluna +attachment_id+ e a coluna +attachment_type+ com o valor padrão 'Photo'.
+NOTE: O helper +references+ realmente não cria restrições de chave estrangeira. Você precisará usar +execute+ para isso ou um plugin que adiciona "foreign key support":#active-record-and-referential-integrity.
 
-NOTE: O heler +references+ atualmente não cria uma constraints de chave estrangeira para você. Você precisará usar +execute+ para executar ou um plugin para adicionar <<foreign_key,suporte a chave estrangeira>>.
+Se os helpers fornecidos pelo Active Record não forem suficientes, você pode utilizar a função +execute+ para rodar SQL arbitrárias.
 
-Se os helpers fornecidos pelo Active Record não for suficiente, você pode utilizar a função +execute+ para executar SQL arbitrárias.
+Para mais detalhes e exemplos de métodos individuais dê uma olhada na documentação da API, em particular a documentação para "ActiveRecord::ConnectionAdapters::SchemaStatements":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html (na qual fornece os métodos disponíveis nos métodos +up+ e +down+), "ActiveRecord::ConnectionAdapters::TableDefinition":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html (que fornece os métodos disponíveis no objeto passado pelo +create_table+) e  "ActiveRecord::ConnectionAdapters::Table":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/Table.html (que fornece os métodos disponíveis no objeto passado pelo +change_table+).
 
-Para mais detalhes e exemplos de métodos individuais dê uma olhada na documentação da API, em particular a documentação para "ActiveRecord::ConnectionAdapters::SchemaStatements":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html (na qual fornece os métodos disponíveis nos métodos +up+ e +down+), "ActiveRecord::ConnectionAdapters::TableDefinition":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html (na qual fornece os métodos disponíveis para o objeto "rendenrizado" (yielded) por +create_table+) e o "ActiveRecord::ConnectionAdapters::Table":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/Table.html (na qual fornece os métodos disponíveis para o objeto "rendenrizado" (yielded) por +change_table+).
-
-h4. Escrevendo seu método down
+h4. Escrevendo o seu Método +down+ *** PAREI AQUI - Adolfo ***
 
 O método +down+ da sua migration deve reverter as transformações concluídas pelo método +up+. Em outras palavras, o banco de dados deve se manter inalterado se você fizer um +up+ seguido de um +down+. Por exemplo, se você criar uma tabela no método up você deverá excluí-la no método +down+. Deve ser sábio e precisamente inverso ao método +up+. Por exemplo
 
