@@ -1,14 +1,14 @@
-h2. Interface de consulta do Active Record
+h2. Interface para Queries do Active Record
 
 Este guia cobre diferente maneiras de recuperar dados do bando de dados usando o Active Record. Usando este guia como referência, você será capaz de:
 
 * Encontrar registros usando uma variedade de métodos e condições
 * Especificar a ordenação, atributos retornados, agrupamento e outras propriedades dos registros encontrados
-* Utilizar eager loading para reduzir o número de consultas ao banco de dados necessárias para recuperar os dados
+* Utilizar eager loading para reduzir o número de queries ao banco de dados necessárias para recuperar os dados
 * Utilizar dynamic finders
 * Criar named scopes para adicionar comportamento de pesquisa personalizado aos seus models
 * Verificar a existência de registros específicos
-* Realaizar diversos cálculos sobre models Active Record
+* Realizar diversos cálculos sobre models Active Record
 
 endprologue.
 
@@ -52,16 +52,16 @@ class Role < ActiveRecord::Base
 end
 </ruby>
 
-O Active Record irá realizar consultas ao banco de dados para você e é compativel com a maioria dos sistemas de bancos de dados (MySQL, PostgreSQL e SQLite, entre outros). Independentemente de qual sistema de banco de dados você está usando, o formato dos métodos do Active Record será sempre o mesmo.
+O Active Record irá realizar queries ao banco de dados para você e é compativel com a maioria dos sistemas de bancos de dados (MySQL, PostgreSQL e SQLite, entre outros). Independentemente de qual sistema de banco de dados você está usando, o formato dos métodos do Active Record será sempre o mesmo.
 
 h3. Recuperando Objetos do Banco de Dados
 
-Para recuperar objetos do banco de dados, o Active Record fornece um método de classe chamado +Model.find+. Este método permite que você passe argumentos para realizar determinadas consultas ao seu banco de dados sem a necessidade de escrever SQL puro.
+Para recuperar objetos do banco de dados, o Active Record fornece um método de classe chamado +Model.find+. Este método permite que você passe argumentos para realizar determinadas queries ao seu banco de dados sem a necessidade de escrever SQL puro.
 
 A operação primária do método <tt>Model.find(options)</tt> pode ser resumida como:
 
-* Converter as opções fornecidas para uma consulta SQL equivalente.
-* Disparar a consulta e recuperar os respectivos resultados do banco de dados.
+* Converter as opções fornecidas para uma query SQL equivalente.
+* Disparar a query e recuperar os respectivos resultados do banco de dados.
 * Instanciar o objeto Ruby equivalente do model apropriado para cada linha resultante.
 * Executar callbacks +after_find+ caso exista algum.
 
@@ -204,7 +204,7 @@ User.find_each(:batch_size => 5000) do |user|
 end
 </ruby>
 
-*Iniciando uma consulta em lote a partir de uma chave primária específica*
+*Iniciando uma query em lote a partir de uma chave primária específica*
 
 Os registros são retornados em ordem crescente de chave primária, a qual deve ser um inteiro. A opção +:start+ permite que você configure o primeiro ID da sequência caso o menor não seja aquele que você precisa. Isso pode ser ũtil por exemplo para reiniciar um processo em lote interrompido caso ele salve o último ID processado.
 
@@ -298,7 +298,7 @@ Client.all(:conditions => ["created_at IN (?)",
   (params[:start_date].to_date)..(params[:end_date].to_date)])
 </ruby>
 
-Isso irá gerar a consulta apropriada a qual é ótima para pequenos intervalos mas não tão boa para intervalos maiores. Por exemplo se você passar uma sequência de datas que completem um ano serão 365 (ou possivelmente 366 dependendo do ano) strings com as quais seu campo serã comparado.
+Isso irá gerar a query apropriada a qual é ótima para pequenos intervalos mas não tão boa para intervalos maiores. Por exemplo se você passar uma sequência de datas que completem um ano serão 365 (ou possivelmente 366 dependendo do ano) strings com as quais seu campo serã comparado.
 
 <sql>
 SELECT * FROM users WHERE (created_at IN
@@ -332,7 +332,7 @@ Isso poderia fazer com que seu servidor de banco de dados lance um erro inespera
 Got a packet bigger than 'max_allowed_packet' bytes: _query_
 </shell>
 
-Onde _query_ é a consulta utilizada para provocar o erro.
+Onde _query_ é a query utilizada para provocar o erro.
 
 Neste exemplo seria melhor utilizar operadores maior-que e menor-que no SQL, como em:
 
@@ -370,7 +370,7 @@ Client.all(:conditions => { 'locked' => true })
 
 h5. Condições de intervalo
 
-A coisa boa disso é que podemos passar um intervalo para nossos campos sem que isso gere uma consulta muito grande, como visto no preâmbulo dessa seção.
+A coisa boa disso é que podemos passar um intervalo para nossos campos sem que isso gere uma query muito grande, como visto no preâmbulo dessa seção.
 
 <ruby>
 Client.all(:conditions => { :created_at => (Time.now.midnight - 1.day)..Time.now.midnight})
@@ -454,7 +454,7 @@ Por exemplo, para selecionar apenas as colunas +viewable_by+ e +locked+:
 Client.all(:select => "viewable_by, locked")
 </ruby>
 
-A consulta SQL utilizada por essa chamada ao método +find+ será algo como:
+A query SQL utilizada por essa chamada ao método +find+ será algo como:
 
 <sql>
 SELECT viewable_by, locked FROM clients
@@ -478,7 +478,7 @@ h4. Limit e Offset
 
 Para aplicar +LIMIT+ ao SQL disparado por +Model.find+, você pode especificar o +LIMIT+ utilizando as opções +:limit+ e +:offset+ sobre o +find+.
 
-Se você quiser limitar o total de registros a um certo subconjunto de registros retornado você geralmente utiliza a opção +:limit+, às vezes em conjunto com +:offset+. Limit é o número máximo de registros que serão recuperados de uma consulta, e offset é o número de registros a partir do qual ele começará a ler, em relação ao primeiro registro no conjunto. Por exemplo:
+Se você quiser limitar o total de registros a um certo subconjunto de registros retornado você geralmente utiliza a opção +:limit+, às vezes em conjunto com +:offset+. Limit é o número máximo de registros que serão recuperados de uma query, e offset é o número de registros a partir do qual ele começará a ler, em relação ao primeiro registro no conjunto. Por exemplo:
 
 <ruby>
 Client.all(:limit => 5)
@@ -621,7 +621,7 @@ Item Update (0.4ms)   UPDATE `items` SET `updated_at` = '2009-02-07 18:05:56', `
 SQL (0.8ms)   COMMIT
 </sql>
 
-Você também pode passar SQL puro para a opção +:lock+ para permitir diferentes tipos de travamentos. Por exemplo, MySQL possui uma expressão chamada +LOCK IN SHARE MODE+ onde você pode travar um registro mas ainda permitir que outras consultas o leiam. Para especificar essa expressão apenas passe-a como a opção +lock+:
+Você também pode passar SQL puro para a opção +:lock+ para permitir diferentes tipos de travamentos. Por exemplo, MySQL possui uma expressão chamada +LOCK IN SHARE MODE+ onde você pode travar um registro mas ainda permitir que outras queries o leiam. Para especificar essa expressão apenas passe-a como a opção +lock+:
 
 <ruby>
 Item.transaction do
@@ -679,7 +679,7 @@ class Guest < ActiveRecord::Base
 end
 </ruby>
 
-Agora todos os exemplos a seguir produzirão as consultas por join esperadas usando +INNER JOIN+:
+Agora todos os exemplos a seguir produzirão as queries por join esperadas usando +INNER JOIN+:
 
 h5. Realizando Join Com Uma Única Associação
 
@@ -741,9 +741,9 @@ Isso irá encontrar todos os clientes que foram criados ontem, novamente utiliza
 
 h3. Usando Eager Loading em Associações
 
-Eager loading é o mecanismo para carregar registros associados dos objetos retornados por +Model.find+ utilizando o mínimo de consultas possível.
+Eager loading é o mecanismo para carregar registros associados dos objetos retornados por +Model.find+ utilizando o mínimo de queries possível.
 
-<strong>O problema das N <plus> 1 consultas</strong>
+<strong>O problema das N <plus> 1 queries</strong>
 
 Considere o código a seguir, o qual encontra 10 clientes e imprime seus códigos postais:
 
@@ -755,11 +755,11 @@ clients.each do |client|
 end
 </ruby>
 
-Este código parece bom à primeira vista. Mas o problema está no total de consultas executadas. O código acima executa 1 (para encontrar o cliente) <plus> 10 (uma para cada cliente para carregar o endereço) = <strong>11</strong> consultas no total.
+Este código parece bom à primeira vista. Mas o problema está no total de queries executadas. O código acima executa 1 (para encontrar o cliente) <plus> 10 (uma para cada cliente para carregar o endereço) = <strong>11</strong> queries no total.
 
-<strong>Solução para o problema das N <plus> 1 consultas</strong>
+<strong>Solução para o problema das N <plus> 1 queries</strong>
 
-O Active Record permite que você especifique previamente todas as associações que serão carregadas. Isso é possível especificando-se a opção +:include+ da chamada ao método +Model.find+. Usando +:include+ o Active Record garante que todas as associações especificadas são carregadas utilizando o menor número de consultas possível.
+O Active Record permite que você especifique previamente todas as associações que serão carregadas. Isso é possível especificando-se a opção +:include+ da chamada ao método +Model.find+. Usando +:include+ o Active Record garante que todas as associações especificadas são carregadas utilizando o menor número de queries possível.
 
 Revisitando o caso acima, nós poderiamos reescrever +Client.all+ para utilizar eager loading para carregar os endereços:
 
@@ -771,7 +771,7 @@ clients.each do |client|
 end
 </ruby>
 
-O código acima irá executar apenas <strong>2</strong> consultas, ao invés de <strong>11</strong> consultas no caso anterior:
+O código acima irá executar apenas <strong>2</strong> queries, ao invés de <strong>11</strong> queries no caso anterior:
 
 <sql>
 SELECT * FROM clients
@@ -833,7 +833,7 @@ irá associar um objeto cliente existente com o nome "Ryan" com a variável loca
 
 h3. Pesquisando com SQL
 
-Se você quiser usar seu próprio SQL para encontrar registros em uma tabela você pode utilizar o método +find_by_sql+. O método +find_by_sql+ irá retornar um array de objetos mesmo que a consulta realizada retorne somente um objeto. Por exemplo você poderia executar esta consulta:
+Se você quiser usar seu próprio SQL para encontrar registros em uma tabela você pode utilizar o método +find_by_sql+. O método +find_by_sql+ irá retornar um array de objetos mesmo que a query realizada retorne somente um objeto. Por exemplo você poderia executar esta query:
 
 <ruby>
 Client.find_by_sql("SELECT * FROM clients 
@@ -853,7 +853,7 @@ Client.connection.select_all("SELECT * FROM clients WHERE id = '1'")
 
 h3. Existência de Objetos
 
-Se você quiser apenas verificar a existência de um objeto, há uma método chamado +exists?+. Este método irá consultar o banco de dados usando a mesma consulta que +find+, mas oa invés de retornar um objeto ou uma coleção de objetos ele retornará +true+ ou +false+.
+Se você quiser apenas verificar a existência de um objeto, há uma método chamado +exists?+. Este método irá consultar o banco de dados usando a mesma query que +find+, mas oa invés de retornar um objeto ou uma coleção de objetos ele retornará +true+ ou +false+.
 
 <ruby>
 Client.exists?(1)

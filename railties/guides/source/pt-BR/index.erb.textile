@@ -20,7 +20,7 @@ Estes guias são desenvolvidos para trazer produtividade imediata com Rails, e a
 h3. Comece aqui
 
 <dl>
-<% guide('Começando com Rails', 'getting_started.html') do %>
+  <% guide_pt_br('Começando com Rails', 'getting_started.html', :revision_ticket => 21) do %>
   Tudo que você precisa saber para instalar o Rails e criar sua primeira aplicação.
 <% end %>
 </dl>
@@ -32,7 +32,7 @@ h3. Models
   Este guia cobre como você pode usar as migrações do Active Record para alterar seu banco de dados de uma forma organizada e estruturada.
 <% end %>
 
-<% guide("Validações e Callbacks do Active Record", 'activerecord_validations_callbacks.html', :ticket => 26) do %>
+<% guide("Validações e Callbacks do Active Record", 'activerecord_validations_callbacks.html') do %>
   Este guia explica como você pode utilizar as validações e callbacks do Active Record.
 <% end %>
 
@@ -40,7 +40,7 @@ h3. Models
   Este guia cobre todas as associações fornecidas pelo Active Record.
 <% end %>
 
-<% guide("Interface para Queries do Active Record", 'active_record_querying.html', :ticket => 16) do %>
+<% guide("Interface para Queries do Active Record", 'active_record_querying.html') do %>
   Este guia cobre como o Active Record trabalha com querys no banco de dados.
 <% end %>
 </dl>
@@ -73,7 +73,7 @@ h3. Aprofundando-se
 
 <dl>
 
-	<% guide("Rails Internationalization API", 'i18n.html', :ticket => 23) do %>
+	<% guide("API de Internacionalização do Rails", 'i18n.html') do %>
 		Este guia cobre como adicionar internacionalização em sua aplicação. Sua aplicação irá ser capaz de traduzir conteúdo para diferentes idiomas, alterar regras de pluralização, usar formatação correta de datas para cada país e muito mais.
 	<% end %>
 
@@ -105,7 +105,7 @@ h3. Aprofundando-se
 	  Este guia cobre as opções básicas de configuração para uma aplicação Rails. 
 	<% end %>
 
-	<% guide("Rails on Rack", 'rails_on_rack.html', :ticket => 58) do %>
+	<% guide("Rails on Rack", 'rails_on_rack.html') do %>
   	Este guia cobre a integração do Rails com Rack e sua interface com componentes Rack.
 	<% end %>
 
@@ -117,7 +117,7 @@ h3. Aprofundando-se
 	  Varia técnicas de caching disponibilizadas pelo Rails.
 	<% end %>
 
-	<% guide("Contributing to Rails", 'contributing.html', :ticket => 64) do %>
+	<% guide("Contributing to Rails", 'contributing.html') do %>
 		Rails não é um "framework de outra pessoa". Este guia cobre as várias formas que você possui para se involver no contínuo processo de desenvolvimento do Rails.
 	<% end %>
 </dl>

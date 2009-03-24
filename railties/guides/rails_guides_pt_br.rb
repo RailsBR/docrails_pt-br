@@ -21,6 +21,7 @@ module RailsGuides
   autoload :Generator, "rails_guides/generator_pt_br"
   autoload :Indexer, "rails_guides/indexer"
   autoload :Helpers, "rails_guides/helpers"
+  autoload :HelpersPtBR, "rails_guides/helpers_pt_br.rb"
   autoload :TextileExtensions, "rails_guides/textile_extensions"
 end
 

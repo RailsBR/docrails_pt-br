@@ -45,6 +45,7 @@ module RailsGuides
       File.open(file, 'w') do |f|
         @view = ActionView::Base.new(view_path)
         @view.extend(Helpers)
+        @view.extend(HelpersPtBR)
 
         if guide =~ /\.erb\.textile/
           # Generate the erb pages with textile formatting - e.g. index/authors
