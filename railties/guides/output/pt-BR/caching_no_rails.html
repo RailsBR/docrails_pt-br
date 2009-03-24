@@ -83,7 +83,7 @@ retornar a esses famintos clientes web na menor fração de tempo possível.</p>
             <div id="subCol">
         <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
         <ol class="chapters">
-<li><a href="#caching-bsico">Caching Básico</a><ul><li><a href="#page-caching">Page Caching</a></li><li><a href="#action-caching">Action Caching</a></li><li><a href="#fragment-caching">Fragment Caching</a></li><li><a href="#sweepers">Sweepers</a></li><li><a href="#sql-caching"><span class="caps">SQL</span> Caching</a></li><li><a href="#cachestores">Cache stores</a></li></ul></li><li><a href="#advanced-caching">Advanced Caching</a><ul></ul></li></ol></div>
+<li><a href="#caching-bsico">Caching Básico</a><ul><li><a href="#page-caching">Page Caching</a></li><li><a href="#action-caching">Action Caching</a></li><li><a href="#fragment-caching">Fragment Caching</a></li><li><a href="#sweepers">Sweepers</a></li><li><a href="#sql-caching"><span class="caps">SQL</span> Caching</a></li><li><a href="#cache-stores">Cache stores</a></li></ul></li><li><a href="#advanced-caching">Advanced Caching</a><ul></ul></li></ol></div>
     </div>
   </div>
 
@@ -327,7 +327,7 @@ Product.find(:all) will be cached and will be used to avoid querying the
 database again the second time that finder is called.</p>
 <p>Query caches are created at the start of an action and destroyed at the end of
 that action and thus persist only for the duration of the action.</p>
-<h4 id="cachestores">1.6 Cache stores</h4>
+<h4 id="cache-stores">1.6 Cache stores</h4>
 <p>Rails provides different stores for the cached data for action and fragment
 caches. Page caches are always stored on disk.</p>
 <p>The cache stores provided include:</p>

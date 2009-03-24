@@ -53,11 +53,11 @@ O projeto "Ruby on Rails guides":http://guides.rubyonrails.org/ tem publicado v�
 
 h3. Suporte para o Ruby 1.9.1
 
-O Rails 2.3 deve passar por todos os seus próprios testes se você está rodando o Ruby 1.8 ou o recentemente liberado Ruby 1.9.1. No entando, você deve estar ciente que mudar para o 1.9.1 acarreta checar todos os adaptadores de dados, plugins, e outros códigos que você depende para compatibilidade com o Ruby 1.9.1, assim como o core do Rails.
+O Rails 2.3 deve passar por todos os seus próprios testes se você está rodando o Ruby 1.8 ou o recentemente liberado Ruby 1.9.1. No entanto, você deve estar ciente que mudar para o 1.9.1 acarreta checar todos os adaptadores de dados, plugins, e outros códigos que você depende para compatibilidade com o Ruby 1.9.1, assim como o core do Rails.
 
 h3. Active Record
 
-O Active Record recebe um número considerável de novas funcionalidades e correções de bug no Rails 2.3. Os destaques incluem atributos aninhados (nested attributes), transações aninhadas (nested transactions), escopos dinâmicos e padrões (dynamic and default scopes), e processamento em lote (batch processing).
+O Active Record recebe um número considerável de novas funcionalidades e correções de bug no Rails 2.3. Os destaques incluem atributos aninhados (nested attributes), transações aninhadas (nested transactions), escopos dinâmicos (dynamic scopes) e padrões (default scopes), e processamento em lote (batch processing).
 
 h4. Atributos Aninhados
 
@@ -97,7 +97,7 @@ User.transaction do
     end
   end
 
-  User.find(:all)  # => Returns only Admin
+  User.find(:all)  # => Retorna somente Admin
 </ruby>
 
 Transações aninhadas permitem que você cancele uma transação interna sem afetar o estado da transação externa. Se você deseja que uma transação seja aninhada, precisa adicionar explicitamente a opção +:requires_new+; caso contrário, a transação aninhada simplesmente será parte da transação pai (assim como é atualmente no Rails 2.2). Por baixo dos panos, transações aninhadas estão "usando savepoints":http://rails.lighthouseapp.com/projects/8994/tickets/383, portanto elas são suportadas mesmo em bancos de dados que não possuem transações aninhadas reais. Existe também um pouco de mágica acontecendo para fazer com que estas transações funcionem bem com fixtures transacionais durantes os testes.
@@ -211,7 +211,7 @@ render :template => 'other_controller/action'
 render :action => 'show'
 </ruby>
 
-Agora no Rails 2.3, você pode apenas fornecer o que você quer renderizar:
+Agora no Rails 2.3, você pode apenas fornecer o que quer renderizar:
 
 <ruby>
 render '/tmp/random_file.erb'
@@ -264,7 +264,7 @@ Existe um par de mundaças significativas no roteamento do Rails 2.3. Os helpers
 
 h4. Sessões com Lazy-load Baseadas no Rack
 
-Uma grande mudança empurrou as camadas baixas de armazenamento de sessão do Action Controller para o nível do Rack. Isto envolveu uma grande quantidade de trabalho no código, apesar de que deve ser completamente transparente para suas aplicações Rails (como um bônus, alguns patches desagradáveis em torno do antigo gerenciador de sessão CGI foram removidos). Isto ainda é significativo, entretanto, por uma simples razão: aplicações Rails não baseadas no Rack tem acesso aos mesmos gerenciadores de armazenamento de sessão (e por conseqüência a mesma sessão) assim como sua aplicação Rails. Além disso, as sessões agora são carregadas sob demanda (lazy load) (em conjunto com os melhoramentos de carga do resto do framework). Isto significa que você não precisa mais desabilitar as sessões explicitamente se você não as quer; somente não se refira a elas e elas não serão carregadas.
+Uma grande mudança empurrou as camadas baixas de armazenamento de sessão do Action Controller para o nível do Rack. Isto envolveu uma grande quantidade de trabalho no código, apesar de que deve ser completamente transparente para suas aplicações Rails (como um bônus, alguns patches desagradáveis em torno do antigo gerenciador de sessão CGI foram removidos). Isto ainda é significativo, entretanto, por uma simples razão: aplicações Rails não baseadas no Rack têm acesso aos mesmos gerenciadores de armazenamento de sessão (e por conseqüência a mesma sessão) assim como sua aplicação Rails. Além disso, as sessões agora são carregadas sob demanda (lazy load) (em conjunto com os melhoramentos de carga do resto do framework). Isto significa que você não precisa mais desabilitar as sessões explicitamente se você não as quer; somente não se refira a elas e elas não serão carregadas.
 
 h4. Mundanças no Tratamento de Tipos MIME
 
@@ -272,7 +272,7 @@ Há um par de mudanças no código para tratamento de tipos MIME no Rails. Prime
 
 <ruby>
 if content_type && Mime::JS =~ content_type
-  # do something cool
+  # faça algo legal
 end
 
 Mime::JS =~ "text/javascript"        => true
@@ -285,7 +285,7 @@ A outra mudança é que agora o framework utiliza o +Mime::JS+ quando checa por 
 
 h4. Otimização do +respond_to+
 
-Em alguns dos primeiros frutos da união entre o Rails e o Merb, o Rails 2.3 inclui algumas otimizações para o método +respond_to+, que é certamente bastante utilizada em muitas aplicações Rails para permitir que seu controller formate resultados diferentemente baseado no tipo MIME da requisição de entrada. Após eliminar uma chamada ao +method_missing+ e alguns recortes e aprimoramentos, nós estamos vendo uma melhoria de 8% no número de requisições por segundo servidas por um simples +respond_to+ que altera entre três formatos. A melhor parte? Nenhuma mudança é requerida em todo o código de sua aplicação para obter vantagem deste ganho.
+Em alguns dos primeiros frutos da união entre o Rails e o Merb, o Rails 2.3 inclui algumas otimizações para o método +respond_to+, que é certamente bastante utilizado em muitas aplicações Rails para permitir que seu controller formate resultados diferentemente baseado no tipo MIME da requisição de entrada. Após eliminar uma chamada ao +method_missing+ e alguns recortes e aprimoramentos, nós estamos vendo uma melhoria de 8% no número de requisições por segundo servidas por um simples +respond_to+ que altera entre três formatos. A melhor parte? Nenhuma mudança é requerida em todo o código de sua aplicação para obter vantagem deste ganho.
 
 h4. Melhoria na Performance do Caching
 
@@ -562,7 +562,7 @@ Isto irá jogar as modificações do template em cima de qualquer código que o 
 
 h4. Backtraces Silenciosos
 
-Criado com base no plugin "Quiet Backtrace":http://www.thoughtbot.com/projects/quietbacktrace da Thoughtbot, que permite que você remova linhas seletivamente dos backtraces do +Test::Unit+, o Rails 2.3 implementa no core +ActiveSupport::BacktraceCleaner+ e +Rails::BacktraceCleaner+. Isto suporta ambos filtros (para realizer substituições com expressões regulares em linhas do backtrace) e silenciadores (para remover por completo linhas do backtrace). O Rails adiciona silenciadores automaticamente para livrar-se do barulho mais comum em uma nova aplicação, e cria um arquivo +config/backtrace_silencers.rb+ para armazenar as suas próprias adições. Esta funcionalidade também ativa uma impressão melhor a partir de qualquer gem no backtrace.
+Criado com base no plugin "Quiet Backtrace":http://www.thoughtbot.com/projects/quietbacktrace da Thoughtbot, que permite que você remova linhas seletivamente dos backtraces do +Test::Unit+, o Rails 2.3 implementa no core +ActiveSupport::BacktraceCleaner+ e +Rails::BacktraceCleaner+. Isto suporta ambos filtros (para realizar substituições com expressões regulares em linhas do backtrace) e silenciadores (para remover por completo linhas do backtrace). O Rails adiciona silenciadores automaticamente para livrar-se do barulho mais comum em uma nova aplicação, e cria um arquivo +config/backtrace_silencers.rb+ para armazenar as suas próprias adições. Esta funcionalidade também ativa uma impressão melhor a partir de qualquer gem no backtrace.
 
 h4. Tempo de Boot Mais Rápido em Modo de Desenvolvimento com Lazy Loading/Autoload
 
@@ -572,7 +572,7 @@ Você também pode especificar (usando a nova opção +preload_frameworks+) se a
 
 h4. Reescrita da Tarefa rake gem
 
-Várias tarefas <code>rake gem</code> foram substancialmente revisadas internamente, fazendo com que o sistema trabalhe melhor em uma variedade de casos. O sistema de gems agora sabe a diferença entre dependências de desenvolvimento e execução, tem um sistema de desempacotamento mais robusto, traz melhores informações quando procurar pelo status de gems, e é menos propenso a problemas de dependência "chicken and egg" quando você está começando com as coisas do zero. Existem também correções para a utilização de comandos gem com JRuby e para dependências que tentam importar cópias externas de gems que já estão vendoziradas.
+Várias tarefas <code>rake gem</code> foram substancialmente revisadas internamente, fazendo com que o sistema trabalhe melhor em uma variedade de casos. O sistema de gems agora sabe a diferença entre dependências de desenvolvimento e execução, tem um sistema de desempacotamento mais robusto, traz melhores informações quando procurar pelo status de gems, e é menos propenso a problemas de dependência do tipo "galinha e ovo" quando você está começando com as coisas do zero. Existem também correções para a utilização de comandos gem com JRuby e para dependências que tentam importar cópias externas de gems que já estão vendoziradas.
 
 * Contribuidor Líder: "David Dollar":http://www.workingwithrails.com/person/12240-david-dollar
 
@@ -585,9 +585,9 @@ h4. Outras Mudanças no Rails
 * Agora o +Rails.root+ retorna um objeto +Pathname+, o que significa que você pode usá-lo diretamente com o método +join+ para "limpar o código existente":http://afreshcup.com/2008/12/05/a-little-rails_root-tidiness/ que usa +File.join+.
 * Vários arquivos no /public que tratam com dispatch CGI e FCGI não são mais gerados em toda aplicação Rails por padrão (você ainda pode obtê-los se precisar adicionando +--with-dispatches+ quando executar o comando +rails+, ou adicioná-los mais tarde com +rake rails:generate_dispatchers+).
 * Rails Guides foram convertidos da marcação AsciiDoc para Textile.
-* Controllers e Views geradas com o scaffold foram um pouco limpas.
+* Controllers e Views geradas com o scaffold foram um pouco limpos.
 * +script/server+ aceita agora um argumento <tt>--path</tt> para subir uma aplicação Rails a partir de um caminho específico.
-* Se algumas gems configuradas estão faltando, as tarefas rake de gems irão pular a carga da maior parte do ambiente, Isto deve resolver mutios dos problemas "chicken-and-egg" onde o rake gems:install não poderia rodar porque as gems estavam faltando.
+* Se algumas gems configuradas estão faltando, as tarefas rake de gems irão pular a carga da maior parte do ambiente, Isto deve resolver muitos dos problemas do tipo "galinha e ovo" onde o rake gems:install não poderia rodar porque as gems estavam faltando.
 * As gems agora são desempacotadas exatamente uma vez. Isto corrige problemas com gems (hoe, por exemplo) que são empacotadas com permissões somente-leitura nos arquivos.
 
 h3. Deprecado
@@ -610,5 +610,5 @@ h3. Créditos
 
 Notas de lançamento compiladas por "Mike Gunderloy":http://afreshcup.com. Esta versão das notas de lançamento do Rails 2.3 foi compilada com base no RC2 do Rails 2.3.
 
-Tradução para o português das notas de lançamento do Rails 2.3 por "Carlos A. da Silva":translators.html#carlosantoniodasilva
+Tradução para o português das notas de lançamento do Rails 2.3 por "Carlos A. da Silva":translators.html#carlosantoniodasilva.
 

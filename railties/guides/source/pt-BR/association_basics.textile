@@ -712,7 +712,7 @@ NOTE: Não há necessidade de usar +:include+ para associações imediatas - ist
 
 h6. :polymorphic
 
-Passando +true+ para a opção +:polymorphic+ indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes "anteriormente neste guia":#associaespolimrficas.
+Passando +true+ para a opção +:polymorphic+ indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes "anteriormente neste guia":#associaes-polimrficas.
 
 h6. :readonly
 
@@ -836,7 +836,7 @@ A associação +has_one+ suporta essas opções:
 
 h6. +:as+
 
-Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes "anteriormente neste guia":#associaespolimrficas.
+Definindo a opção +:as+ indica que esta será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes "anteriormente neste guia":#associaes-polimrficas.
 
 h6. +:autosave+
 
@@ -936,7 +936,7 @@ A opção +:source_type+ específica o tipo da fonte para uma associação +has_
 
 h6. +:through+
 
-A opção +:through+ específica um model para a junção para executar a query. "Associações +has_one :through+ já foram discutidas em detalhes":#aassociaohas-onethrough.
+A opção +:through+ específica um model para a junção para executar a query. "Associações +has_one :through+ já foram discutidas em detalhes":#a-associao-has-one-through.
 
 h6. +:validate+
 
@@ -1140,7 +1140,7 @@ A associação +has_many+ suporta estas opções:
 
 h6. +:as+
 
-Definindo a opção +:as+ indica que essa será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes "anteriormente neste guia":#associaespolimrficas.
+Definindo a opção +:as+ indica que essa será uma associação polimórfica. Associações polimórficas foram discutidas em detalhes "anteriormente neste guia":#associaes-polimrficas.
 
 h6. +:autosave+
 
@@ -1190,7 +1190,7 @@ NOTE: Esta opção é ignorada quando você utiliza a opção +:through+ na asso
 
 h6. +:extend+
 
-A opção +:extend+ especifica o nome de um módulo para extender o proxy de associação. Extensão de associações "serão discutidas com mais detalhes neste guia":#extensesdeassociao.
+A opção +:extend+ especifica o nome de um módulo para extender o proxy de associação. Extensão de associações "serão discutidas com mais detalhes neste guia":#extenses-de-associao.
 
 h6. +:finder_sql+
 
@@ -1298,7 +1298,7 @@ A opção +:source_type+ especifica o tipo da associação de origem para uma as
 
 h6. +:through+
 
-A opção +:through+ especifica um model para uma junção. Associações +has_many :through+ criam uma forma de implementar uma associação many-to-many (muitos para muitos), "como discutido anteriormente neste guia":#a-associaohas-manythrough .
+A opção +:through+ especifica um model para uma junção. Associações +has_many :through+ criam uma forma de implementar uma associação many-to-many (muitos para muitos), "como discutido anteriormente neste guia":#a-associao-has-many-through .
 
 h6. +:uniq+
 
@@ -1556,7 +1556,7 @@ Normalmente o Rails gera automaticamente o SQL apropriado para remover as ligaç
 
 h6. +:extend+
 
-A opção +:extend+ especifica um módulo para estender o proxy de associação. Extensão de associações "serão discutidas com mais detalhes neste guia":#extensesdeassociao.
+A opção +:extend+ especifica um módulo para estender o proxy de associação. Extensão de associações "serão discutidas com mais detalhes neste guia":#extenses-de-associao.
 
 h6. +:finder_sql+
 

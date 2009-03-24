@@ -87,22 +87,22 @@
             <div id="subCol">
         <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
         <ol class="chapters">
-<li><a href="#porqueescrevertestesparaasuaaplicao-rails">Por que escrever testes para a sua aplicação Rails?</a><ul></ul></li><li><a href="#introduoaos-testes">Introdução aos Testes</a><ul><li><a href="#os3-ambientes">Os 3 Ambientes</a></li><li><a href="#railspreparadopara-testesdesdeo-incio">Rails preparado para Testes desde o Início</a></li><li><a href="#os-segredosdas-fixtures">Os Segredos das Fixtures</a></li></ul></li><li><a href="#testes-unitriosparaosseus-models">Testes Unitários para os seus Models</a><ul><li><a href="#preparandoasua-aplicaoparaser-testada">Preparando a sua Aplicação para ser Testada</a></li><li><a href="#executandoos-testes">Executando os Testes</a></li><li><a href="#o-que-incluir-nos-seus-testes-unitrios">O Que Incluir Nos Seus Testes Unitários</a></li><li><a href="#assertions-disponveis">Assertions Disponíveis</a></li><li><a href="#assertions-especficasdo-rails">Assertions Específicas do Rails</a></li></ul></li><li><a href="#testes-funcionais-para-os-seus-controllers">Testes Funcionais Para Os Seus Controllers</a><ul><li><a href="#oqueincluirnosseus-testes-funcionais">O que incluir nos seus Testes Funcionais</a></li><li><a href="#tiposde-requisies-disponveispara-testes-funcionais">Tipos de Requisições Disponíveis para Testes Funcionais</a></li><li><a href="#os4-hashesdo-apocalipse">Os 4 Hashes do Apocalipse</a></li><li><a href="#variveisde-instncia-disponveis">Variáveis de Instância Disponíveis</a></li><li><a href="#um-exemplo-mais-completode-teste-funcional">Um Exemplo Mais Completo de Teste Funcional</a></li><li><a href="#testando-views">Testando Views</a></li></ul></li><li><a href="#testesde-integrao">Testes de Integração</a><ul><li><a href="#helpers-disponveisparatestesde-integrao">Helpers Disponíveis para testes de Integração</a></li><li><a href="#exemplosde-testesde-integrao">Exemplos de Testes de Integração</a></li></ul></li><li><a href="#tarefas-rake-para-executar-testes">Tarefas Rake Para Executar Testes</a><ul></ul></li><li><a href="#breve-nota-sobre-test-unit">Breve Nota Sobre Test::Unit</a><ul></ul></li><li><a href="#setupe-teardown">Setup e Teardown</a><ul></ul></li><li><a href="#testando-rotas">Testando Rotas</a><ul></ul></li><li><a href="#testandoosseus-mailers">Testando os seus Mailers</a><ul><li><a href="#deolhono-mailer">De olho no Mailer</a></li><li><a href="#testes-unitrios">Testes Unitários</a></li><li><a href="#testes-funcionais">Testes Funcionais</a></li></ul></li><li><a href="#outras-formasde-testar">Outras Formas de Testar</a><ul></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
+<li><a href="#por-que-escrever-testes-para-a-sua-aplicao-rails">Por que escrever testes para a sua aplicação Rails?</a><ul></ul></li><li><a href="#introduo-aos-testes">Introdução aos Testes</a><ul><li><a href="#os-trs-ambientes">Os Três Ambientes</a></li><li><a href="#rails-preparado-para-testes-desde-o-incio">Rails preparado para Testes desde o Início</a></li><li><a href="#os-segredos-das-fixtures">Os Segredos das Fixtures</a></li></ul></li><li><a href="#testes-unitrios-para-os-seus-models">Testes Unitários para os seus Models</a><ul><li><a href="#preparando-a-sua-aplicao-para-ser-testada">Preparando a sua Aplicação para ser Testada</a></li><li><a href="#executando-os-testes">Executando os Testes</a></li><li><a href="#o-que-incluir-nos-seus-testes-unitrios">O Que Incluir Nos Seus Testes Unitários</a></li><li><a href="#assertions-disponveis">Assertions Disponíveis</a></li><li><a href="#assertions-especficas-do-rails">Assertions Específicas do Rails</a></li></ul></li><li><a href="#testes-funcionais-para-os-seus-controllers">Testes Funcionais Para Os Seus Controllers</a><ul><li><a href="#o-que-incluir-nos-seus-testes-funcionais">O que incluir nos seus Testes Funcionais</a></li><li><a href="#tipos-de-requisies-disponveis-para-testes-funcionais">Tipos de Requisições Disponíveis para Testes Funcionais</a></li><li><a href="#os-quatro-hashes-do-apocalipse">Os Quatro Hashes do Apocalipse</a></li><li><a href="#variveis-de-instncia-disponveis">Variáveis de Instância Disponíveis</a></li><li><a href="#um-exemplo-mais-completo-de-teste-funcional">Um Exemplo Mais Completo de Teste Funcional</a></li><li><a href="#testando-views">Testando Views</a></li></ul></li><li><a href="#testes-de-integrao">Testes de Integração</a><ul><li><a href="#helpers-disponveis-para-testes-de-integrao">Helpers Disponíveis para testes de Integração</a></li><li><a href="#exemplos-de-testes-de-integrao">Exemplos de Testes de Integração</a></li></ul></li><li><a href="#tarefas-rake-para-executar-testes">Tarefas Rake Para Executar Testes</a><ul></ul></li><li><a href="#breve-nota-sobre-testunit">Breve Nota Sobre <tt>Test::Unit</tt></a><ul></ul></li><li><a href="#setup-e-teardown">Setup e Teardown</a><ul></ul></li><li><a href="#testando-rotas">Testando Rotas</a><ul></ul></li><li><a href="#testando-os-seus-mailers">Testando os seus Mailers</a><ul><li><a href="#de-olho-no-mailer">De olho no Mailer</a></li><li><a href="#testes-unitrios">Testes Unitários</a></li><li><a href="#testes-funcionais">Testes Funcionais</a></li></ul></li><li><a href="#outras-formas-de-testar">Outras Formas de Testar</a><ul></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
     </div>
   </div>
 
   <div id="container">
     <div class="wrapper">
       <div id="mainCol">
-        <h3 id="porqueescrevertestesparaasuaaplicao-rails">1 Por que escrever testes para a sua aplicação Rails?</h3>
+        <h3 id="por-que-escrever-testes-para-a-sua-aplicao-rails">1 Por que escrever testes para a sua aplicação Rails?</h3>
 <ul>
 	<li>Rails facilita muito este trabalho. Ele começa produzindo o código-base de teste em segundo plano enquanto você está criando os seus models e controllers.</li>
 	<li>Rodando os seus testes você é capaz de garantir que o seu código atende às funcionalidades desejadas mesmo depois de algumas importantes refatorações.</li>
 	<li>Eles também podem simular requisições para que você teste as respostas da sua aplicação sem ter que fazer isso pelo navegador.</li>
 </ul>
-<h3 id="introduoaos-testes">2 Introdução aos Testes</h3>
+<h3 id="introduo-aos-testes">2 Introdução aos Testes</h3>
 <p>O suporte a testes está presente no Rails desde o seu início. Isso não foi algo do tipo &#8220;opa! vamos fazer o suporte a testes porque isso é uma novidade legal&#8221;.  Quase toda aplicação Rails interage muito com uma base de dados &#8211; e, como resultado, os seus testes também  precisarão de uma base de dados para interagir. Para escrever testes eficientes, você vai precisar entender como configurar e popular esta base com amostras de dados.</p>
-<h4 id="os3-ambientes">2.1 Os 3 Ambientes</h4>
+<h4 id="os-trs-ambientes">2.1 Os Três Ambientes</h4>
 <p>Toda aplicação rails que você constrói tem 3 ambientes: um para produção, um para desenvolvimento e um para testes.</p>
 <p>Um lugar em que você vai encontrar esta distinção é no arquivo <tt>config/database.yml</tt>. Este arquivo de configuração <span class="caps">YAML</span> tem 3 diferentes seções definindo 3 configurações únicas de bases de dados:</p>
 <ul>
@@ -113,7 +113,7 @@
 <p>Isto permite que você configure e interaja com os dados de testes sem qualquer perigo de que os seus testes alterem dados do seu ambiente de produção.</p>
 <p>Por exemplo, suponha que você precise testar o seu novo método <tt>apague_este_usuario_e_tudo_associado_a_ele</tt>. Você não gostaria de executá-lo num ambiente em que não faça diferença destruir ou não dados?</p>
 <p>Quando você acaba destruindo a sua base de teste (e isto vai acontecer), você pode reconstruí-la do zero de acordo com as especificações definidas nela mesma. Você pode fazer isso executando <tt>rake db:test:prepare</tt>.</p>
-<h4 id="railspreparadopara-testesdesdeo-incio">2.2 Rails preparado para Testes desde o Início</h4>
+<h4 id="rails-preparado-para-testes-desde-o-incio">2.2 Rails preparado para Testes desde o Início</h4>
 <p>O Rails gera uma pasta <tt>test</tt> assim que você cria uma aplicação usando o comando <tt>rails <em>nome_do_projeto</em></tt>. Se você listar o conteúdo desta pasta você verá</p>
 <div class="code_container"><code class="html">
 $ ls -F test/
@@ -121,7 +121,7 @@ $ ls -F test/
 fixtures/       functional/     integration/    test_helper.rb  unit/
 </code></div>
 <p>A pasta <tt>unit</tt> é encarregada de armazenar testes para os seus models, a pasta <tt>functional</tt> armazena testes para os seus controllers e a pasta <tt>integration</tt> deve guardar testes que envolvam interações entre seus controllers. Fixtures são uma forma de organizar os dados de teste; elas ficam na pasta <tt>fixtures</tt>. O arquivo <tt>test_helper.rb</tt> guarda as configurações padrão para os seus testes.</p>
-<h4 id="os-segredosdas-fixtures">2.3 Os Segredos das Fixtures</h4>
+<h4 id="os-segredos-das-fixtures">2.3 Os Segredos das Fixtures</h4>
 <p>Para ter bons testes, você precisará configurar dados de testes. No Rails, isto pode ser feito definindo e ajustando fixtures.</p>
 <h5 id="o-que-so-fixtures">2.3.1 O Que São Fixtures?</h5>
 <p><em>Fixtures</em> é um nome bonito para amostra de dados. As fixtures permitem que você configure a sua base de dados de teste com informações pré-definidas antes de executar os seus testes. São independentes de banco de dados e assumem um de dois formatos: <strong><span class="caps">YAML</span></strong> ou <strong><span class="caps">CSV</span></strong>. Neste guia nós vamos usar o <strong><span class="caps">YAML</span></strong>, que é o formato preferido.</p>
@@ -142,7 +142,7 @@ steve:
  profession: guy with keyboard
 </code></div>
 <p>Cada fixture tem um nome seguido por uma lista de pares chave/valor desejados. Registros são separados por um espaço em branco. Você pode colocar comentários em uma fixture digitando o caracter # na primeira coluna.</p>
-<h5 id="e-rb-dando-uma-fora">2.3.3 ERb Dando Uma Força</h5>
+<h5 id="erb-dando-uma-fora">2.3.3 ERb Dando Uma Força</h5>
 <p>ERb permite que você introduza código ruby em templates. Tanto as fixtures de formato <span class="caps">YAML</span> como <span class="caps">CSV</span> são pré-processadas com ERb quando carregadas. Com isso, é possível utilizar Ruby para ajudar a gerar dados para seus testes.</p>
 <div class="code_container"><code class="ruby">
 &lt;% earth_size = 20 -%&gt;
@@ -163,7 +163,7 @@ mars:
 &lt;% %&gt;
 </code></div>
 <p>é considerada código Ruby. Quando esta fixture é carregada, o atributo <tt>size</tt> dos três registros vai receber os valores 20/50, 20/2 e 20-69, respectivamente. O atributo <tt>brightest_on</tt> também será calculado e formatado pelo Rails para ser compatível com a sua base de dados.</p>
-<h5 id="fixturesem-ao">2.3.4 Fixtures em Ação</h5>
+<h5 id="fixtures-em-ao">2.3.4 Fixtures em Ação</h5>
 <p>Por padrão, o Rails carrega automaticamente para os testes unitários e funcionais todas as fixtures existentes na pasta &#8216;test/fixtures&#8217;. O carregamento envolve três passos:</p>
 <ul>
 	<li>Remoção de qualquer dado pré-existente na tabela correspondente à fixture</li>
@@ -187,7 +187,7 @@ david = users(:david).find
 # e agora nós temos acesso aos métodos disponíveis somente na classe User
 email(david.girlfriend.email, david.location_tonight)
 </code></div>
-<h3 id="testes-unitriosparaosseus-models">3 Testes Unitários para os seus Models</h3>
+<h3 id="testes-unitrios-para-os-seus-models">3 Testes Unitários para os seus Models</h3>
 <p>No Rails, você testa os seus models escrevendo testes unitários.</p>
 <p>Para este guia, nós vamos usar o recurso <em>scaffolding</em> do Rails. Ele vai gerar o model, uma migration, controller e views para o novo recurso numa única operação. Ele também vai gerar uma suíte de testes completa seguindo as melhores práticas do Rails. Vou usar exemplos deste código gerado e vou complementando-o com exemplos adicionais quando necessário.</p>
 <div class='note'><p>Para mais informações a respeito do Rails <em>scaffolding</em>, consulte o <a href="getting_started.html">Começando com Rails</a></p></div>
@@ -235,7 +235,7 @@ assert true
 	<li>a senha do usuário tem mais do que 5 caracteres?</li>
 </ul>
 <p>Cada teste tem uma ou mais assertions. Somente quando todas as assertions são válidas o teste passa.</p>
-<h4 id="preparandoasua-aplicaoparaser-testada">3.1 Preparando a sua Aplicação para ser Testada</h4>
+<h4 id="preparando-a-sua-aplicao-para-ser-testada">3.1 Preparando a sua Aplicação para ser Testada</h4>
 <p>Antes de poder executar os testes, você precisa certificar-se de que a estrutura da sua base de testes está atualizada. Para isso, você pode usar os seguintes comandos rake:</p>
 <div class="code_container"><code class="html">
 $ rake db:migrate
@@ -244,7 +244,7 @@ $ rake db:test:load
 </code></div>
 <p>O comando <tt>rake db:migrate</tt> acima executa todas as migrations que estiverem pendentes no ambiente <em>development</em> (ambiente de desenvolvimento) e atualiza o seu <tt>db/schema.rb</tt>. A task <tt>rake db:test:load</tt> recria a base de testes a partir do db/schema.rb atual. Nas próximas vezes, é uma boa prática executar primeiro <tt>db:test:prepare</tt> para verificar se há migrations pendentes e visualizar eventuais alertas apropriadamente.</p>
 <div class='note'><p><tt>db:test:prepare</tt> irá falhar se o arquivo db/schema.rb não existir.</p></div>
-<h5 id="rake-taskspara-prepararsua-aplicaopara-testes">3.1.1 Rake Tasks para Preparar sua Aplicação para Testes</h5>
+<h5 id="rake-tasks-para-preparar-sua-aplicao-para-testes">3.1.1 Rake Tasks para Preparar sua Aplicação para Testes</h5>
 <table>
 	<tr>
 		<th>Tasks                        </th>
@@ -272,7 +272,7 @@ $ rake db:test:load
 	</tr>
 </table>
 <div class='info'><p>Você pode consultar todas estas tasks rake e suas descrições executando <tt>rake --tasks --describe</tt></p></div>
-<h4 id="executandoos-testes">3.2 Executando os Testes</h4>
+<h4 id="executando-os-testes">3.2 Executando os Testes</h4>
 <p>Para executar um teste basta invocar o arquivo contendo os testes pelo Ruby:</p>
 <shel>
 <p></pre>
@@ -481,7 +481,7 @@ NameError: undefined local variable or method `some_undefined_variable' for #&lt
 </table>
 <p>Por conta da natureza modular do framework de teste, é possível criar as suas próprias assertions. De fato, é exatamente o que o Rails faz. Ele inclui algumas assertions especializadas para facilitar o seu trabalho.</p>
 <div class='note'><p>Criar as suas próprias assertions é um tópico avançado que nós não vamos cobrir neste tutorial.</p></div>
-<h4 id="assertions-especficasdo-rails">3.5 Assertions Específicas do Rails</h4>
+<h4 id="assertions-especficas-do-rails">3.5 Assertions Específicas do Rails</h4>
 <p>Rails adiciona algumas assertions ao framework <tt>test/unit</tt>:</p>
 <table>
 	<tr>
@@ -524,7 +524,7 @@ NameError: undefined local variable or method `some_undefined_variable' for #&lt
 <p>Você verá o uso de algumas dessas assertions no próximo capítulo.</p>
 <h3 id="testes-funcionais-para-os-seus-controllers">4 Testes Funcionais Para Os Seus Controllers</h3>
 <p>Em Rails, os testes de várias actions de um único controller são chamados de testes funcionais. Controllers tratam as requisições web para a sua aplicação e eventualmente respondem com uma view renderizada.</p>
-<h4 id="oqueincluirnosseus-testes-funcionais">4.1 O que incluir nos seus Testes Funcionais</h4>
+<h4 id="o-que-incluir-nos-seus-testes-funcionais">4.1 O que incluir nos seus Testes Funcionais</h4>
 <p>Você deve testar coisas como:</p>
 <ul>
 	<li>a requisição foi bem sucedida?</li>
@@ -570,7 +570,7 @@ def test_should_create_post
 end
 </code></div>
 <p>Agora você pode tentar executar todos os testes e eles devem passar.</p>
-<h4 id="tiposde-requisies-disponveispara-testes-funcionais">4.2 Tipos de Requisições Disponíveis para Testes Funcionais</h4>
+<h4 id="tipos-de-requisies-disponveis-para-testes-funcionais">4.2 Tipos de Requisições Disponíveis para Testes Funcionais</h4>
 <p>Se você estiver familiarizado com o protocolo <span class="caps">HTTP</span>, você saberá que <tt>get</tt> é um tipo de requisição. Há 5 tipos de requisições suportadas nos testes funcionais do Rails:</p>
 <ul>
 	<li><tt>get</tt></li>
@@ -580,7 +580,7 @@ end
 	<li><tt>delete</tt></li>
 </ul>
 <p>Todos estes tipos de requisições são métodos que você pode usar, entretanto, você provavelmente vai acabar usando os dois primeiros com mais freqüência.</p>
-<h4 id="os4-hashesdo-apocalipse">4.3 Os 4 Hashes do Apocalipse</h4>
+<h4 id="os-quatro-hashes-do-apocalipse">4.3 Os Quatro Hashes do Apocalipse</h4>
 <p>Depois que uma requisição tiver sido realizada e processada usando um dos 5 métodos (<tt>get</tt>, <tt>post</tt>, etc.), você terá 4 objetos Hash prontos para usar:</p>
 <ul>
 	<li><tt>assigns</tt> &#8211; Qualquer objeto que estiver armazenado como variável de instância em actions para uso nas views.</li>
@@ -597,14 +597,14 @@ end
 # Por que você não pode usar assigns[:something] por razões históricas:
   assigns[&quot;something&quot;]          assigns(:something)
 </code></div>
-<h4 id="variveisde-instncia-disponveis">4.4 Variáveis de Instância Disponíveis</h4>
+<h4 id="variveis-de-instncia-disponveis">4.4 Variáveis de Instância Disponíveis</h4>
 <p>Você também tem acesso a três variáveis de instância nos seus testes funcionais:</p>
 <ul>
 	<li><tt>@controller</tt> &#8211; O controller processando a requisição</li>
 	<li><tt>@request</tt> &#8211; A requisição</li>
 	<li><tt>@response</tt> &#8211; A resposta</li>
 </ul>
-<h4 id="um-exemplo-mais-completode-teste-funcional">4.5 Um Exemplo Mais Completo de Teste Funcional</h4>
+<h4 id="um-exemplo-mais-completo-de-teste-funcional">4.5 Um Exemplo Mais Completo de Teste Funcional</h4>
 <p>Aqui está outro exemplo que usa <tt>flash</tt>, <tt>assert_redirected_to</tt>, e <tt>assert_difference</tt>:</p>
 <div class="code_container"><code class="ruby">
 def test_should_create_post
@@ -632,7 +632,7 @@ assert_select 'ul.navigation' do
 end
 </code></div>
 <p>A asserção <tt>assert_select</tt> é muito poderosa. Para um uso mais avançado, visite a sua <a href="http://api.rubyonrails.com/classes/ActionController/Assertions/SelectorAssertions.html#M000749">documentação</a>.</p>
-<h5 id="assertions-adicionais-baseadasna-view">4.6.1 Assertions Adicionais Baseadas na View</h5>
+<h5 id="assertions-adicionais-baseadas-na-view">4.6.1 Assertions Adicionais Baseadas na View</h5>
 <p>Há outras assertions que são mais usadas para testar views:</p>
 <table>
 	<tr>
@@ -662,7 +662,7 @@ assert_select_email do
   assert_select 'small', 'Por favor, clique no link &quot;Desinscrever-se&quot; caso queira sair da lista.'
 end
 </code></div>
-<h3 id="testesde-integrao">5 Testes de Integração</h3>
+<h3 id="testes-de-integrao">5 Testes de Integração</h3>
 <p>Testes de integração são usados para testar a interação entre qualquer número de controllers. Eles são geralmente usados para testar importantes fluxos de trabalho da sua aplicação.</p>
 <p>Diferentemente dos testes Unitários e Funcionais, os testes de integração devem ser explicitamente criados dentro da pasta &#8216;test/integration&#8217; na sua aplicação. O Rails provê um gerador para criar um esqueleto do teste de integração.</p>
 <div class="code_container"><code class="html">
@@ -684,7 +684,7 @@ class UserFlowsTest &lt; ActionController::IntegrationTest
 end
 </code></div>
 <p>Os testes de integração herdam de <tt>ActionController::IntegrationTest</tt>. Isto faz com que helpers adicionais estejam disponíveis para serem usados nos seus testes. Você também precisa incluir explicitamente as fixtures para que elas estejam disponíveis para o teste.</p>
-<h4 id="helpers-disponveisparatestesde-integrao">5.1 Helpers Disponíveis para testes de Integração</h4>
+<h4 id="helpers-disponveis-para-testes-de-integrao">5.1 Helpers Disponíveis para testes de Integração</h4>
 <p>Adicionalmente aos helpers padrão, há alguns outros disponíveis para os testes de integração:</p>
 <table>
 	<tr>
@@ -736,7 +736,7 @@ end
 		<td>Abre uma nova instância de sessão.</td>
 	</tr>
 </table>
-<h4 id="exemplosde-testesde-integrao">5.2 Exemplos de Testes de Integração</h4>
+<h4 id="exemplos-de-testes-de-integrao">5.2 Exemplos de Testes de Integração</h4>
 <p>Um simples teste de integração que exercita múltiplos controllers:</p>
 <div class="code_container"><code class="ruby">
 require 'test_helper'
@@ -846,10 +846,10 @@ end
 		<td>Executa todos os testes de plugins de <tt>vendor/plugins/*/**/test</tt> (ou de modo específico com <tt>PLUGIN=_name_</tt>)</td>
 	</tr>
 </table>
-<h3 id="breve-nota-sobre-test-unit">7 Breve Nota Sobre Test::Unit</h3>
+<h3 id="breve-nota-sobre-testunit">7 Breve Nota Sobre <tt>Test::Unit</tt></h3>
 <p>O Ruby contém um grande número de bibliotecas. Uma pequena gem de uma bibliotea é a <tt>Test::Unit</tt>, um framework para testes unitários em Ruby. Todas as assertions básicas discutidas anteriormente estão na verdade em <tt>Test::Unit::Assertions</tt>. A classe <tt>ActiveSupport::TestCase</tt> que nós estamos usando em nossos testes unitários e funcionais estendem  <tt>Test::Unit::TestCase</tt>. É desta forma que nós podemos usar todas as assertions básicas em nossos testes.</p>
 <div class='note'><p>Para mais informações a respeito de <tt>Test::Unit</tt>, visite a <a href="http://ruby-doc.org/stdlib/libdoc/test/unit/rdoc/">Documentação do test/unit</a></p></div>
-<h3 id="setupe-teardown">8 Setup e Teardown</h3>
+<h3 id="setup-e-teardown">8 Setup e Teardown</h3>
 <p>Caso você queira executar um bloco de código antes de começar cada teste e outro bloco de código após o fim de cada teste, você tem dois callbacks especiais para te ajudar. Veremos isso passando por um exemplo de teste funcional do controller <tt>Posts</tt>:</p>
 <div class="code_container"><code class="ruby">
 require 'test_helper'
@@ -939,9 +939,9 @@ def test_should_route_to_post
   assert_routing '/posts/1', { :controller =&gt; &quot;posts&quot;, :action =&gt; &quot;show&quot;, :id =&gt; &quot;1&quot; }
 end
 </code></div>
-<h3 id="testandoosseus-mailers">10 Testando os seus Mailers</h3>
+<h3 id="testando-os-seus-mailers">10 Testando os seus Mailers</h3>
 <p>Testar classes que enviam emails (mailers) requer algumas ferramentas específicas.</p>
-<h4 id="deolhono-mailer">10.1 De olho no Mailer</h4>
+<h4 id="de-olho-no-mailer">10.1 De olho no Mailer</h4>
 <p>Suas classes <tt>ActionMailer</tt> &#8212; como todas as outras partes da sua aplicação Rails &#8212; devem ser testadas para garantir que estão funcionando como o esperado.</p>
 <p>Os objetivos de testar as suas classes <tt>ActionMailer</tt> são para assegurar-se de que:</p>
 <ul>
@@ -949,14 +949,14 @@ end
 	<li>o conteúdo dos emails está correto (assunto, remetente, corpo, etc)</li>
 	<li>os emails corretos estão sendo enviados nos momentos certos</li>
 </ul>
-<h5 id="portodaparte">10.1.1 Por toda parte</h5>
+<h5 id="por-toda-parte">10.1.1 Por toda parte</h5>
 <p>Há dois aspectos a serem analisados ao testar o seu mailer: os testes unitários e os testes funcionais. Nos testes unitários, você executa o mailer isoladamente com entradas muito bem controladas e compara a saída com um valor conhecido (uma fixture &#8212;yay! mais fixtures!). Nos testes funcionais, você não testa muito os detalhes produzidos pelo mailer. Ao contrário, nós testamos se nossos controllers e models estão usando o mailer da maneira correta. Você testa para provar que o email correto foi enviado na hora correta.</p>
 <h4 id="testes-unitrios">10.2 Testes Unitários</h4>
 <p>Com o objetivo de testar se o seu mailer está trabalhando como esperado, você pode usar testes unitários para comparar os resultados gerados pelo mailer com exemplos (escritos previamente) do que deveria ser produzido.</p>
-<h5 id="vinganadas-fixtures">10.2.1 Vingança das Fixtures</h5>
+<h5 id="vingana-das-fixtures">10.2.1 Vingança das Fixtures</h5>
 <p>Para o propósito de testar unitariamente um mailer, fixtures são usadas para nos dar um exemplo de como a saída <em>deve</em> ser. Como esses são emails de exemplo, e não dados do Active Record como as outras fixtures, eles são mantidos em seus próprios subdiretórios, separados das outras fixtures. O nome do diretório em <tt>test/fixtures</tt> corresponde ao nome do mailer. Então, para o mailer de nome <tt>UserMailer</tt>, as fixtures devem ficar no diretório <tt>test/fixtures/user_mailer</tt>.</p>
 <p>Quando você gerou o seu mailer, o generator criou esqueletos de fixtures para cada uma das suas actions mailers. Se você não usou o generator, você mesmo terá que criar esses arquivos.</p>
-<h5 id="o-casode-teste-bsico">10.2.2 O Caso de Teste Básico</h5>
+<h5 id="o-caso-de-teste-bsico">10.2.2 O Caso de Teste Básico</h5>
 <p>Aqui está um teste unitário para um mailer chamado <tt>UserMailer</tt> cuja action <tt>invite</tt> é usada para enviar um convite para um amigo. É uma versão adaptada do teste básico criado pelo generator para um action <tt>invite</tt>.</p>
 <div class="code_container"><code class="ruby">
 require 'test_helper'
@@ -1004,7 +1004,7 @@ class UserControllerTest &lt; ActionController::TestCase
   end
 end
 </code></div>
-<h3 id="outras-formasde-testar">11 Outras Formas de Testar</h3>
+<h3 id="outras-formas-de-testar">11 Outras Formas de Testar</h3>
 <p>O modo padrão baseado no <tt>test/unit</tt> não é a única maneira de testar aplicações Rails. Programadores Rails produziram uma variedade enorme de formas e truques para realizar testar, incluindo:</p>
 <ul>
 	<li><a href="http://avdi.org/projects/nulldb/">NullDB</a>, uma maneira de acelerar os testes ao evitar o uso de banco de dados.</li>
