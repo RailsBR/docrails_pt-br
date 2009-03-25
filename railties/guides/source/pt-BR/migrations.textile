@@ -336,9 +336,9 @@ Se os helpers fornecidos pelo Active Record não forem suficientes, você pode u
 
 Para mais detalhes e exemplos de métodos individuais dê uma olhada na documentação da API, em particular a documentação para "ActiveRecord::ConnectionAdapters::SchemaStatements":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html (na qual fornece os métodos disponíveis nos métodos +up+ e +down+), "ActiveRecord::ConnectionAdapters::TableDefinition":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html (que fornece os métodos disponíveis no objeto passado pelo +create_table+) e  "ActiveRecord::ConnectionAdapters::Table":http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/Table.html (que fornece os métodos disponíveis no objeto passado pelo +change_table+).
 
-h4. Escrevendo o seu Método +down+ *** PAREI AQUI - Adolfo ***
+h4. Escrevendo o seu Método +down+
 
-O método +down+ da sua migration deve reverter as transformações concluídas pelo método +up+. Em outras palavras, o banco de dados deve se manter inalterado se você fizer um +up+ seguido de um +down+. Por exemplo, se você criar uma tabela no método up você deverá excluí-la no método +down+. Deve ser sábio e precisamente inverso ao método +up+. Por exemplo
+O método +down+ da sua migration deve reverter as transformações realizadas pelo método +up+. Em outras palavras, o schema do banco de dados deve se manter inalterado se você fizer um +up+ seguido de um +down+. Por exemplo, se você criar uma tabela no método up você deverá excluí-la no método +down+. É sinal de sabedoria fazer as coisas na ordem inversa do que feito no método +up+. Por exemplo
 
 <ruby>
 class ExampleMigration < ActiveRecord::Migration
@@ -348,13 +348,18 @@ class ExampleMigration < ActiveRecord::Migration
       t.references :category
     end
     #add a foreign key
-    execute "ALTER TABLE products ADD CONSTRAINT fk_products_categories FOREIGN KEY (category_id) REFERENCES categories(id)"
-    
+    execute <<-SQL
+      ALTER TABLE products
+        ADD CONSTRAINT fk_products_categories
+        FOREIGN KEY (category_id)
+        REFERENCES categories(id)
+    SQL
+
     add_column :users, :home_page_url, :string
-    
+
     rename_column :users, :email, :email_address
   end
-  
+
   def self.down
     rename_column :users, :email_address, :email
     remove_column :users, :home_page_url
@@ -363,13 +368,13 @@ class ExampleMigration < ActiveRecord::Migration
   end
 end
 </ruby>
+Algmas vezes a sua migration fará algumas coisa irreversível. Por exemplo, ela pode apagar alguns dados. Em casos como esse em que você não pode reverter uma migration, você pode lançar +IrreversibleMigration+ no seu método +down+. Se alguém tentar reverter a sua migration uma mensagem de erro será mostrada informando que a reversão não poderá ser realizada.
 
-Algmas vezes a sua migration pode fazer algumas coisas irreversíveis, por exemplo quando você destrói alguns dados. Em casos como esse onde você não pode reverter uma migration, você pode lançar IrreversibleMigration para o seu método +down+. Se alguém tentar reverter a sua migration uma mensagem será mostrada falando que ela não será completa.
-displayed saying that it can't be done.
+h3. Executando Migrations
 
-h3. Executando migrações
+O Rails fornece um conjunto de tasks rake para trabalhar com migrations, o que se resume a rodar certos conjuntos de migrations. A primeiríssima task rake que você usará será provavelmente a +db:migrate+. Na sua forma mais básica, ela simplesmente executa o método +up+ para todas as migrações que ainda não foram rodadas. Se não existirem estas migrations ainda não executadas, ela se encerra.
 
-Rails fornece um conjunto de tarefas rake para trabalhar com as migrações, que se resume em rodar alguns conjuntos de migrações. A tarefa rake mais relatada que você provavelmente usará é +db:migrate+. Na sua forma mais básica certamente rodará o método +up+ para todas as migrações que ainda não foram rodadas. Se não existir migrações ele sai.
+Note que ao rodar a task +db:migrate+, também será executada a +db:schema:dump+, que irá alterar o arquivo db/schema.rb para bater com a estrutura do seu banco de dados.
 
 Se você especificar uma migration, o Active Record irá rodar as migrações requeridas (up ou down) até que ela tenha chegado nessa versão específica. A versão é o prefixo numérico do nome de uma migration. Por exemplo para migrar até a versão 20080906120000 execute
 
