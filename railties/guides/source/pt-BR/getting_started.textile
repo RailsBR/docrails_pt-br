@@ -1286,14 +1286,14 @@ O Rails também vem com ajuda embutida que você pode gerar usando o utilitário
 
 h3. Changelog
 
-"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/2
+"Ticket do Lighthouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/2
 
-* February 3, 2009: Primeira versão da tradução para português por "Carlos A. da Silva":translators.html#carlosantoniodasilva
-* February 1, 2009: Updated for Rails 2.3 by "Mike Gunderloy":credits.html#mgunderloy
-* November 3, 2008: Formatting patch from Dave Rothlisberger
-* November 1, 2008: First approved version by "Mike Gunderloy":credits.html#mgunderloy
-* October 16, 2008: Revised based on feedback from Pratik Naik by "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)
-* October 13, 2008: First complete draft by "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)
-* October 12, 2008: More detail, rearrangement, editing by "Mike Gunderloy":credits.html#mgunderloy (not yet approved for publication)
-* September 8, 2008: initial version by James Miller (not yet approved for publication)
+* 3 de Fevereiro de 2009: Primeira versão da tradução para português por "Carlos A. da Silva":translators.html#carlosantoniodasilva
+* 1 de Fevereiro de 2009: Atualização para o Rails 2.3 por "Mike Gunderloy":credits.html#mgunderloy
+* 3 de Novembro de 2008: Patch de formatação de Dave Rothlisberger
+* 1 de Novembro de 2008: Primeira versão aprovada por "Mike Gunderloy":credits.html#mgunderloy
+* 16 de Outubro de 2008: Revisão baseada no feedback de Pratik Naik por "Mike Gunderloy":credits.html#mgunderloy (ainda não aprovado para publicação)
+* 13 de Outubro de 2008: Primeiro esboço completo por "Mike Gunderloy":credits.html#mgunderloy (ainda não aprovado para publicação)
+* 12 de Outubro de 2008: Mais detalhes, reorganização, edição por "Mike Gunderloy":credits.html#mgunderloy (ainda não aprovado para publicação)
+* 8 de Setembro de 2008: versão inicial por James Miller (ainda não aprovado para publicação)
 
