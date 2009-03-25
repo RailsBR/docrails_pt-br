@@ -235,6 +235,6 @@ h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/64
 
-* March 24, 2009: Tradução para português por "Carlos A. da Silva":translators.html#carlosantoniodasilva
-* March 2, 2009: Rascunho inicial por "Mike Gunderloy":credits.html#mgunderloy
+* 24 de Março de 2009: Tradução para português por "Carlos A. da Silva":translators.html#carlosantoniodasilva
+* 2 de Março de 2009: Rascunho inicial por "Mike Gunderloy":credits.html#mgunderloy
 
