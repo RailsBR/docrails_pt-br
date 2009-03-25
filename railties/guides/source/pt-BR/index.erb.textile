@@ -50,7 +50,7 @@ h3. Views
 
 <dl>
 <% guide_pt_br("Layouts e Renderização no Rails", 'layouts_and_rendering.html', :translation_ticket => 5) do %>
-Este guia cobre o básico dos recursos de layout do Action Controller e Action View, incluindo renderização e redirecionamento, usando blocos +content_for+, e trabalhando com partials. 
+Este guia cobre o básico dos recursos de layout do Action Controller e Action View, incluindo renderização e redirecionamento, usando blocos +content_for+, e trabalhando com partials.
 <p>
   Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/layouts_and_rendering.html" %>
 </p>
@@ -93,19 +93,19 @@ h3. Aprofundando-se
 	<% end %>
 
 	<% guide("Guia de Segurança para Aplicações Rails", 'security.html') do %>
-	  Este guia descreve problemas de segurança comuns em aplicações web e como evita-los com Rails. 
+	  Este guia descreve problemas de segurança comuns em aplicações web e como evita-los com Rails.
 	<% end %>
 
 	<% guide("Debugando Aplicações Rails", 'debugging_rails_applications.html') do %>
-	  Este guia descreve como depurar aplicações Rails. Ele cobre diferentes formas de faze-lo e como entender o que está acontecendo “nos bastidores” do seu código. 
+	  Este guia descreve como depurar aplicações Rails. Ele cobre diferentes formas de faze-lo e como entender o que está acontecendo “nos bastidores” do seu código.
 	<% end %>
 
 	<% guide("Realizando Testes de Desempenho em Aplicações Rails", 'performance_testing.html') do %>
-	  Este guia ensina maneiras de analizar e otimizar a execução do seu código no Rails. 
+	  Este guia ensina maneiras de analizar e otimizar a execução do seu código no Rails.
 	<% end %>
 
 	<% guide("The Basics of Creating Rails Plugins", 'http://guides.rubyonrails.org/plugins.html', :ticket => 32) do %>
-	  Este guia cobre como criar plugins para estender as funcionalidades do Rails. (Ainda não traduzido) 
+	  Este guia cobre como criar plugins para estender as funcionalidades do Rails. (Ainda não traduzido)
 	<% end %>
 
 	<% guide("Configuring Rails Applications", 'http://guides.rubyonrails.org/configuring.html') do %>
@@ -127,10 +127,11 @@ h3. Aprofundando-se
 	  Varia técnicas de caching disponibilizadas pelo Rails. (Ainda não traduzido)
 	<% end %>
 
-  <% guide_pt_br("Contribuindo para o Rails", 'contributing.html', :translation_ticket => 24) do %>
-  Rails não é um "framework de outra pessoa". Este guia cobre as várias formas que você possui para se involver no contínuo processo de desenvolvimento do Rails.
+  <% guide_pt_br("Contribuindo para o Rails", 'contributing_to_rails.html', :translation_ticket => 24) do %>
+  Rails não é um "framework de alguém". Este guia cobre as várias formas que você possui para se envolver no contínuo processo de desenvolvimento do Rails.
   <p>
     Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/contributing_to_rails.html" %>
   </p>
 	<% end %>
 </dl>
+
