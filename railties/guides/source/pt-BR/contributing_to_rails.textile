@@ -225,7 +225,7 @@ h4. Obtenha Algum Feedback
 
 Agora você precisa fazer com que outras pessoas olhem seu patch, assim como você examinou os patchs de outras pessoas. Você pode utilizar a lista de email rubyonrails-core ou o canal #rails-contrib no IRC freenode para isto. Você pode também apenas tentar falar com os desenvolvedores Rails que conhece.
 
-h4. Itere como Necessário
+h4. Itere como for Necessário
 
 É totalmente possível que o feedback que você terá irá sugerir mudanças. Não fique desencorajado: todo o ponto de contribuir para um projeto open source ativo é explorar o conhecimento da comunidade. Se as pessoas estão encorajando você a mexer no seu código, então é valido fazer mudanças e reenviar. Se o feedback é que seu código não pertence ao core, você pode ainda pensar sobre lançá-lo como um plugin.
 
@@ -233,7 +233,7 @@ E então... pense sobre sua próxima contribuição!
 
 h3. Changelog
 
-"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/64
+"Ticket do Lighthouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/64
 
 * 24 de Março de 2009: Tradução para português por "Carlos A. da Silva":translators.html#carlosantoniodasilva
 * 2 de Março de 2009: Rascunho inicial por "Mike Gunderloy":credits.html#mgunderloy
