@@ -376,43 +376,43 @@ O Rails fornece um conjunto de tasks rake para trabalhar com migrations, o que s
 
 Note que ao rodar a task +db:migrate+, também será executada a +db:schema:dump+, que irá alterar o arquivo db/schema.rb para bater com a estrutura do seu banco de dados.
 
-Se você especificar uma migration, o Active Record irá rodar as migrações requeridas (up ou down) até que ela tenha chegado nessa versão específica. A versão é o prefixo numérico do nome de uma migration. Por exemplo para migrar até a versão 20080906120000 execute
+Se você especificar uma versão, o Active Record irá rodar as migrações requeridas (anteriores ou posteriores) até que ele tenha chegado nessa versão específica. A versão é o prefixo numérico no nome de uma migration. Por exemplo, para migrar para a versão 20080906120000 execute
 
 <pre>
 rake db:migrate VERSION=20080906120000
 </pre>
 
-Se a versão for maior do que a versão corrente (ou seja, está migrando para cima) irá rodar o método +up+ de em todas as migrações acima e incluindo a versão 20080906120000, se a migration for para baixo, então será executado os métodos +down+ de todas as migrações para baixo até, mas não incluindo, 20080906120000.
+Se a versão especificada for mais recente do que a versão atual (ou seja, estiver migrando para cima), o comando irá executar o método +up+ em todas as migrations acima (posteriores) da atual, incluindo a versão 20080906120000. Se a migration for para baixo, o comando executará o método +down+ de todas as migrations abaixo da atual, mas não incluirá a 20080906120000.
 
-h4. Reversão
+h4. Revertendo
 
-Uma tarefa comum é regressar a última migration, por exemplo, se você cometeu um engano e deseja corrigi-lo. Ao invés de monitorar o método down com a migration anterior, você pode rodar
+Uma tarefa comum é reverter a última migration, por exemplo, se você cometeu um engano e deseja corrigi-lo. Ao invés de procurar o número da versão associado com a migration anterior, você pode rodar
 
 <pre>
 rake db:rollback
 </pre>
 
-Isso irá rodar o método +down+ da migration mais recente. Se você precisa se desfazer de várias migrações, você pode fornecer o parâmetro +STEP+:
+Isso irá rodar o método +down+ da migration mais recente. Se você precisa desfazer várias migrations, você pode fornecer um parâmetro +STEP+:
 
 <pre>
 rake db:rollback STEP=3
 </pre>
 
-irá rodar o método +down+ das 3 últimas migrações.
+irá rodar o método +down+ das 3 últimas migrations.
 
-A tarefa +db:migrate:redo+ é um atalho para fazer uma reversão e a migration de volta. Assim como na tarefa +db:rollback+ você pode usar o parâmetro +STEP+ se você precisar voltar em mais de uma versão, por exemplo
+A task +db:migrate:redo+ é um atalho para fazer uma reversão e então executar a migration novamente. Assim como na task +db:rollback+ você pode usar o parâmetro +STEP+ se precisar voltar mais de uma versão, por exemplo
 
 <pre>
 rake db:migrate:redo STEP=3
 </pre>
 
-Nenhuma dessas tarefas Rake fazem qualquer coisa que você não poderia fazer com +db:migrate+, são simplesmente mais convenientes, desde que você não precise explicitamente especificar a versão de uma migration para outra.
+Nenhuma dessas tasks Rake fazem qualquer coisa que você não poderia fazer com +db:migrate+, elas são simplesmente mais convenientes, uma vez que você não precisa especificar explicitamente a versão da migration para a qual você deseja ir.
 
-Finalmente, a tarefa +db:reset+ irá destruir sua base de dados, recria-la e carregar o schema atual dentro dela.
+Por fim, a task +db:reset+ irá apagar a sua base de dados, recriá-la e carregar o schema atual dela.
 
-NOTE: Isto não é o mesmo que você rodar todas as migrações - veja a seção "schema.rb":#armazenando-esquemas-e-voc
+NOTE: Isto não é o mesmo que você rodar todas as migrations - veja a seção em "schema.rb":#armazenando-esquemas-e-voc.
 
-h4. Especificando uma migration
+h4. Sendo Específico **** parei aqui - adolfo ****
 
 Se você precisa especificar uma migration para cima ou para baixo, as tarefas +db:migrate:up+ e +db:migrate:down+ irão fazer isso. Basta especificar a versão apropriada e a migration correspondente e terá seu método +up+ ou +down+ invocado, por exemplo
 
