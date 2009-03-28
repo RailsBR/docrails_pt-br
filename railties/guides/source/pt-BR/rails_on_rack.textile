@@ -113,7 +113,7 @@ O propósito de cada um desses middlewares é explicado na seção "Middlewares 
 
 h4. Configurando a pilha de Middlewares
 
-O Rails fornece uma interface simples de configuração +config.middleware+ para adicionar, remover e modificar os middlewares na pilha de middlewares por meio do +environment.rb+ ou do arquivo de configuração específico do ambiente <tt>environments/&lt;ambiente&gt;.rb</tt>.
+O Rails fornece uma interface simples de configuração +config.middleware+ para adicionar, remover e modificar os middlewares na pilha de middlewares por meio do +environment.rb+ ou do arquivo de configuração específico do ambiente em  <tt>environments/&lt;ambiente&gt;.rb</tt>.
 
 h5. Adicionando um Middleware
 
@@ -284,7 +284,7 @@ Todavia, é possível alterar a ordem padrão no seu ambiente. Simplesmente adic
 config.metals = ["Bbb", "Aaa"]
 </ruby>
 
-Cada string no array deve ser o nome da sua classe metal. Se você fizer isso, será avisado de que aplicações metal não listadas não serão carregadas.
+Cada string no array deve ser o nome da sua classe metal. Se utilizar a configuração anterior, será avisado de que aplicações metal não listadas não serão carregadas.
 
 WARNING: Aplicações Metal não podem retornar o Status HTTP +404+ para um cliente, pois ele é usado para continuar a execução da cadeia Metal. Por favor, use controllers Rails normais ou um middleware personalizado se retornar +404+ for um requisito.
 
