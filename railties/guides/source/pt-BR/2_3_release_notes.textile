@@ -258,7 +258,7 @@ end
 
 h4. Roteamento Mais Eficiente
 
-Existe um par de mundaças significativas no roteamento do Rails 2.3. Os helpers para rotas +formatted_+ sumiram, em favor de passar apenas +:format+ como uma opção. Isto reduz o processo de geração de rotas em 50% para qualquer recurso - e pode salvar uma quantia substancial de memória (até 100MB em grandes aplicações). Se o seu código utiliza os helpers +formatted_+, ele ainda funcionará atualmente - mas este comportamento está deprecado e sua aplicação será mais eficiente se você reescrever estas rotas usando o novo padrão. Outra granda mudança é que o Rails agora suporta vários arquivos de roteamento, não só o +routes.rb+. Você pode utilizar +RouteSet#add_configuration_file+ para importar mais rotas a qualquer momento - sem limpar as rotas carregadas atualmente. Embora esta mudança é mais útil para os Engines, você pode utilizá-la em qualquer aplicação que precise carregar rotas em lote.
+Existe um par de mundaças significativas no roteamento do Rails 2.3. Os helpers para rotas +formatted_+ sumiram, em favor de passar apenas +:format+ como uma opção. Isto reduz o processo de geração de rotas em 50% para qualquer recurso - e pode salvar uma quantia substancial de memória (até 100MB em grandes aplicações). Se o seu código utiliza os helpers +formatted_+, ele ainda funcionará atualmente - mas este comportamento está depreciado e sua aplicação será mais eficiente se você reescrever estas rotas usando o novo padrão. Outra granda mudança é que o Rails agora suporta vários arquivos de roteamento, não só o +routes.rb+. Você pode utilizar +RouteSet#add_configuration_file+ para importar mais rotas a qualquer momento - sem limpar as rotas carregadas atualmente. Embora esta mudança é mais útil para os Engines, você pode utilizá-la em qualquer aplicação que precise carregar rotas em lote.
 
 * Contribuidores Líderes: "Aaron Batalion":http://blog.hungrymachine.com/
 
@@ -590,18 +590,18 @@ h4. Outras Mudanças no Rails
 * Se algumas gems configuradas estão faltando, as tarefas rake de gems irão pular a carga da maior parte do ambiente, Isto deve resolver muitos dos problemas do tipo "galinha e ovo" onde o rake gems:install não poderia rodar porque as gems estavam faltando.
 * As gems agora são desempacotadas exatamente uma vez. Isto corrige problemas com gems (hoe, por exemplo) que são empacotadas com permissões somente-leitura nos arquivos.
 
-h3. Deprecado
+h3. Depreciado
 
-Alguns pedaços de código antigo foram deprecados nesta versão:
+Alguns pedaços de código antigo foram depreciados nesta versão:
 
 * Se você é um dos (bastante raros) desenvolvedores Rails que faz deploy em uma modo que depende dos scripts inspector, reaper, e spawner, precisa saber que estes scripts não estão mais inclusos no core Rails. Se você precisa deles, pode obter cópias através do plugin "irs_process_scripts":http://github.com/rails/irs_process_scripts/tree.
-* +render_component+ vai de "deprecado" para "naoexistente" no Rails 2.3. Se você ainda precisa dele, pode instalar o "plugin render_component":http://github.com/rails/render_component/tree/master.
+* +render_component+ vai de "depreciado" para "naoexistente" no Rails 2.3. Se você ainda precisa dele, pode instalar o "plugin render_component":http://github.com/rails/render_component/tree/master.
 * O suporte para componentes Rails foi removido.
 * Se você é uma das pessoas que costumava executar +script/performance/request+ para verificar a performance com base nos testes de integração, precisa aprender um novo truque: este script agora foi removido do core Rails. Existe um novo plugin request_profiler que você pode instalar para obter a mesma funcionalidade de volta.
-* +ActionController::Base#session_enabled?+ está deprecado porque as sessões são agora carregadas sob demanda (lazy-load).
-* As opções +:digest+ e +:secret+ para o +protect_from_forgery+ estão deprecadas e não tem efeito.
+* +ActionController::Base#session_enabled?+ está depreciado porque as sessões são agora carregadas sob demanda (lazy-load).
+* As opções +:digest+ e +:secret+ para o +protect_from_forgery+ estão depreciadas e não tem efeito.
 * Alguns helpers de testes de integração foram removidos. +response.headers["Status"]+ e +headers["Status"]+ não retornarão mais nada. O Rack não permite "Status" nos seus headers de retorno. Contudo você ainda pode usar os helpers +status+ e +status_message+. +response.headers["cookie"]+ e +headers["cookie"]+ não retornarão nenhum cookie CGI. Você pode inspecionar +headers["Set-Cookie"]+ para ver o header do cookie sem ser processado ou utilizar o helper +cookies+ para obter um hash dos cookies enviados para o cliente.
-* +formatted_polymorphic_url+ está deprecado. Utilize no lugar +polymorphic_url+ com +:format+.
+* +formatted_polymorphic_url+ está depreciado. Utilize no lugar +polymorphic_url+ com +:format+.
 * A opção +:http_only+ no +ActionController::Response#set_cookie+ foi renomeada para +:httponly+.
 * As opções +:connector+ e +:skip_last_comma+ do método +to_sentence+ foram substituídas pelas opções +:words_connnector+, +:two_words_connector+, e +:last_word_connector+.
 * Postar um form multipart com um controle +file_field+ vazio costumava enviar uma string vazia para o controller. Agora ele envia nil, devido a diferenças entre o parser multipart do Rack e o antigo parser do Rails.
