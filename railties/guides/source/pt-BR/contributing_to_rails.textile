@@ -16,7 +16,7 @@ h3. Reportando um Problema com o Rails
 
 O Rails utiliza um "projeto do Lighthouse":http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/ para rastrear os problemas (primariamente bugs e contribuições de código novo). Se você encontrou um bug no Rails, este é o lugar para começar.
 
-NOTE: Bugs na versão mais recente do Rails provavelmente são os que obterão mais atenção. Além disso, a equipe core Rails está sempre interessado em feedback daqueles que podem tirar tempo para testar o _Rails edge_ (o código da versão do Rails que está atualmente em desenvolvimento). Mais tarde neste Guia você descobrirá como obter o Rails edge para testar.
+NOTE: Bugs na versão mais recente do Rails provavelmente são os que obterão mais atenção. Além disso, a equipe do core Rails está sempre interessada em feedback daqueles que podem tirar tempo para testar o _Rails edge_ (o código da versão do Rails que está atualmente em desenvolvimento). Mais tarde neste Guia você descobrirá como obter o Rails edge para testar.
 
 h4. Criando um Relatório de Bug
 
@@ -140,7 +140,7 @@ Os "Rails Guides":http://guides.rubyonrails.org/ são um conjunto de recursos on
 
 h4. A Documentação da API do Rails
 
-A "documentação da API do Rails":http://api.rubyonrails.org/ é gerada automaticamente a partir do código fonte do Rails via "RDoc":http://rdoc.rubyforge.org/. Se você acha que alguma parte da documentação está incompleta, confusa, ou simplesmente errada, pode intervir e corrigí-la
+A "documentação da API do Rails":http://api.rubyonrails.org/ é gerada automaticamente a partir do código fonte do Rails via "RDoc":http://rdoc.rubyforge.org/. Se você acha que alguma parte da documentação está incompleta, confusa, ou simplesmente errada, pode intervir e corrigí-la.
 
 Para contribuir com uma atualização para a documentação da API, você pode contatar "lifo":http://github.com/lifo no Github e pedir por direitos de commit no repositório docrails e enviar suas mudanças para o repositório. Por favor siga as "convenções RDoc do docrails":http://wiki.github.com/lifo/docrails/rails-api-documentation-conventions quando contribuir com mudanças.
 
