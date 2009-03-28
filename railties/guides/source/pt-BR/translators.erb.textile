@@ -34,3 +34,7 @@ Cássio Marques é um desenvolvedor que trabalha com diversas linguagens de prog
 <% author('Rafael Rosa', 'rafaelrosafu') do %>
 Rafael Rosa é formado em administração de empresas pela Faculdade de Administração, Economia e Contabilidade da Universidade de São Paulo, e trabalha com desenvolvimento de sistemas há mais de 13 anos. Já trabalhou com Delphi, .NET e atualmente trabalha com Ruby on Rails. Além de participar da comunidade Ruby/Rails ele também acompanha a comunidade ALT.NET. Atualmente é um dos colaboradores do "Ruby Inside Brasil":http://www.rubyinside.com.br e mantém um "blog sobre Ruby, Rails, ALT.NET e cinema":http://www.rafaelrosafu.com. Ele dedica 90% de suas horas vagas ao cinema e os outros 10% aprendendo francês. Você pode acompanhá-lo no "Twitter":http://www.twitter.com/rafaelrosafu.
 <% end %>
+
+<% author('Fernando Luizão', 'fernandoluizao') do %>
+Fernando Luizão é formado em Ciências da Computação pela Universidade Estadual de Londrina. Atualmente cursa mestrado na mesma universidade e atua como desenvolvedor em diversas linguagens de programação, como Ruby, Java e C++. Mantém um "blog":http://fernandoluizao.blogspot.com onde escreve sobre desenvolvimento de software em geral.
+<% end %>
