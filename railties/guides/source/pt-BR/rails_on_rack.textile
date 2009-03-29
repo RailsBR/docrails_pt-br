@@ -3,7 +3,7 @@ h2. Rails on Rack
 Esse guia cobre a integração do Rails com o Rack e interface com outros componentes Rack. Ao completar este guia, você será capaz de:
 
 * Criar aplicações com Rails Metal
-* Usar middlewares do Rack em suas aplicações Rails
+* Usar middlewares Rack em suas aplicações Rails
 * Entender a pilha interna de middlewares do Action Pack
 * Definir uma pilha de middlewares personalizada
 
@@ -256,7 +256,7 @@ class Poller
 end
 </ruby>
 
-Aplicações Metal dentro do diretório +app/metal+ de plugins também serão descobertos e adicionados à lista
+Aplicações Metal dentro do diretório +app/metal+ de plugins também serão descobertos e adicionados à lista.
 
 Aplicações Metal são uma otimização. Você deve certificar-se de "entender as implicações relacionadas ao desempenho"::http://weblog.rubyonrails.org/2008/12/20/performance-of-rails-metal antes de usá-las.
 
@@ -305,8 +305,7 @@ h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/58
 
+* 28 de Março de 2009: Revisado por "Daniel Lopes":translators.html#danielvlopes
 * 28 de Março de 2009: Traduzido por "Fernando Luizão":translators.html#fernandoluizao
-
 * 7 de Fevereiro de 2009: Segunda versão por "Pratik":credits.html#lifo
-
 * 11 de Janeiro 2009: Primeira versão por "Pratik":credits.html#lifo

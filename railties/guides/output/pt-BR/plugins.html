@@ -167,9 +167,11 @@ create  vendor/plugins/yaffle/generators/yaffle/USAGE
 <p>Neste guia você irá aprender como testar seu plugin com vários adaptadores diferentes usando o Active Record.
 Este guia não irá cobrir o uso de fixtures nos testes do plugin.</p>
 <p>Para preparar seu plugin para permitir que os testes sejam executados facilmente você precisa adicionar 3 arquivos:</p>
-* Um arquivo &#8216;database.yml&#8217; com todas as suas strings de conexão.
-* Um arquivo &#8216;schema.rb&#8217; com todas as definições de suas tabelas.
-* Um helper para teste que prepara o banco de dados antes de executar os testes.
+<ul>
+	<li>Um arquivo &#8216;database.yml&#8217; com todas as suas strings de conexão.</li>
+	<li>Um arquivo &#8216;schema.rb&#8217; com todas as definições de suas tabelas.</li>
+	<li>Um helper para teste que prepara o banco de dados antes de executar os testes.</li>
+</ul>
 <p><strong>vendor/plugins/yaffle/test/database.yml:</strong></p>
 <pre>
 sqlite:
