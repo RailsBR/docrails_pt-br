@@ -1,6 +1,6 @@
 h2. Interface para Queries do Active Record
 
-Este guia cobre diferente maneiras de recuperar dados do bando de dados usando o Active Record. Usando este guia como referência, você será capaz de:
+Este guia cobre diferente maneiras de recuperar dados do banco de dados usando o Active Record. Usando este guia como referência, você será capaz de:
 
 * Encontrar registros usando uma variedade de métodos e condições
 * Especificar a ordenação, atributos retornados, agrupamento e outras propriedades dos registros encontrados
@@ -8,15 +8,15 @@ Este guia cobre diferente maneiras de recuperar dados do bando de dados usando o
 * Utilizar dynamic finders
 * Criar named scopes para adicionar comportamento de pesquisa personalizado aos seus models
 * Verificar a existência de registros específicos
-* Realizar diversos cálculos sobre models Active Record
+* Realizar diversos cálculos sobre Active Record models
 
 endprologue.
 
-Se você estiver acostumado a utilizar SQL puro para encontrar registros no banco de dados então, de forma geral, você descobrirá que existem maneiras melhores de realizar as mesmas operações no Rails. O Active Record evita a necessidade de utilizar SQL na maioria dos casos.
+Se você estiver acostumado a utilizar SQL puro para encontrar registros no banco de dados então, de forma geral, você descobrirá que existem maneiras melhores de realizar as mesmas operações no Rails. O Active Record evita a necessidade de você utilizar SQL na maioria dos casos.
 
 Os exemplos de código por todos este guia irão se referir a um ou mais dos seguintes models:
 
-TIP: Todos os models a seguir utilizar +id+ como chave primária, a não ser quando específicado diferentemente.
+TIP: Todos os models a seguir utilizam +id+ como chave primária, a não ser quando especificado de outro modo.
 
 <br />
 
@@ -56,7 +56,7 @@ O Active Record irá realizar queries ao banco de dados para você e é compativ
 
 h3. Recuperando Objetos do Banco de Dados
 
-Para recuperar objetos do banco de dados, o Active Record fornece um método de classe chamado +Model.find+. Este método permite que você passe argumentos para realizar determinadas queries ao seu banco de dados sem a necessidade de escrever SQL puro.
+Para recuperar objetos do banco de dados, o Active Record fornece um método de classe chamado +Model.find+. Este método permite você passar argumentos para realizar determinadas queries ao seu banco de dados sem a necessidade de escrever SQL puro.
 
 A operação primária do método <tt>Model.find(options)</tt> pode ser resumida como:
 
@@ -71,7 +71,7 @@ O Active Record permite que você recupere um único objeto de três formas dife
 
 h5. Utilizando uma Chave Primária
 
-Utilizando <tt>Model.find(primary_key, options = nil)</tt>, você pode recuperar o objeto que corresponde à chave primária fornecida. Por exemplo:
+Utilizando <tt>Model.find(primary_key, options = nil)</tt>, você pode recuperar o objeto que corresponde à chave primária fornecida e que combine com as opções fornecidas (se houver). Por exemplo:
 
 <ruby>
 # Encontrar o cliente com chave primária (id) 10
@@ -85,7 +85,7 @@ O SQL equivalente para o código acima é:
 SELECT * FROM clients WHERE (clients.id = 10)
 </sql>
 
-<tt>Model.find(primary_key)</tt> irá lançar uma exceção +ActiveRecord::RecordNotFound+ caso nenhum registro seja encontado.
+<tt>Model.find(primary_key)</tt> irá lançar uma exceção +ActiveRecord::RecordNotFound+ caso nenhum registro seja encontrado.
 
 h5. +first+
 
@@ -108,7 +108,7 @@ NOTE: +Model.find(:first, options)+ é equivalente a +Model.first(options)+
 
 h5. +last+
 
-<tt>Model.last(options = nil)</tt> encontra o último registro que case com as opções fornecidas. Se +options+ não for informado, o último registro encontrado seŕa retornado. Por exemplo:
+<tt>Model.last(options = nil)</tt> encontra o último registro que case com as opções fornecidas. Se +options+ não for informado, o último registro encontrado será retornado. Por exemplo:
 
 <ruby>
 client = Client.last
@@ -133,7 +133,7 @@ h5. Utilizando Várias Chaves Primárias
 
 <ruby>
 # Encontra os clientes com chaves primárias 1 e 10.
-client = Client.find(1, 10) # Or even Client.find([1, 10])
+client = Client.find(1, 10) # Ou ainda Client.find([1, 10])
 => [#<Client id: 1, name: => "Lifo">, #<Client id: 10, name: => "Ryan">]
 </ruby>
 
@@ -180,11 +180,11 @@ end
 
 Mas se o número total de linhas na tabela é muito grande, a abordagem acima pode variar entre ineficiente e praticamente impossível.
 
-Isso acontece porque +User.all+ recupera _toda a tabela_, constrói um objeto por linha, e mantém o array inteiro na memória. Algumas vezes isso pode significar objetos demais e exige memória demais.
+Isso acontece porque +User.all+ recupera _toda a tabela_, constrói um objeto por linha, e mantém o array inteiro na memória. Algumas vezes isso pode significar objetos demais e requer memória demais.
 
 h5. +find_each+
 
-Para iterar efientemente sobre uma grande tabela, o Active Record fornece um método para pesquisa em lote chamado  +find_each+:
+Para iterar eficientemente sobre uma grande tabela, o Active Record fornece um método para pesquisa em lote chamado  +find_each+:
 
 <ruby>
 User.find_each do |user|
@@ -194,7 +194,7 @@ end
 
 *Configurando o tamanho do lote*
 
-Por baixo dos panos +find_each+ recupera linhas em lotes de +1000+ e retorna-os um por um.
+Por baixo dos panos +find_each+ recupera linhas em lotes de +1000+ e retorna-as uma por uma.
 
 Para recuperar registros da classe +User+ em lotes de +5000+:
 
@@ -206,7 +206,7 @@ end
 
 *Iniciando uma query em lote a partir de uma chave primária específica*
 
-Os registros são retornados em ordem crescente de chave primária, a qual deve ser um inteiro. A opção +:start+ permite que você configure o primeiro ID da sequência caso o menor não seja aquele que você precisa. Isso pode ser ũtil por exemplo para reiniciar um processo em lote interrompido caso ele salve o último ID processado.
+Os registros são retornados em ordem crescente de chave primária, a qual deve ser um inteiro. A opção +:start+ permite que você configure o primeiro ID da sequência caso um menor não seja aquele que você precisa. Isso pode ser útil, por exemplo, para reiniciar um processo em lote interrompido, caso ele salve o último ID processado como um ponto de controle.
 
 Para enviar newsletters apenas para usuários cuja chave primária seja maior ou igual a +2000+:
 
