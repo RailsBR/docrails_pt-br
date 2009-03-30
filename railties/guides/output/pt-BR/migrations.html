@@ -132,7 +132,7 @@ end
 </code></div>
 <p>Esta migration adiciona a coluna <tt>receive_newsletter</tt> na tabela <tt>users</tt>. Nós queremos que o padrão seja <tt>falso</tt> para novos usuários, mas para os usuários existentes, consideramos que eles já fizeram a sua opção, então usamos o model User para setar a flag como <tt>true</tt> para os usuários existentes.
  
-<div class='note'><p>Algumas <a href="#usando-models-nas-suas-migraes">ressalvas</a> se aplicam ao utilizar models nas suas migrations.</p></div></p>
+<div class='note'><p>Algumas <a href="#usando-models-nas-suas-migrations">ressalvas</a> se aplicam ao utilizar models nas suas migrations.</p></div></p>
 <h4 id="migrations-so-classes">1.1 Migrations são classes
 A migration é uma subclasse de ActiveRecord::Migration que implementa dois métodos: up (para realizar as transformações exigidas) e down (reverte o que foi feito).</h4>
 <p>O Active Record fornece métodos que executam tarefas comuns para definição dos dados de um modo independente do banco de dados (você lerá sobre elas com detalhes mais tarde):</p>
@@ -321,7 +321,7 @@ end
 <p>criará uma coluna <tt>category_id</tt> do tipo apropriado. Note que você passa o nome do model, não o nome da coluna. O Active Recorde adiciona o <tt>_id</tt> pra você. Se você tem associações polimórficas <tt>belongs_to</tt>, então <tt>references</tt> irá adicionar as duas colunas necessárias:</p>
 <p>dirty_workaround_for_nontextile_23
 irá adicionar a coluna <tt>attachment_id</tt> e a coluna <tt>attachment_type</tt> do tipo string com o valor padrão &#8216;Photo&#8217;.</p>
-<div class='note'><p>O helper <tt>references</tt> realmente não cria restrições de chave estrangeira. Você precisará usar <tt>execute</tt> para isso ou um plugin que adiciona <a href="#active-record-and-referential-integrity">foreign key support</a>.</p></div>
+<div class='note'><p>O helper <tt>references</tt> realmente não cria restrições de chave estrangeira. Você precisará usar <tt>execute</tt> para isso ou um plugin que adiciona <a href="#active-record-e-integridade-referencial">foreign key support</a>.</p></div>
 <p>Se os helpers fornecidos pelo Active Record não forem suficientes, você pode utilizar a função <tt>execute</tt> para rodar <span class="caps">SQL</span> arbitrárias.</p>
 <p>Para mais detalhes e exemplos de métodos individuais dê uma olhada na documentação da <span class="caps">API</span>, em particular a documentação para <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html">ActiveRecord::ConnectionAdapters::SchemaStatements</a> (na qual fornece os métodos disponíveis nos métodos <tt>up</tt> e <tt>down</tt>), <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html">ActiveRecord::ConnectionAdapters::TableDefinition</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>create_table</tt>) e  <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/Table.html">ActiveRecord::ConnectionAdapters::Table</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>change_table</tt>).</p>
 <h4 id="escrevendo-o-seu-mtodo-down">3.4 Escrevendo o seu Método <tt>down</tt></h4>
@@ -352,7 +352,7 @@ rake db:migrate:redo STEP=3
 </pre>
 <p>Nenhuma dessas tasks Rake fazem qualquer coisa que você não poderia fazer com <tt>db:migrate</tt>, elas são simplesmente mais convenientes, uma vez que você não precisa especificar explicitamente a versão da migration para a qual você deseja ir.</p>
 <p>Por fim, a task <tt>db:reset</tt> irá apagar a sua base de dados, recriá-la e carregar o schema atual dela.</p>
-<div class='note'><p>Isto não é o mesmo que você rodar todas as migrations &#8211; veja a seção em <a href="#armazenando-esquemas-e-voc">schema.rb</a>.</p></div>
+<div class='note'><p>Isto não é o mesmo que você rodar todas as migrations &#8211; veja a seção em <a href="#armazenando-schemas-e-voc">schema.rb</a>.</p></div>
 <h4 id="sendo-especfico">4.2 Sendo Específico</h4>
 <p>Se você precisar rodar uma migration específica para cima ou para baixo, as tasks <tt>db:migrate:up</tt> e <tt>db:migrate:down</tt> irão fazer isso. Basta especificar a versão apropriada e a migration correspondente terá seu método <tt>up</tt> ou <tt>down</tt> invocado, por exemplo</p>
 <pre>
