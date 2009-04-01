@@ -1,6 +1,6 @@
 h2. Interface para Queries do Active Record
 
-Este guia cobre diferente maneiras de recuperar dados do banco de dados usando o Active Record. Usando este guia como referência, você será capaz de:
+Este guia cobre diferentes maneiras de recuperar dados do banco de dados usando o Active Record. Usando este guia como referência, você será capaz de:
 
 * Encontrar registros usando uma variedade de métodos e condições
 * Especificar a ordenação, atributos retornados, agrupamento e outras propriedades dos registros encontrados
@@ -14,7 +14,7 @@ endprologue.
 
 Se você estiver acostumado a utilizar SQL puro para encontrar registros no banco de dados então, de forma geral, você descobrirá que existem maneiras melhores de realizar as mesmas operações no Rails. O Active Record evita a necessidade de você utilizar SQL na maioria dos casos.
 
-Os exemplos de código por todos este guia irão se referir a um ou mais dos seguintes models:
+Os exemplos de código por todo este guia irão se referir a um ou mais dos seguintes models:
 
 TIP: Todos os models a seguir utilizam +id+ como chave primária, a não ser quando especificado de outro modo.
 
