@@ -38,3 +38,7 @@ Rafael Rosa é formado em administração de empresas pela Faculdade de Administ
 <% author('Fernando Luizão', 'fernandoluizao') do %>
 Fernando Luizão é formado em Ciências da Computação pela Universidade Estadual de Londrina. Atualmente cursa mestrado na mesma universidade e atua como desenvolvedor em diversas linguagens de programação, como Ruby, Java e C++. Mantém um "blog":http://fernandoluizao.blogspot.com onde escreve sobre desenvolvimento de software em geral.
 <% end %>
+
+<% author('José Eleudson G. Queiroz', 'eleudsonqueiroz') do %>
+Eleudson Queiroz é formado em Informática pela Universidade de Fortaleza, UNIFOR. Atualmente cursa mestrado em gestão e administração de sistemas informáticos na Univerdidade Carlos III de Madrid, por meio de uma bolsa de estudos do LASPAU Leadership Fellowship Program da Harvad University e Fundação W. K. Kellogg. Mantém o "blog":http://www.eleudson.com.br onde escreve sobre administração de sistemas, programação (principalmente em Ruby on Rails), experiência de viver na Espanha e sobre projetos de desenvolvimento sustentável, entre outros assuntos.
+<% end %>
