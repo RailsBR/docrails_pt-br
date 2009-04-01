@@ -55,7 +55,7 @@ end
 
 Esta migration adiciona a coluna +receive_newsletter+ na tabela +users+. Nós queremos que o padrão seja +falso+ para novos usuários, mas para os usuários existentes, consideramos que eles já fizeram a sua opção, então usamos o model User para setar a flag como +true+ para os usuários existentes.
  
-NOTE: Algumas "ressalvas":#usando-models-nas-suas-migraes se aplicam ao utilizar models nas suas migrations.
+NOTE: Algumas "ressalvas":#usando-models-nas-suas-migrations se aplicam ao utilizar models nas suas migrations.
 
 h4. Migrations são classes
 A migration é uma subclasse de ActiveRecord::Migration que implementa dois métodos: up (para realizar as transformações exigidas) e down (reverte o que foi feito).
@@ -330,7 +330,7 @@ end
 </ruby>
 irá adicionar a coluna +attachment_id+ e a coluna +attachment_type+ do tipo string com o valor padrão 'Photo'.
 
-NOTE: O helper +references+ realmente não cria restrições de chave estrangeira. Você precisará usar +execute+ para isso ou um plugin que adiciona "foreign key support":#active-record-and-referential-integrity.
+NOTE: O helper +references+ realmente não cria restrições de chave estrangeira. Você precisará usar +execute+ para isso ou um plugin que adiciona "foreign key support":#active-record-e-integridade-referencial.
 
 Se os helpers fornecidos pelo Active Record não forem suficientes, você pode utilizar a função +execute+ para rodar SQL arbitrárias.
 
@@ -410,7 +410,7 @@ Nenhuma dessas tasks Rake fazem qualquer coisa que você não poderia fazer com 
 
 Por fim, a task +db:reset+ irá apagar a sua base de dados, recriá-la e carregar o schema atual dela.
 
-NOTE: Isto não é o mesmo que você rodar todas as migrations - veja a seção em "schema.rb":#armazenando-esquemas-e-voc.
+NOTE: Isto não é o mesmo que você rodar todas as migrations - veja a seção em "schema.rb":#armazenando-schemas-e-voc.
 
 h4. Sendo Específico
 
