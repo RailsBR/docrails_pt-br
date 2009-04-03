@@ -92,9 +92,9 @@ Claro que isso não substitui a comunicação dentro da equipe. Por exemplo, se 
 
 h4. Alterando Migrations
 
-Ocasionalmente, você comete um erro enquanto escreve uma migration. Se você já tiver executado a migration, então você não pode simplesmente editar e executar novamente a migration: o Rails sabe que a migration já foi executada, então ele não fará nada quando você rodar +rake db:migrate+. Você deve reverter a migration (com +rake db:rollback+, por exemplo), editar sua migration e então executar +rake db:migrate+ para rodar a versão corrigida.
+Ocasionalmente, você comete um erro enquanto escreve uma migration. Se você já tiver executado a migration, então você não pode simplesmente editar e executá-la novamente: o Rails sabe que a migration já foi executada, então ele não fará nada quando você rodar +rake db:migrate+. Você deve reverter a migration (com +rake db:rollback+, por exemplo), editar sua migration e então executar +rake db:migrate+ para rodar a versão corrigida.
 
-Geralmente, editar migrations existentes não é uma boa idéia: você estará criando trabalho extra para você mesmo e para seus parceiros de trabalho e mais dor de cabeça se a versão existente da migration já tiver sido rodada em máquinas de produção. Em vez disso, você deve escrever uma nova migration para realizar as alterações que você queira. Editar uma migration recém-gerada e que ainda não foi comitada no controlador de versão (ou, de modo geral, que ainda não foi propagada para além da sua máquina de desenvolvimento) é relativamente inofensivo. Apenas use o bom senso.
+Geralmente, editar migrations existentes não é uma boa idéia: você estará criando trabalho extra para você mesmo e para seus parceiros, e mais dor de cabeça se a versão existente da migration já tiver sido rodada em máquinas de produção. Em vez disso, você deve escrever uma nova migration para realizar as alterações que você queira. Editar uma migration recém-gerada e que ainda não foi comitada no controlador de versão (ou, de modo geral, que ainda não foi propagada para além da sua máquina de desenvolvimento) é relativamente inofensivo. Apenas use o bom senso.
 
 h3. Criando uma Migration
 
@@ -125,7 +125,7 @@ class CreateProducts < ActiveRecord::Migration
 end
 </ruby>
 
-Você pode adicionar quantos pares nomes/tipo de colunas queira. Por padrão +t.timestamps+ (que cria as colunas +updated_at+ e +created_at+ que são populadas automaticamente pelo Active Record) será adicionada por você.
+Você pode adicionar quantas colunas quiser. Por padrão +t.timestamps+ (que cria as colunas +updated_at+ e +created_at+ que são populadas automaticamente pelo Active Record) será adicionado para você.
 
 h4. Criando uma Migration Standalone
 
