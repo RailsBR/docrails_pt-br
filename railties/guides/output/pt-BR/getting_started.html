@@ -515,7 +515,7 @@ end
 </code></div>
 <p>Este código define a variável de instância <tt>@posts</tt> como um array de todos os posts no banco de dados. <tt>Post.find(:all)</tt> ou <tt>Post.all</tt> solicita ao model <tt>Post</tt> para retornar todos os posts que estão no banco de dados atualmente, sem nenhuma condição de limite.</p>
 <div class='info'><p>Para mais informações sobre busca de registros com Active Record, veja <a href="active_record_querying.html">Interface para Queries do Active Record</a>.</p></div>
-<p>O bloco <tt>respond_to</tt> gerencia ambas as chamadas <span class="caps">HTML</span> e <span class="caps">XML</span> para esta ação. Se você navegar para <tt>http://localhost:3000/posts.xml</tt>, verá todos os posts em formato <span class="caps">XML</span>. O formato <span class="caps">HTML</span> busca por uma view em <tt>app/views/posts/</tt> com um nome que corresponda ao nome da ação. O Rails faz com que todas as variáveis de instância da ação estejam disponíveis para a view. Aqui está o <tt>app/view/posts/index.html.erb</tt>:</p>
+<p>O bloco <tt>respond_to</tt> gerencia ambas as chamadas <span class="caps">HTML</span> e <span class="caps">XML</span> para esta ação. Se você navegar para <tt>http://localhost:3000/posts.xml</tt>, verá todos os posts em formato <span class="caps">XML</span>. O formato <span class="caps">HTML</span> busca por uma view em <tt>app/views/posts/</tt> com um nome que corresponda ao nome da ação. O Rails faz com que todas as variáveis de instância da ação estejam disponíveis para a view. Aqui está o <tt>app/views/posts/index.html.erb</tt>:</p>
 <div class="code_container"><code class="html">
 &lt;h1&gt;Listing posts&lt;/h1&gt;
 

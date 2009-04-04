@@ -76,8 +76,9 @@
   <div id="feature">
     <div class="wrapper">
       <h2>Migrations</h2>
-<p>Migrations é a forma conveniente de você alterar seu banco de dados de uma maneira organizada e estruturada. Você poderia editar fragmentos de <span class="caps">SQL</span> na mão mas teria a responsabilidade de comunicar aos outros desenvolvedores que eles precisam executá-los. Você também necessitaria acompanhar as mudanças na máquina de produção na próxima vez que você fosse fazer um deploy. O Active Record marca as migrations que já foram executadas, então tudo que você precisa fazer é atualizar seu código e rodar <tt>rake db:migrate</tt>. O Active Record saberá quais migrations devem ser rodadas. Ele também irá atualizar o seu arquivo db/schema.rb para refletir a estrutura da sua base de dados.</p>
-<p>As migrations também permitem que você descreva estas transformações usando Ruby. A grande sacada disto tudo (como a maioria das funcionalidades do Active Record) é a independência do banco de dados: você não precisa se preocupar com mais nenhuma sintaxe para <span class="caps">CREATE</span> <span class="caps">TABLE</span>, ou sobre variações de <span class="caps">SELECT</span> * (você pode abstrair os requisitos específicos de banco de dados <span class="caps">SQL</span>). Por exemplo, você poderia usar SQLite 3 no desenvolvimento, mas MySQL em produção.</p>
+<p>Migrations é a forma conveniente de você alterar seu banco de dados de uma maneira organizada e estruturada. Você poderia editar fragmentos de <span class="caps">SQL</span> na mão mas teria a responsabilidade de comunicar aos outros desenvolvedores que eles precisam executá-los. Você também necessitaria acompanhar as mudanças na máquina de produção na próxima vez que você fosse fazer um deploy.</p>
+<p>O Active Record marca as migrations que já foram executadas, então tudo que você precisa fazer é atualizar seu código e rodar <tt>rake db:migrate</tt>. O Active Record saberá quais migrations devem ser rodadas. Ele também irá atualizar o seu arquivo <tt>db/schema.rb</tt> para refletir a estrutura da sua base de dados.</p>
+<p>As migrations também permitem que você descreva estas transformações usando Ruby. A grande sacada disto tudo (como a maioria das funcionalidades do Active Record) é a independência do banco de dados: você não precisa se preocupar com mais nenhuma sintaxe para <span class="caps">CREATE</span> <span class="caps">TABLE</span>, ou sobre variações de <span class="caps">SELECT</span> * (você pode descartar o <span class="caps">SQL</span> puro para funcionalidades específicas dos bancos de dados). Você poderia usar SQLite 3 no desenvolvimento mas MySQL em produção, por exemplo.</p>
 <p>Você aprenderá tudo sobre migrations incluindo:</p>
 <ul>
 	<li>Os geradores que você pode usar para criá-las</li>
@@ -89,7 +90,7 @@
             <div id="subCol">
         <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
         <ol class="chapters">
-<li><a href="#anatomia-de-uma-migration">Anatomia de uma Migration</a><ul><li><a href="#migrations-so-classes">Migrations são classes</a></li><li><a href="#o-que-h-em-um-nome">O que há em um Nome</a></li><li><a href="#alterando-migrations">Alterando Migrations</a></li></ul></li><li><a href="#criando-uma-migration">Criando uma Migration</a><ul><li><a href="#criando-um-model">Criando um Model</a></li><li><a href="#criando-uma-migration-standalone">Criando uma Migration Standalone</a></li></ul></li><li><a href="#escrevendo-uma-migration">Escrevendo uma Migration</a><ul><li><a href="#criando-uma-tabela">Criando uma Tabela</a></li><li><a href="#alterando-tabelas">Alterando Tabelas</a></li><li><a href="#helpers-especiais">Helpers Especiais</a></li><li><a href="#escrevendo-o-seu-mtodo-down">Escrevendo o seu Método <tt>down</tt></a></li></ul></li><li><a href="#executando-migrations">Executando Migrations</a><ul><li><a href="#revertendo">Revertendo</a></li><li><a href="#sendo-especfico">Sendo Específico</a></li><li><a href="#sendo-comunicativo">Sendo comunicativo</a></li></ul></li><li><a href="#usando-models-nas-suas-migrations">Usando Models Nas Suas Migrations</a><ul><li><a href="#lidando-com-models-em-mudana">Lidando com Models em Mudança</a></li></ul></li><li><a href="#armazenando-schemas-e-voc">Armazenando Schemas e Você</a><ul><li><a href="#qual-a-funo-dos-arquivos-de-schema">Qual a função dos arquivos de Schema?</a></li><li><a href="#formas-de-extrao-do-schema">Formas de Extração do Schema</a></li><li><a href="#dumps-de-schemas-e-controle-de-verso">Dumps de Schemas e Controle de Versão</a></li></ul></li><li><a href="#active-record-e-integridade-referencial">Active Record e Integridade Referencial</a><ul></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
+<li><a href="#anatomia-de-uma-migration">Anatomia de uma Migration</a><ul><li><a href="#migrations-so-classes">Migrations São Classes</a></li><li><a href="#o-que-h-em-um-nome">O que há em um Nome</a></li><li><a href="#alterando-migrations">Alterando Migrations</a></li></ul></li><li><a href="#criando-uma-migration">Criando uma Migration</a><ul><li><a href="#criando-um-model">Criando um Model</a></li><li><a href="#criando-uma-migration-standalone">Criando uma Migration Standalone</a></li></ul></li><li><a href="#escrevendo-uma-migration">Escrevendo uma Migration</a><ul><li><a href="#criando-uma-tabela">Criando uma Tabela</a></li><li><a href="#alterando-tabelas">Alterando Tabelas</a></li><li><a href="#helpers-especiais">Helpers Especiais</a></li><li><a href="#escrevendo-o-seu-mtodo-down">Escrevendo o seu Método <tt>down</tt></a></li></ul></li><li><a href="#executando-migrations">Executando Migrations</a><ul><li><a href="#revertendo">Revertendo</a></li><li><a href="#sendo-especfico">Sendo Específico</a></li><li><a href="#sendo-comunicativo">Sendo Comunicativo</a></li></ul></li><li><a href="#usando-models-nas-suas-migrations">Usando Models Nas Suas Migrations</a><ul><li><a href="#lidando-com-models-em-mudana">Lidando com Models em Mudança</a></li></ul></li><li><a href="#armazenando-schemas-e-voc">Armazenando Schemas e Você</a><ul><li><a href="#qual-a-funo-dos-arquivos-de-schema">Qual a função dos arquivos de Schema?</a></li><li><a href="#formas-de-extrao-do-schema">Formas de Extração do Schema</a></li><li><a href="#dumps-de-schemas-e-controle-de-verso">Dumps de Schemas e Controle de Versão</a></li></ul></li><li><a href="#active-record-e-integridade-referencial">Active Record e Integridade Referencial</a><ul></ul></li><li><a href="#changelog">Changelog</a><ul></ul></li></ol></div>
     </div>
   </div>
 
@@ -97,7 +98,7 @@
     <div class="wrapper">
       <div id="mainCol">
         <h3 id="anatomia-de-uma-migration">1 Anatomia de uma Migration</h3>
-<p>Antes de eu mergulhar nos detalhes de uma migration, aqui estão alguns exemplos curtos de coisas que você pode fazer:</p>
+<p>Antes mergulhar nos detalhes de uma migration, aqui estão alguns exemplos de coisas que você pode fazer:</p>
 <div class="code_container"><code class="ruby">
 class CreateProducts &lt; ActiveRecord::Migration
   def self.up
@@ -114,7 +115,7 @@ class CreateProducts &lt; ActiveRecord::Migration
   end
 end
 </code></div>
-<p>Esta migration adiciona uma tabela chamada <tt>products</tt> com uma coluna string chamada <tt>name</tt> e uma coluna text chamada <tt>description</tt>. Uma chave primária chamada <tt>id</tt> também será adicionada, no entanto, por padrão, não precisamos pedir isso. As colunas timestamps <tt>created_at</tt> e <tt>updated_at</tt> que o Active Record preenche automaticamente também serão adicionadas. Reverter esta migration simplesmente remove a tabela.</p>
+<p>Esta migration adiciona uma tabela chamada <tt>products</tt> com uma coluna string chamada <tt>name</tt> e uma coluna text chamada <tt>description</tt>. Uma chave primária de nome <tt>id</tt> também será adicionada. No entanto, por padrão, não precisamos pedir isso. As colunas timestamps <tt>created_at</tt> e <tt>updated_at</tt> que o Active Record preenche automaticamente também serão adicionadas. Reverter esta migration simplesmente remove a tabela.</p>
 <p>Migrações não estão limitadas a alterar o schema. Você também as pode usar para corrigir dados incorretos no banco ou popular novos campos:</p>
 <div class="code_container"><code class="ruby">
 class AddReceiveNewsletterToUsers &lt; ActiveRecord::Migration
@@ -133,7 +134,7 @@ end
 <p>Esta migration adiciona a coluna <tt>receive_newsletter</tt> na tabela <tt>users</tt>. Nós queremos que o padrão seja <tt>falso</tt> para novos usuários, mas para os usuários existentes, consideramos que eles já fizeram a sua opção, então usamos o model User para setar a flag como <tt>true</tt> para os usuários existentes.
  
 <div class='note'><p>Algumas <a href="#usando-models-nas-suas-migrations">ressalvas</a> se aplicam ao utilizar models nas suas migrations.</p></div></p>
-<h4 id="migrations-so-classes">1.1 Migrations são classes
+<h4 id="migrations-so-classes">1.1 Migrations São Classes
 A migration é uma subclasse de ActiveRecord::Migration que implementa dois métodos: up (para realizar as transformações exigidas) e down (reverte o que foi feito).</h4>
 <p>O Active Record fornece métodos que executam tarefas comuns para definição dos dados de um modo independente do banco de dados (você lerá sobre elas com detalhes mais tarde):</p>
 <ul>
@@ -147,17 +148,17 @@ A migration é uma subclasse de ActiveRecord::Migration que implementa dois mét
 	<li><tt>add_index</tt></li>
 	<li><tt>remove_index</tt></li>
 </ul>
-<p>Se você precisa executar tarefas específicas para seu banco de dados (por exemplo, criar uma <a href="#active-record-e-integridade-referencial">foreign key</a>) então a função <tt>execute</tt> permite que você execute <span class="caps">SQL</span> arbitrárias. A migration é apenas uma classe comum em Ruby, então você não está limitado a apenas estas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus models).</p>
+<p>Se você precisar executar tarefas específicas para seu banco de dados (por exemplo, criar uma <a href="#active-record-e-integridade-referencial">foreign key</a>) então a função <tt>execute</tt> permite que você execute <span class="caps">SQL</span> arbitrárias. A migration é apenas uma classe comum em Ruby, então você não está limitado a apenas estas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus models).</p>
 <p>Em banco de dados que suportam transações com parâmetros para mudar o schema (como o PostreSQL), as migrations entram em uma transação. Se o banco de dados não suporta isso (por exemplo MySQL e SQLite) então quando a migration falhar, as partes que tiveram sucesso não poderão ser revertidas. Você terá que desfazer estas mudanças manualmente.</p>
 <h4 id="o-que-h-em-um-nome">1.2 O que há em um Nome</h4>
-<p>Migrations são armazenadas em arquivos dentro de <tt>db/migrate</tt>, um para cada classe de migration. O nome dos arquivos é na forma de <tt>YYYYMMDDHHMMSS_create_products.rb</tt>, ou seja, uma hora <span class="caps">UTC</span> identificando a migration seguida de um underscore seguido pelo nome da migration. O nome da classe de migration deve bater com a última parte do arquivo. Por exemplo, <tt>20080906120000_create_products.rb</tt> deverá definir CreateProducts e <tt>20080906120001_add_details_to_products.rb</tt> deverá definir AddDetailsToProducts. Se você acha que necessita mudar o nome do arquivo, então você <em>deve</em> atualizar o nome da classe dentro do arquivo ou então o Rails irá se queixar de uma classe inexistente.</p>
+<p>Migrations são armazenadas em arquivos dentro de <tt>db/migrate</tt>, um para cada classe de migration. O nome dos arquivos é tem a forma de <tt>YYYYMMDDHHMMSS_create_products.rb</tt>, ou seja, uma hora <span class="caps">UTC</span> identificando a migration, seguida de um underscore, seguido pelo nome da migration. O nome da classe de migration deve bater com a última parte do arquivo. Por exemplo, <tt>20080906120000_create_products.rb</tt> deverá definir <tt>CreateProducts</tt> e <tt>20080906120001_add_details_to_products.rb</tt> deverá definir <tt>AddDetailsToProducts</tt>. Se você acha que necessita mudar o nome do arquivo, então você <em>deve</em> atualizar o nome da classe dentro do arquivo, ou então o Rails irá se queixar de uma classe inexistente.</p>
 <p>Internamente, o Rails usa apenas o número da migration (data) para identificá-la. Antes do Rails 2.1, os números das migrations eram iniciados com 1 e incrementados cada vez que era gerada uma nova migration. Com vários desenvolvedores, era fácil haver conflitos, o que te forçava a reverter as migrations e renumerá-las. Com o Rails 2.1, isto é evitado usando a hora de geração da migration para identificá-las. Você pode mudar para o esquema da velha numeração setando <tt>config.active_record.timestamped_migrations</tt> para <tt>false</tt> no <tt>environment.rb</tt>.</p>
 <p>A combinação de timestamps e o registro de quais migrations já foram rodadas permite que o Rails trate situações comuns que ocorrem com múltiplos desenvolvedores.</p>
 <p>Por exemplo, Alice adiciona as migrations <tt>20080906120000</tt> e <tt>20080906123000</tt> e Bob adiciona a <tt>20080906124500</tt> e a executa. Alice finaliza suas mudanças, comita suas migrations e Bob puxa as últimas atualizações. O Rails sabe que ele não rodou as duas migrations da Alice, então <tt>rake db:migrate</tt> deverá executá-las (mesmo que a migration com um timestamp maior do Bob já tenha sido rodada), e, similarmente, reverter as migrations não deverá executar os seus métodos <tt>down</tt>.</p>
-<p>Claro que isso não substitui a comunicação dentro da equipe. Por exemplo, se a migration da Alice remove uma tabela que a migration do Bob assume que existe, então problemas deverão certamente acontecer.</p>
+<p>Claro que isso não substitui a comunicação dentro da equipe. Por exemplo, se a migration da Alice remove uma tabela que a migration do Bob assume que existe, então certamente problemas vão acontecer.</p>
 <h4 id="alterando-migrations">1.3 Alterando Migrations</h4>
-<p>Ocasionalmente, você comete um erro enquanto escreve uma migration. Se você já tiver executado a migration, então você não pode simplesmente editar e executar novamente a migration: o Rails sabe que a migration já foi executada, então ele não fará nada quando você rodar <tt>rake db:migrate</tt>. Você deve reverter a migration (com <tt>rake db:rollback</tt>, por exemplo), editar sua migration e então executar <tt>rake db:migrate</tt> para rodar a versão corrigida.</p>
-<p>Geralmente, editar migrations existentes não é uma boa idéia: você estará criando trabalho extra para você mesmo e para seus parceiros de trabalho e mais dor de cabeça se a versão existente da migration já tiver sido rodada em máquinas de produção. Em vez disso, você deve escrever uma nova migration para realizar as alterações que você queira. Editar uma migration recém-gerada e que ainda não foi comitada no controlador de versão (ou, de modo geral, que ainda não foi propagada para além da sua máquina de desenvolvimento) é relativamente inofensivo. Apenas use o bom senso.</p>
+<p>Ocasionalmente, você comete um erro enquanto escreve uma migration. Se você já tiver executado a migration, então você não pode simplesmente editar e executá-la novamente: o Rails sabe que a migration já foi executada, então ele não fará nada quando você rodar <tt>rake db:migrate</tt>. Você deve reverter a migration (com <tt>rake db:rollback</tt>, por exemplo), editar sua migration e então executar <tt>rake db:migrate</tt> para rodar a versão corrigida.</p>
+<p>Geralmente, editar migrations existentes não é uma boa idéia: você estará criando trabalho extra para você mesmo e para seus parceiros, e mais dor de cabeça se a versão existente da migration já tiver sido rodada em máquinas de produção. Em vez disso, você deve escrever uma nova migration para realizar as alterações que você queira. Editar uma migration recém-gerada e que ainda não foi comitada no controlador de versão (ou, de modo geral, que ainda não foi propagada para além da sua máquina de desenvolvimento) é relativamente inofensivo. Apenas use o bom senso.</p>
 <h3 id="criando-uma-migration">2 Criando uma Migration</h3>
 <h4 id="criando-um-model">2.1 Criando um Model</h4>
 <p>Os models e os geradores de scaffold criarão as migrations apropriadas para a geração de um novo model. Esta migration já terá instruções para a criação da tabela relacionada. Se você disser pro Rails as colunas que você precisa, então as declarações já estarão criadas. Por exemplo, executar</p>
@@ -181,7 +182,7 @@ class CreateProducts &lt; ActiveRecord::Migration
   end
 end
 </code></div>
-<p>Você pode adicionar quantos pares nomes/tipo de colunas queira. Por padrão <tt>t.timestamps</tt> (que cria as colunas <tt>updated_at</tt> e <tt>created_at</tt> que são populadas automaticamente pelo Active Record) será adicionada por você.</p>
+<p>Você pode adicionar quantas colunas quiser. Por padrão <tt>t.timestamps</tt> (que cria as colunas <tt>updated_at</tt> e <tt>created_at</tt> que são populadas automaticamente pelo Active Record) será adicionado para você.</p>
 <h4 id="criando-uma-migration-standalone">2.2 Criando uma Migration Standalone</h4>
 <p>Se você está criando migrations para outros propósitos (por exemplo, adicionar uma coluna em uma tabela já existente) então você pode usar o gerador de migrations:</p>
 <div class="code_container"><code class="html">
@@ -286,7 +287,7 @@ end
 </code></div>
 <p>Isto, no entanto, pode dificultar a portabilidade para outros bancos de dados.</p>
 <h4 id="alterando-tabelas">3.2 Alterando Tabelas</h4>
-<p>Um primo próximo de <tt>create_table</tt> é <tt>change_table</tt>, usado para alterar tabelas existentes. É usado de um modo parecido com o  <tt>create_table</tt> mas o objeto passado para o bloco conhece mais truques. Por exemplo</p>
+<p>Um primo próximo de <tt>create_table</tt> é <tt>change_table</tt>, usado para alterar tabelas existentes. É usado de um modo parecido com o  <tt>create_table</tt> mas o objeto passado pelo bloco conhece mais truques. Por exemplo</p>
 <div class="code_container"><code class="ruby">
 change_table :products do |t|
   t.remove :description, :name
@@ -305,12 +306,10 @@ rename_column :products, :upccode, :upc_code
 </code></div>
 <p>Você não precisa ficar repetindo o nome da tabela e de seus grupos em todas as expressões relacionadas à alteração de uma tabela em particular. Os nomes individuais de alteração são também mais curtos, por exemplo, <tt>remove_column</tt> se torna somente <tt>remove</tt> e <tt>add_index</tt> se torna <tt>index</tt>.</p>
 <h4 id="helpers-especiais">3.3 Helpers Especiais</h4>
-<p>O Active Record fornece alguns atalhos para as funcionalidades mais comuns. Por exemplo, é muito comum adicionar as colunas <tt>created_at</tt> e <tt>updated_at</tt> e há um método que faz exatamente isso:</p>
+<p>O Active Record fornece alguns atalhos para as funcionalidades mais corriqueiras. Por exemplo, é muito comum adicionar as colunas <tt>created_at</tt> e <tt>updated_at</tt> e há um método que faz exatamente isso:</p>
 <p>dirty_workaround_for_nontextile_19
-Criará uma tabela products com essas duas colunas</p>
-<p>dirty_workaround_for_nontextile_20
 vai criar uma nova tabela products com aquelas duas colunas (mais a coluna <tt>id</tt>) enquanto</p>
-<p>dirty_workaround_for_nontextile_21
+<p>dirty_workaround_for_nontextile_20
 adiciona as colunas em uma tabela existente.</p>
 <p>O outro helper é chamado de <tt>references</tt> (também disponível como <tt>belongs_to</tt>). Na sua forma mais simples, adiciona alguma legibilidade</p>
 <div class="code_container"><code class="ruby">
@@ -319,29 +318,29 @@ create_table :products do |t|
 end
 </code></div>
 <p>criará uma coluna <tt>category_id</tt> do tipo apropriado. Note que você passa o nome do model, não o nome da coluna. O Active Recorde adiciona o <tt>_id</tt> pra você. Se você tem associações polimórficas <tt>belongs_to</tt>, então <tt>references</tt> irá adicionar as duas colunas necessárias:</p>
-<p>dirty_workaround_for_nontextile_23
+<p>dirty_workaround_for_nontextile_22
 irá adicionar a coluna <tt>attachment_id</tt> e a coluna <tt>attachment_type</tt> do tipo string com o valor padrão &#8216;Photo&#8217;.</p>
 <div class='note'><p>O helper <tt>references</tt> realmente não cria restrições de chave estrangeira. Você precisará usar <tt>execute</tt> para isso ou um plugin que adiciona <a href="#active-record-e-integridade-referencial">foreign key support</a>.</p></div>
 <p>Se os helpers fornecidos pelo Active Record não forem suficientes, você pode utilizar a função <tt>execute</tt> para rodar <span class="caps">SQL</span> arbitrárias.</p>
-<p>Para mais detalhes e exemplos de métodos individuais dê uma olhada na documentação da <span class="caps">API</span>, em particular a documentação para <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html">ActiveRecord::ConnectionAdapters::SchemaStatements</a> (na qual fornece os métodos disponíveis nos métodos <tt>up</tt> e <tt>down</tt>), <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html">ActiveRecord::ConnectionAdapters::TableDefinition</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>create_table</tt>) e  <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/Table.html">ActiveRecord::ConnectionAdapters::Table</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>change_table</tt>).</p>
+<p>Para mais detalhes e exemplos de métodos individuais dê uma olhada na documentação da <span class="caps">API</span>, em particular a documentação para <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html">ActiveRecord::ConnectionAdapters::SchemaStatements</a> (que fornece os métodos disponíveis nos métodos <tt>up</tt> e <tt>down</tt>), <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html">ActiveRecord::ConnectionAdapters::TableDefinition</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>create_table</tt>) e  <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/Table.html">ActiveRecord::ConnectionAdapters::Table</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>change_table</tt>).</p>
 <h4 id="escrevendo-o-seu-mtodo-down">3.4 Escrevendo o seu Método <tt>down</tt></h4>
-<p>O método <tt>down</tt> da sua migration deve reverter as transformações realizadas pelo método <tt>up</tt>. Em outras palavras, o schema do banco de dados deve se manter inalterado se você fizer um <tt>up</tt> seguido de um <tt>down</tt>. Por exemplo, se você criar uma tabela no método up você deverá excluí-la no método <tt>down</tt>. É sinal de sabedoria fazer as coisas na ordem inversa do que feito no método <tt>up</tt>. Por exemplo</p>
-<p>dirty_workaround_for_nontextile_24
-Algmas vezes a sua migration fará algumas coisa irreversível. Por exemplo, ela pode apagar alguns dados. Em casos como esse em que você não pode reverter uma migration, você pode lançar <tt>IrreversibleMigration</tt> no seu método <tt>down</tt>. Se alguém tentar reverter a sua migration uma mensagem de erro será mostrada informando que a reversão não poderá ser realizada.</p>
+<p>O método <tt>down</tt> da sua migration deve reverter as transformações realizadas pelo método <tt>up</tt>. Em outras palavras, o schema do banco de dados deve se manter inalterado se você fizer um <tt>up</tt> seguido de um <tt>down</tt>. Por exemplo, se você criar uma tabela no método up você deverá excluí-la no método <tt>down</tt>. É uma estratégia inteligente fazer as coisas na ordem inversa do que feito no método <tt>up</tt>. Por exemplo</p>
+<p>dirty_workaround_for_nontextile_23
+Algmas vezes a sua migration fará algumas coisas irreversíveis. Por exemplo, ela pode apagar alguns dados. Em casos como esse em que você não pode reverter uma migration, você pode lançar <tt>IrreversibleMigration</tt> no seu método <tt>down</tt>. Se alguém tentar reverter a sua migration uma mensagem de erro será mostrada informando que a reversão não poderá ser realizada.</p>
 <h3 id="executando-migrations">4 Executando Migrations</h3>
 <p>O Rails fornece um conjunto de tasks rake para trabalhar com migrations, o que se resume a rodar certos conjuntos de migrations. A primeiríssima task rake que você usará será provavelmente a <tt>db:migrate</tt>. Na sua forma mais básica, ela simplesmente executa o método <tt>up</tt> para todas as migrações que ainda não foram rodadas. Se não existirem estas migrations ainda não executadas, ela se encerra.</p>
 <p>Note que ao rodar a task <tt>db:migrate</tt>, também será executada a <tt>db:schema:dump</tt>, que irá alterar o arquivo db/schema.rb para bater com a estrutura do seu banco de dados.</p>
-<p>Se você especificar uma versão, o Active Record irá rodar as migrações requeridas (anteriores ou posteriores) até que ele tenha chegado nessa versão específica. A versão é o prefixo numérico no nome de uma migration. Por exemplo, para migrar para a versão 20080906120000 execute</p>
+<p>Se você especificar uma versão, o Active Record irá rodar as migrações requeridas (anteriores ou posteriores) até que ele tenha chegado nessa versão específica. A versão é o prefixo numérico do nome de uma migration. Por exemplo, para migrar para a versão 20080906120000 execute</p>
 <pre>
 rake db:migrate VERSION=20080906120000
 </pre>
 <p>Se a versão especificada for mais recente do que a versão atual (ou seja, estiver migrando para cima), o comando irá executar o método <tt>up</tt> em todas as migrations acima (posteriores) da atual, incluindo a versão 20080906120000. Se a migration for para baixo, o comando executará o método <tt>down</tt> de todas as migrations abaixo da atual, mas não incluirá a 20080906120000.</p>
 <h4 id="revertendo">4.1 Revertendo</h4>
-<p>Uma tarefa comum é reverter a última migration, por exemplo, se você cometeu um engano e deseja corrigi-lo. Ao invés de procurar o número da versão associado com a migration anterior, você pode rodar</p>
+<p>Uma tarefa comum é reverter a última migration se, por exemplo, você cometeu um engano e deseja corrigi-lo. Ao invés de procurar o número da versão associado com a migration anterior, você pode rodar</p>
 <pre>
 rake db:rollback
 </pre>
-<p>Isso irá rodar o método <tt>down</tt> da migration mais recente. Se você precisa desfazer várias migrations, você pode fornecer um parâmetro <tt>STEP</tt>:</p>
+<p>Isto irá rodar o método <tt>down</tt> da migration mais recente. Se você precisa desfazer várias migrations, você pode fornecer um parâmetro <tt>STEP</tt>:</p>
 <pre>
 rake db:rollback STEP=3
 </pre>
@@ -350,7 +349,7 @@ rake db:rollback STEP=3
 <pre>
 rake db:migrate:redo STEP=3
 </pre>
-<p>Nenhuma dessas tasks Rake fazem qualquer coisa que você não poderia fazer com <tt>db:migrate</tt>, elas são simplesmente mais convenientes, uma vez que você não precisa especificar explicitamente a versão da migration para a qual você deseja ir.</p>
+<p>Nenhuma dessas tasks Rake faz qualquer coisa que você não poderia fazer com <tt>db:migrate</tt>, elas são simplesmente mais convenientes, uma vez que você não precisa especificar explicitamente a versão da migration para a qual você deseja ir.</p>
 <p>Por fim, a task <tt>db:reset</tt> irá apagar a sua base de dados, recriá-la e carregar o schema atual dela.</p>
 <div class='note'><p>Isto não é o mesmo que você rodar todas as migrations &#8211; veja a seção em <a href="#armazenando-schemas-e-voc">schema.rb</a>.</p></div>
 <h4 id="sendo-especfico">4.2 Sendo Específico</h4>
@@ -359,7 +358,7 @@ rake db:migrate:redo STEP=3
 rake db:migrate:up VERSION=20080906120000
 </pre>
 <p>irá rodar o método <tt>up</tt> da migration 20080906120000. Estas tasks checam se a migration foi executada, então, por exemplo, <tt>db:migrate:up VERSION=20080906120000</tt> não irá fazer nada se o Active Record acreditar que a migration 20080906120000 já tenha sido executada.</p>
-<h4 id="sendo-comunicativo">4.3 Sendo comunicativo</h4>
+<h4 id="sendo-comunicativo">4.3 Sendo Comunicativo</h4>
 <p>Por padrão, as migrations te dizem exatamente o que elas estão fazendo e o tempo que levaram para rodar. Uma migration criando uma tabela e adicionando um índice produz uma saída como esta</p>
 <div class="code_container"><code class="html">
 20080906170109 CreateProducts: migrating
@@ -410,9 +409,9 @@ end
    -&gt; 250 rows
 20080906170109 CreateProducts: migrated (10.0097s)
 </code></div>
-<p>Se você quiser que o Active Record não diga nada, então executar <tt>rake db:migrate VERBOSE=false</tt> irá suprimir qualquer saída.</p>
+<p>Se você quiser que o Active Record não diga nada, então execute <tt>rake db:migrate VERBOSE=false</tt> e você irá suprimir qualquer saída.</p>
 <h3 id="usando-models-nas-suas-migrations">5 Usando Models Nas Suas Migrations</h3>
-<p>Ao criar ou atualizar dados em uma migration, muitas vezes é tentador utilizar um de seus models, afinal eles existem para fornecer acesso fácil aos seus dados. Isto pode ser feito mas um certo cuidado deve ser tomado.</p>
+<p>Ao criar ou atualizar dados em uma migration, muitas vezes é tentador utilizar um de seus models, afinal eles existem para fornecer acesso fácil aos seus dados. Isto pode ser feito, mas um certo cuidado deve ser tomado.</p>
 <p>Considere, por exemplo, uma migration que usa o model <tt>Product</tt> para atualizar uma linha na tabela correspondente. Alice, mais tarde, atualiza o model Product, adicionando uma nova coluna e uma validação. Bob volta do feriado, atualiza o código e roda as migrations pendentes com <tt>rake db:migrate</tt>, incluindo aquela que utilizou o model <tt>Product</tt>. Quando a migration roda, o código é atualizado e o model Product possui a validação adicionada pela Alice. O banco de dados, entretanto, não permanece inalterado, não contém aquela coluna, então um erro acontece porque porque aquela validação ocorre em uma coluna que ainda não existe.</p>
 <p>Frequentemente, eu só preciso atualizar algumas linhas no banco de dados sem escrever <span class="caps">SQL</span> manualmente. Eu não estou usando nada específico para o model. Um padrão para isso, é definir uma cópia do modelo dentro da própria migration, por exemplo:</p>
 <div class="code_container"><code class="ruby">
@@ -431,7 +430,7 @@ end
 </code></div>
 <p>A migration tem a sua cópia mínima do model <tt>Product</tt> e não se importa mais com o model definido na aplicação.</p>
 <h4 id="lidando-com-models-em-mudana">5.1 Lidando com Models em Mudança</h4>
-<p>Por razões de performance, as informações sobre as colunas de um modelo são cacheadas. Por exemplo, se você adicionar uma coluna em uma tabela e tentar usar o modelo correspondente para inserir uma nova linha, ele pode tentar e usar a informação antiga da coluna. Você pode forçar o Active Record a reler a informação da coluna com o método <tt>reset_column_information</tt>, por exemplo</p>
+<p>Por razões de performance, as informações sobre as colunas de um modelo são cacheadas. Por exemplo, se você adicionar uma coluna em uma tabela e tentar usar o modelo correspondente para inserir uma nova linha, ele pode usar a informação antiga da coluna. Você pode forçar o Active Record a reler a informação da coluna com o método <tt>reset_column_information</tt>. Um exemplo:</p>
 <div class="code_container"><code class="ruby">
 class AddPartNumberToProducts &lt; ActiveRecord::Migration
   class Product &lt; ActiveRecord::Base
@@ -452,8 +451,8 @@ end
 <h4 id="qual-a-funo-dos-arquivos-de-schema">6.1 Qual a função dos arquivos de Schema?</h4>
 <p>Migrations, poderosas como devem ser, não são a fonte mais confiável para o schema do seu banco de dados. Esse papel cabe ao <tt>schema.rb</tt> ou a um arquivo <span class="caps">SQL</span> gerado pelo Active Record pela análise do banco de dados. Eles não foram projetados para serem editados, eles somente representam o estado atual da base de dados.</p>
 <p>Não é necessário (e isto é um erro), para implantar uma nova versão de uma aplicação, rodar o histórico inteiro de migrations. É muito mais simples e rápido apenas carregar dentro do banco de dados uma descrição do schema atual.</p>
-<p>Por exemplo, esta é a forma de como o banco de dados de testes é criado: o banco de dados atual de desenvolvimento é extraído (ou para o <tt>schema.rb</tt> ou para o <tt>development.sql</tt>) e então carregado dentro do banco de dados de teste.</p>
-<p>Arquivos de schema também são úteis se você deseja olhar rapidamente quais atributos o objeto do Active Record possui. Esta informação não está no código do model, frequentemente está espalhada pelas várias migrations, mas arquivo de schema ela está concentrada. O plugin <a href="http://agilewebdevelopment.com/plugins/annotate_models">annotate_models</a>, que automaticamente adiciona (e atualiza) comentários no início de cada model resumindo o schema, também pode ser interessante para este propósito.</p>
+<p>Por exemplo, esta é a forma pela qual o banco de dados de testes é criado: o banco de dados atual de desenvolvimento é extraído (ou para o <tt>schema.rb</tt> ou para o <tt>development.sql</tt>) e carregado dentro do banco de dados de teste.</p>
+<p>Arquivos de schema também são úteis se você deseja olhar rapidamente quais atributos o objeto do Active Record possui. Esta informação não está no código do model, frequentemente está espalhada pelas várias migrations, mas no arquivo de schema ela está concentrada. O plugin <a href="http://agilewebdevelopment.com/plugins/annotate_models">annotate_models</a>, que automaticamente adiciona (e atualiza) comentários no início de cada model resumindo o schema, também pode ser interessante para este propósito.</p>
 <h4 id="formas-de-extrao-do-schema">6.2 Formas de Extração do Schema</h4>
 <p>Existem duas formas de extrair o schema. Isto está configurado no <tt>config/environment.rb</tt> pela propriedade <tt>config.active_record.schema_format</tt>, que pode ser <tt>:sql</tt> ou <tt>:ruby</tt>.</p>
 <p>Se <tt>:ruby</tt> é selecionada, então o schema é armazenado em <tt>db/schema.rb</tt>. Se você olhar este arquivo vai perceber que ele se parece muito com uma grande migration:</p>
@@ -474,15 +473,15 @@ ActiveRecord::Schema.define(:version =&gt; 20080906171750) do
   end
 end
 </code></div>
-<p>E de certa forma é exatamente isto. Este arquivo é criado pela inspeção do banco de dados e expressa a sua estrutura usando <tt>create_table</tt>, <tt>add_index</tt> e assim por diante. Por causa da independência do banco de dados ele pode ser carregado em qualquer banco de dados que o Active Record suporta. Isto poderia ser muito útil se você fosse distribuir uma aplicação que seria rodada em muitas bases de dados.</p>
+<p>E de certa forma é exatamente isto. Este arquivo é criado pela inspeção do banco de dados e expressa a sua estrutura usando <tt>create_table</tt>, <tt>add_index</tt> e assim por diante. Por causa da independência do banco de dados, ele pode ser carregado em qualquer banco que o Active Record suporta. Isto poderia ser muito útil se você fosse distribuir uma aplicação que seria rodada em muitas bases de dados.</p>
 <p>Existe, porém, uma desvantagem: <tt>schema.rb</tt> não consegue expressar itens específicos dos bancos de dados, como constraints de chaves estrangeiras, triggers ou stored procedures. Enquanto numa migration você pode executar <span class="caps">SQL</span> customizadas, o extrator do schema não consegue reconstituir essas atribuições a partir do banco de dados. Se você está usando recursos como estes, então você deve atribuir o formato do schema para <tt>:sql</tt>.</p>
-<p>Em vez de usar o extrator de schema do Active Record, a estrutura do banco de dados será armazenada, usando uma ferramenta específica do banco de dados (pela task Rake <tt>db:structure:dump</tt>), dentro de <tt>db/#\{RAILS_ENV\}_structure.sql</tt>. Para o PostgreSQL, por exemplo, a funcionalidade <tt>pg_dump</tt> é utilizada e para o MySQL este arquivo irá conter a saída de <tt>SHOW CREATE TABLE</tt> para as várias tabelas. Carregar este schema é simplesmente uma questão de executar as declarações <span class="caps">SQL</span> contidas nele.</p>
-<p>Por definição, esta será uma cópia perfeita da estrutura do banco de dados, mas isso geralment vai impedir que se carregue o schema em um banco de dados diferente daquele usado para criá-lo.</p>
+<p>Em vez de usar o extrator de schema do Active Record, a estrutura do banco de dados será armazenada usando uma ferramenta específica do banco de dados (pela task Rake <tt>db:structure:dump</tt>), dentro de <tt>db/#\{RAILS_ENV\}_structure.sql</tt>. Para o PostgreSQL, por exemplo, a funcionalidade <tt>pg_dump</tt> é utilizada e para o MySQL este arquivo irá conter a saída de <tt>SHOW CREATE TABLE</tt> para as várias tabelas. Carregar este schema é simplesmente uma questão de executar as declarações <span class="caps">SQL</span> contidas nele.</p>
+<p>Por definição, esta será uma cópia perfeita da estrutura do banco de dados, mas isso geralmente vai impedir que se carregue o schema em um banco de dados diferente daquele usado para criá-lo.</p>
 <h4 id="dumps-de-schemas-e-controle-de-verso">6.3 Dumps de Schemas e Controle de Versão</h4>
-<p>Porque os dumps de são a fonte confiável para o schema do seu banco de dados, é altamente recomendado que você os mantenha no seu sistema de controle de versão.</p>
+<p>Porque os dumps são uma fonte confiável para o schema do seu banco de dados, é altamente recomendado que você os mantenha no seu sistema de controle de versão.</p>
 <h3 id="active-record-e-integridade-referencial">7 Active Record e Integridade Referencial</h3>
-<p>O estilo do Active Record pede que exista inteligência nos seus models e não no seu banco de dados. Alguns recursos como triggers ou  constraints de chaves estrangeiras, que coloca um pouco da inteligência no banco de dados, não são muito usados.</p>
-<p>Validações como <tt>validates_uniqueness_of</tt> são uma forma pela qual os seus models podem garantir a integridade dos dados. A opção <tt>:dependent</tt> em associações permite que os models destruam automaticamente objetos filhos quando seus pais são apagados. Como tudo que funciona no nível da aplicação, estes recursos não podem garantir integridade referencial, então algumas pessoas aumentam isso constraints de chaves estrangeiras.</p>
+<p>O estilo do Active Record pede que exista lógica nos seus models e não no seu banco de dados. Alguns recursos como triggers ou  constraints de chaves estrangeiras, que coloca um pouco da lógica no banco de dados, não são muito usados.</p>
+<p>Validações como <tt>validates_uniqueness_of</tt> são uma forma pela qual os seus models podem garantir a integridade dos dados. A opção <tt>:dependent</tt> em associações permite que os models destruam automaticamente objetos filhos quando seus pais são apagados. Como tudo que funciona no nível da aplicação, estes recursos não podem garantir integridade referencial, então algumas pessoas aumentam isso usando constraints de chaves estrangeiras.</p>
 <p>Apesar de o Active Record não fornecer qualquer ferramenta para trabalhar diretamente com estes recursos, o método <tt>execute</tt> pode ser usado para executar <span class="caps">SQL</span> arbitrárias. Há também uma série de plugins como <a href="http://agilewebdevelopment.com/plugins/search?search=redhillonrails">redhillonrails</a> que adicionam suporte a chaves estrangeiras ao Active Record (incluindo suporte para extrair as chaves estrangeiras no <tt>schema.rb</tt>)</p>
 <h3 id="changelog">8 Changelog</h3>
 <p><a href="http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/6">Lighthouse ticket</a></p>
