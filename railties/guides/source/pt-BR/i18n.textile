@@ -1,0 +1,907 @@
+h2. A API de Internacionalização do Rails (I18n)
+
+A gem I18n (abreviação para _internationalization_) do Ruby que acompanha o Ruby on Rails (a partir do Rails 2.2) oferece um framework extensível e fácil de usar para *traduzir suas aplicações para uma outra língua além do inglês* ou para permitir *suporte à múltiplas línguas* na sua aplicação.
+
+O processo de “internacionalização” normalmente significa abstrair da aplicação todas as strings e outras partes que dependem das particularidades de cada local e língua, como o formato de datas  ou moeda. O processo de “localização” significa providenciar traduções e formatação adequadas à cada uma dessa partes. [1]
+
+Assim, durante o processo de _internacionalizar_ sua aplicação Rails você terá que:
+
+* Garantir a existência de suporte ao I18n
+* Dizer ao Rails onde encontrar seus dicionários localizados
+* Dizer ao Rails como definir, manter e trocar o local selecionado
+
+Para _localizar_ sua aplicação, você provavelmente desejará fazer três coisas:
+
+* Trocar ou incrementar as informações padrão de local do Rails -- ex: formatos de data e hora, nomes dos meses, nomes dos modelos Active Record, etc
+* Abstrair strings na sua aplicação ligando à chaves de dicionários -- ex: mensagens flash, texto estático em suas views, etc
+* Armazenar os dicionários resultantes em algum lugar
+
+Esse guia irá apresentar a API do I18n e contém um tutorial de como internacionalizar sua aplicação Rails a partir do zero.
+
+endprologue.
+
+OBSERVAÇÃO: O Ruby I18n fornece todo o framework necessário para internacionalizar/localizar suas aplicações Rails. No entanto, você pode usar vários plugins e extensões disponíveis, que adicionam outras funcionalidades. Leia o "Wiki do Rails I18n":http://rails-i18n.org/wiki para obter mais informações.
+
+
+Internacionalização é uma questão complexa. As linguagens naturais são tão diferentes entre si (ex: regras de pluralização) que é difícil oferecer ferramentas para resolver todos esses problemas de uma só vez. Por isso, a API do I18n do Rails se concentra em:
+
+* Oferecer suporte para inglês e línguas similares “out of the box”
+* Possibilitar a customização e extensão de tudo que for necessário para atender outras línguas
+
+Parte da solução foi tornar *todas as strings estáticas no Rails* -- ex: as mensagens de validação do Active Record, formatos de data e hora -- *foram internacionalizadas*, assim, _localizar_ uma aplicação Rails significa “sobreescrever” essas strings padrão.
+
+h4. A Arquitetura Geral da Biblioteca
+
+A gem Ruby I18n é dividida em duas partes:
+
+* A API publicado framework I18 -- um module Ruby com métodos públicos que definem como a biblioteca funciona
+* Um backend padrão (que é intencionalmente chamado _Simple_ backend (backend simples)) que implementa esses métodos
+
+Como usuário você sempre deverá acessar apenas os métodos públicos do módulo I18n, mas é útil conhecer as funcionalidades do backend.
+
+OBSERVAÇÃO: É possível (ou mesmo desejável) substituir o Simple backend que vêm com o Rails por um mais poderoso, que armazene as traduções num banco de dados, num dicionário GetText ou algo similar. Veja a seção “Utilizando backends diferentes”#utilizando-backends-diferentes mais abaixo.
+
+h4. A API pública do I18n
+
+Os métodos mais importantes da API do I18n são:
+
+<ruby>
+translate # Busca textos traduzidos
+localize  # Adapta os formatos de objetos Data e Hora ao local
+</ruby>
+
+Eles tem os aliases #t e #l, que você pode utilizar assim:
+
+<ruby>
+I18n.t 'store.title'
+I18n.l Time.now
+</ruby>
+
+Também existem métodos de leitura e gravação para os seguintes atributos::
+
+<ruby>
+load_path         # Especifica onde estão seus arquivos customizados de tradução
+locale            # Lê e grava o local atual
+default_locale    # Lê e grava o local padrão
+exception_handler # Especifica o uso de um exception_handler diferente
+backend           # Especifica um backend diferente
+</ruby>
+
+Nos próximos capítulos iremos internacionalizar uma aplicação Rails simples desde o início!
+
+h3. Configurando uma Aplicação Rails para Internacionalização
+
+São necessários apenas alguns passos simples para fazer sua aplicação suportar o I18n.
+
+h4. Configure o Módulo I18n
+
+Seguindo a filosofia da _convenção sobre configuração_, o Rails irá configurar sua aplicação com opções padrão razoáveis. Se você precisar de configurações diferentes, você pode sobrescrevê-las facilmente.
+
+O Rails adicionará todos os arquivos +.rb+ e +.yml+ do diretório +config/locales+ ao *load path de traduções* automaticamente.
+
+O arquivo padrão +en.yml+ nesse diretório contém um exemplo de par de strings de tradução:
+
+<ruby>
+en:
+  hello: "Hello world"
+</ruby>
+
+Isso significa que no local +:en+, a chave _hello_ irá mapear a string _Hello world_. Todas as strings dentro do Rails estão internacionalizadas dessa forma, veja, por exemplo, as mensagens de validação do Active Record no arquivo  "+activerecord/lib/active_record/locale/en.yml+":http://github.com/rails/rails/blob/master/activerecord/lib/active_record/locale/en.yml ou os formatos de data e hora no arquivo "+activesupport/lib/active_support/locale/en.yml+":http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml. Você pode usar arquivos YAML ou Hashes padrão do Ruby para armazenar as traduções quando utilizar o backend padrão (no caso, o Simple).
+
+A biblioteca I18n define o *inglês* como *local padrão*, ou seja, se você não definir um local diferente, +:en+ será utilizado para procurar as traduções.
+
+OBSERVAÇÃO: A biblioteca I18n assume uma *postura pragmática* (após “alguma discussão":http://groups.google.com/group/rails-i18n/browse_thread/thread/14dede2c7dbe9470/80eec34395f64f3c?hl=en) ao usar como chaves de local apenas a parte _locale_ (“língua”), como +:en+, +:pl+, e não a parte _region_ (região) como em +:en-US+ ou +:en-UK+, que tradicionalmente são utilizadas para separar “línguas” e “configurações regionais” ou “dialetos”. Muitas aplicações internacionais utilizam apenas o elemento “língua” de um local, como em +:cz+, +:th+ or +:es+ (para Tcheco, Tailandês ou Espanhol). Porém, existem diferenças que podem ser importantes entre os diferentes grupos linguísticos. Por exemplo, no local +:en-US+ você teria $ como símbolo de moeda, enquanto em +:en-UK+ você teria £. Nada o impede de separar informações regionais e outros detalhes dessa maneira: tudo que você precisa fazer é fornecer todas as informações do local "English - United Kingdom" em um dicionário +:en-UK+. Vários “plugins para Rails I18n":http://rails-i18n.org/wiki como o "Globalize2":http://github.com/joshmh/globalize2/tree/master podem ajudá-lo a implementar isso.
+
+O *caminho de carga dos arquivos de tradução* (+I18n.load_path+) é apenas uma Array Ruby de caminhos para seus arquivos de tradução, que serão carregados automaticamente e disponibilizados à sua aplicação.Você pode usar qualquer nomenclatura de arquivos e diretórios que faça sentido para você.
+
+OBSERVAÇÃO: O backend irá fazer o lazy-load dessas traduções no momento em que uma tradução for solicitada pela primeira vez. Isso permite que o backend seja trocado por outro após a definição do caminho de carga.
+
+Os arquivos +environment.rb+ padrão contém instruções sobre como adicionar locais a partir de outros diretórios e como mudar o local padrão. Basta descomentar e editar as linhas relacionadas.
+ 
+<ruby>
+# The internationalization framework can be changed
+# to have another default locale (standard is :en) or more load paths.
+# All files from config/locales/*.rb,yml are added automatically.
+# config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
+# config.i18n.default_locale = :de
+</ruby>
+
+h4. Opcional: Definição Customizada das Configurações do I18n
+
+Para cobrir todos os detalhes, é bom mencionar que, se por qualquer motivo você não quiser utilizar o arquivo   +environment.rb+, você também pode configurar tudo manualmente.
+
+Para dizer à biblioteca I18n onde ela pode encontrar as traduções customizadas, você pode definir o caminho de carga em qualquer local da sua aplicação - apenas garanta que isso será feito antes que seja executada qualquer tradução seja pesquisada. Você também pode querer trocar o local padrão. A maneira mais simples de fazer isso é colocar o seguinte código dentro de um initializer:
+
+<ruby>
+# em config/initializer/locale.rb
+
+# dizendo à biblioteca I18n onde encontrar as traduções
+I18n.load_path << Dir[ File.join(RAILS_ROOT, 'lib', 'locale', 
+  '*.{rb,yml}') ]
+
+# definindo o local padrão para outra coisa que não :en
+I18n.default_locale = :pt
+</ruby>
+
+h4. Definindo e Passando o Local
+
+Se você quer traduzir sua aplicação Rails para *uma única língua além do inglês* (que é o local padrão), você pode definir o I18n.default_locale para o seu local no +environment.rb+ ou em um initializer, como mostrado acima, e ele irá persistir essa definição em todas as requisições.
+
+Porém, é provável que você queira *suportar mais de um local* em sua aplicação. Nesse caso, você precisará definir e passar esse local entre as requisições.
+
+ATENÇÃO: Você pode ficar tentado à armazenar o local selecionado em uma _sessão_ ou _cookie_. *Não faça isso*. O local deve ser transparente e parte da URL. Assim, você não irá contradizer pressuposições básicas das pessoas sobre a própria web: se você enviar uma URL para algum amigo, ele deve ver a mesma página, o mesmo conteúdo. Um jeito empolado de dizer isso é que você estaria sendo "_RESTful_":http://en.wikipedia.org/wiki/Representational_State_Transfer. Leia mais sobre a abordagem RESTful nos "artigos de Stefan Tilkov's articles":http://www.infoq.com/articles/rest-introduction. Podem haver algumas exceções à essa regra, que serão discutidas abaixo.
+
+A parte de _definir o local_ é fácil. Você pode fazê-lo em um +before_filter+ no ApplicationController dessa maneira:
+
+<ruby>
+before_filter :set_locale
+def set_locale
+  # se params[:locale] for nulo, então deve-se utilizar I18n.default_locale
+  I18n.locale = params[:locale] || I18n.default_locale
+end
+</ruby>
+
+Fazer isso exige que você passe o local como um query parameter com feito em +http://example.com/books?locale=pt+. (É assim que o Google faz, por exemplo). Assim, +http://localhost:3000?locale=pt+ irá carregar a localização para o português, enquanto +http://localhost:3000?locale=de+ irá carregar a localização para o alemão, e assim por diante. Você pode pular a próxima seção e ir diretamente à seção *Internacionalizando sua aplicação* se você quiser experimentar colocando o local na URL manualmente e recarregando a página.
+
+Mas é claro que você provavelmente não quer fazer isso manualmente em todas as URL da sua aplicação, ou quer que as URLs fiquem diferentes, como por exemplo em +http://example.com/pt/books+ e +http://example.com/en/books+. Vamos analisar suas opções.
+
+IMPORTANTE: Os exemplos a seguir dependem da existência de uma array de strings definindo os locais disponíveis como em +[“en”, “es”, “gr”]+. Isso não está incluído no Rails 2.2 – a versão 2.3 já possui o método +available_locales+. (Veja "esse commit":http://github.com/svenfuchs/i18n/commit/411f8fe7c8f3f89e9b6b921fa62ed66cb92f3af4 e o todo o histórico em "no Wiki do Rails I18n":http://rails-i18n.org/wiki/pages/i18n-available_locales.)
+
+Assim, para deixar aparentes os locais disponíveis no Rails 2.2, temos que incluir o método manualmente em algum initializer, assim::
+
+<ruby>
+# config/initializers/available_locales.rb
+#
+# Retorna os locais carregados de maneira conveniente
+# Veja http://rails-i18n.org/wiki/pages/i18n-available_locales
+module I18n
+  class << self
+    def available_locales; backend.available_locales; end
+  end
+  module Backend
+    class Simple
+      def available_locales; translations.keys.collect { |l| l.to_s }.sort; end
+    end
+  end
+end
+
+# Você precisa forçar a inicialização dos locais carregados
+I18n.backend.send(:init_translations)
+
+AVAILABLE_LOCALES = I18n.backend.available_locales
+RAILS_DEFAULT_LOGGER.debug "* Loaded locales: #{AVAILABLE_LOCALES.inspect}"
+</ruby>
+
+Depois, você pode encapsular a constante um método do ApplicationController para facilitar o acesso:
+
+<ruby>
+class ApplicationController < ActionController::Base
+  def available_locales; AVAILABLE_LOCALES; end
+end
+</ruby>
+
+h4. Definindo o Local a partir do Nome do Domínio
+
+Uma das opções para definir o local é fazê-lo a partir do nome do domínio onde sua aplicação está rodando. Por exemplo, queremos que +www.example.com+ carregue inglês (ou o padrão) como local, e que  +www.example.es+ carregue espanhol como local. Assim, o _primeiro nível do nome de domínio_ é utilizado para definir o local. Existem várias vantagens nessa abordagem:
+
+* O local é uma parte _óbvia_ da URL
+* As pessoas saberão de maneira intuitiva qual é a língua do conteúdo apresentado
+* É simples de se implementar no Rails
+* Search engines funcionam bem com conteúdo em diferentes línguas habitando domínios diferentes e interconectados
+
+Você pode implementar isso no seu ApplicationController:
+
+<ruby>
+before_filter :set_locale
+def set_locale
+  I18n.locale = extract_locale_from_uri
+end
+# Pega o local do primeiro nível do nome de domínio ou retorna nil se o local não estiver disponível
+# Você terá que coloar algo como:
+#   127.0.0.1 application.com
+#   127.0.0.1 application.it
+#   127.0.0.1 application.pl
+# no seu arquivo /etc/hosts para testar isso localmente
+def extract_locale_from_tld
+  parsed_locale = request.host.split('.').last
+  (available_locales.include? parsed_locale) ? parsed_locale  : nil
+end
+</ruby>
+
+Também podemos definir o local usando um _sub-domínio_ de maneira similar:
+
+<ruby>
+# Pega o local do sub-domínio da requisição (como http://it.application.local:3000)
+# Você terá que colocar algo como:
+#   127.0.0.1 gr.application.local
+# no seu arquivo /etc/hosts para testar isso localmente
+def extract_locale_from_subdomain
+  parsed_locale = request.subdomains.first
+  (available_locales.include? parsed_locale) ? parsed_locale  : nil
+end
+</ruby>
+
+Se quiser incluir incluir um menu para trocar de local na sua aplicação, você deverá fazer algo como:
+
+<ruby>
+link_to("Deutsch", "#{APP_CONFIG[:deutsch_website_url]}#{request.env['REQUEST_URI']}")
+</ruby>
+
+Assumindo que você definirá +APP_CONFIG[:deutsch_website_url]+ como +http://www.application.de+, ou algo parecido.
+
+Essa solução tem as vantagens mencionadas, porém, pode não ser possível ou desejável oferecer diferentes localizações (“versões em línguas diferentes”) em diferentes domínios. A solução óbvia seria incluir o código do local nos parâmetros da URL (ou no endereço da requisição).
+
+h4. Definindo o Local nos Parâmetros da URL
+
+A maneira mais comum de definir (e passar) o local é incluindo-o nos parâmetros da URL, como fizemos em +I18n.locale = params[:locale]+ _before_filter_ do primeiro exemplo. Nesse caso, gostariamos de ter URLs como +www.example.com/books?locale=ja+ ou +www.example.com/ja/books+.
+
+Essa abordagem tem mais ou menos as mesmas vantagens de definir o local no nome do domínio, para ser mais exato é RESTful e funciona de acordo com o resto da World Wide Web. Porém, implementar essa abordagem exige um pouco mais de trabalho.
+
+Pegar o local do +params+ e definí-lo de maneira apropriada não é difícil, incluí-lo em todas as URL para *passá-lo a todas as requisições* é mais complicado. Obviamente incluir o parâmetro de maneira explícita em todas as URLs (ex: +link_to( books_url(:locale => I18n.locale))+) seria tedioso, até mesmo impossível.
+
+O Rails já conta com infra-estrutura para “centralizar decisões dinâmicas sobre URLs” em "+ApplicationController#default_url_options+":http://api.rubyonrails.org/classes/ActionController/Base.html#M000515, que é útil exatamente em casos como esse: ele nos permite definir “padrões” para "+url_for+":http://api.rubyonrails.org/classes/ActionController/Base.html#M000503 e métodos helper que dependem dele (seja implementando-o ou sobrescrevendo-o).
+
+Assim, podemos incluir no nosso ApplicationController algo como:
+
+<ruby>
+# app/controllers/application_controller.rb
+def default_url_options(options={})
+  logger.debug "default_url_options is passed options: #{options.inspect}\n"
+  { :locale => I18n.locale }
+end
+</ruby>
+
+Todos os métodos helper que dependem de +url_for+ (ex: helpers para rotas nomeadas como +root_path+ ou +root_url+, rotas para recursos como +books_path+ ou +books_url+, etc) irão incluir automaticamente o local na sua query string, assim: +http://localhost:3001/?locale=ja+.
+
+Talvez isso seja suficiente, mas ele irá dificultar a leitura das URLs, porque o local ficará “pendurado” no fim de todas as URLs da sua aplicação. Além disso, sob o ponto de vista de arquitetura, a definição do local deveria ser hierarquicamente superior às outras partes do domínio da aplicação, e isso deveria estar refletido na URL.
+
+Você provavelmente vai preferir que as URLs fiquem parecidas com: +www.example.com/en/books+ (o que carregaria a localização para inglês) e +www.example.com/nl/books+ (o que carregaria a localização para holandês). Isso é possível com a estratégia de “sobreescrever +default_url_options+” descrita acima: você só precisa configurar suas rotas com a opção "+path_prefix+":http://api.rubyonrails.org/classes/ActionController/Resources.html#M000354 da seguinte maneira:
+
+<ruby>
+# config/routes.rb
+map.resources :books, :path_prefix => '/:locale'
+</ruby>
+
+Assim, quando você executar o método +books_path+ você deve receber +”/en/books”+ (para o local padrão). Uma URL como +http://localhost:3001/nl/books+ deverá carregar a localização para a Holanda, e chamadas subsequentes à +books_path+ deverão retornar +”/nl/books/”+ (porque o local foi alterado).
+
+Obviamente você precisará tomar cuidados especiais com a URL base (normalmente sua “homepage” ou “painel de controle”) da sua aplicação. Uma URL como +http://localhost:3001/nl+ funcionará automaticamente, porque a declaração de +map.root :controller => "dashboard"+ no seu +routes.rb+ não leva o local em consideração (E isso é correto: só existe uma URL base).
+
+Você provavelmente precisará mapear URLs como essas:
+
+<ruby>
+# config/routes.rb
+map.dashboard '/:locale', :controller => "dashboard"
+</ruby>
+
+Dê atenção especial à “ordem das suas rotas* para que as declarações não “comam” umas as outras. (Você pode querer adicioná-la antes da declaração de +map.root+.)
+
+IMPORTANTE: No momento essa solução tem uma grande *desvantagem*. Devido à implementação de _default_url_options_, você tem que passar explicitamente a opção +:id+, da seguinte maneira: +link_to 'Show', book_url(:id => book)+ e não pode depender de mágicas do Rails como +link_to 'Show', book+. Se isso for um problema, dê uma olhada em dois plugins que simplificam o trabalho com rotas como essas: o "routing_filter":http://github.com/svenfuchs/routing-filter/tree/master de Sven Fuchs e o "translate_routes":http://github.com/raul/translate_routes/tree/master de Raul Murciano. Veja também a página “Como codificar o local atual em uma URL”:http://rails-i18n.org/wiki/pages/how-to-encode-the-current-locale-in-the-url no Wiki do Rails I18n.
+
+h4. Definindo o Local com Base em Informações Fornecidas pelo Client
+
+Em casos específicos, faz sentido definir o local de acordo com as informações fornecidas pelo client, e não com base numa URL. Essa informação pode vir, por exemplo, das configurações de línguas prediletas do usuário (definidas no browser), podem ser baseadas em informações geográficas inferidas a partir do seu IP, ou o usuário pode simplesmente escolher o local na interface da aplicação e salvando essa escolha na sua conta. Essa abordagem é mais adequada para aplicações web ou serviços, e não para websites -- veja as observações sobre _sessions_, _cookies_ e arquitetura RESTful mais acima.
+
+h5. Utilizando +Accept-Language+
+
+Uma das fontes de informações sobre o client seria um cabeçalho HTTP +Accept-Language+. As pessoas podem “definí-lo em seus browsers":http://www.w3.org/International/questions/qa-lang-priorities ou em outros tipos de client (como o _curl_).
+
+Uma implementação comum para se utilizar um cabeçalho +Accept-Language+ seria:
+
+<ruby>
+def set_locale
+  logger.debug "* Accept-Language: #{request.env['HTTP_ACCEPT_LANGUAGE']}"
+  I18n.locale = extract_locale_from_accept_language_header
+  logger.debug "* Locale set to '#{I18n.locale}'"
+end
+private
+def extract_locale_from_accept_language_header
+  request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+end
+</ruby>
+
+Obviamente em um ambiente de produção você precisaria de um código muito mais robusto, e poderia utilizar um plugin como o "http_accept_language":http://github.com/iain/http_accept_language/tree/master criado pelo Ian Hecker ou mesmo um middleware para Rack como o "locale":http://github.com/rtomayko/rack-contrib/blob/master/lib/rack/locale.rb do Ryan Tomayko.
+
+h5. Usando o Banco de Dados GeoIP ou Similares
+
+Outra maneira de escolher o local a partir das informações do client seria utilizar um banco de dados para relacionar o IP do client à uma região, como o "GeoIP Lite Country":http://www.maxmind.com/app/geolitecountry. A mecânica do código seria bastante similar ao mostrado acima -- você procuraria o IP do usuário no banco de dados e veria qual o local mais adequado de acordo com o país/região/cidade retornado.
+
+h5. Conta do Usuário
+
+Você também pode oferecer aos usuários da sua aplicação formas de definir (e até mesmo sobrescrever) o local utilizado pela interface. Novamente, a mecânica para essa abordagem é bastante similar ao código acima -- você provavelmente deixaria o usuário escolher o local em uma lista de opções e salvaria sua escolha em sua conta no banco de dados, e ao fazer login você usaria esse valor como local.
+
+h3. Internacionalizando sua Aplicação
+
+OK! Até aqui você inicializou o suporte ao I18n na sua aplicação Ruby on Rails e disse a ele qual local utilizar e como preservar essa escolha entre requisições. Com isso feito, estamos preparados para fazer o que interessa.
+
+Vamos _internacionalizar_ nossa aplicação, ou seja, abstrair todas as partes que fazem referência a um local específico e então _localizá-las_, ou seja, providenciar as devidas traduções para essas abstrações.
+
+É bastante provável que você tenha algo assim em suas aplicações:
+
+<ruby>
+# config/routes.rb
+ActionController::Routing::Routes.draw do |map|
+  map.root :controller => 'home', :action => 'index'
+end
+
+# app/controllers/home_controller.rb
+class HomeController < ApplicationController
+  def index
+    flash[:notice] = "Hello flash!"
+  end
+end
+
+# app/views/home/index.html.erb
+<h1>Hello world!</h1>
+<p><%= flash[:notice] %></p>
+</ruby>
+
+!images/i18n/demo_untranslated.png(rails i18n demo untranslated)!
+
+h4. Adicionando Traduções
+
+É evidente que existem *duas string que estão localizadas para o inglês*. Para internacionalizar esse código, devemos *substituir essas strings* com chamadas ao helper #t do Rails passando uma chave de pesquisa que faça sentido para a tradução:
+
+<ruby>
+# app/controllers/home_controller.rb
+class HomeController < ApplicationController
+  def index
+    flash[:notice] = t(:hello_flash)
+  end
+end
+
+# app/views/home/index.html.erb
+<h1><%=t :hello_world %></h1>
+<p><%= flash[:notice] %></p>
+</ruby>
+
+Agora, quando essa view for renderizada, ela irá mostrar uma mensagem de erro que dirá a você que não existem traduções para as chaves +:hello_world+ e +:hello_flash+ informadas.
+
+!images/i18n/demo_translation_missing.png(rails i18n demo translation missing)!
+
+OBSERVAÇÃO: O Rails adiciona um método helper +t+ (+translate+) à suas views para que você não precise digitar +I18n.t+ a todo momento. Além disso, esse helper irá capturar traduções inexistentes e encapsular a mensagem de erro resultante em um +&lt;span class="translation_missing"&gt;+.
+
+Então, vamos adicionar a tradução inexistente ao nossos arquivos-dicionário (ou seja, fazer a parte da “localização”):
+
+<ruby>
+# config/locale/en.yml
+en:
+  hello_world: Hello World
+  hello_flash: Hello Flash
+
+# config/locale/pirate.yml
+pirate:
+  hello_world: Ahoy World
+  hello_flash: Ahoy Flash
+</ruby>
+
+Pronto, acabou. Como você não mudou o default_locale, o I18n irá utilizar o inglês. Agora, sua aplicação irá mostrar:
+
+!images/i18n/demo_translated_en.png(rails i18n demo translated to english)!
+
+E quando alterar a URL para passar o local “piratês”, (+http://localhost:3000?locale=pirate+), você obterá:
+
+!images/i18n/demo_translated_pirate.png(rails i18n demo translated to pirate)!
+
+OBSERVAÇÃO: Você precisa reiniciar o servidor quando adicionar novos arquivos de local.
+
+Você pode utilizar arquivos YAML (+.yml+) ou Ruby puro (+.rb+) para armazenar suas traduções utilizando o SimpleStore, sendo o YAML a opção preferida entre os desenvolvedores Rails, porém, ele tem uma grande desvantagem: arquivos YAML são extremamente sensíveis à espaços em branco e caracteres especiais, assim, sua aplicação pode não carregar seus dicionários de maneira apropriada. Já os arquivos Ruby irão dar erro assim que forem utilizados, facilitando a localização de erros. (Se você tiver “problemas estranhos” com dicionários YAML, tente colocar uma parte significativa deles em arquivos Ruby.)
+
+h4. Adicionando Formatos de Data e Hora
+
+OK! Agora vamos adicionar um timestamp à uma view, para que possamos demonstrar as funcionalidades de *localização de data e hora*. Para localizar o formato de hora, você deve passar um objeto Time ao +I18n.l+ ou (sempre que possível) usar o helper +#l+ do Rails. Você pode escolher o formato passando a opção +:format+ -- por padrão o formato +:default+ format é utilizado.
+
+<ruby>
+# app/views/home/index.html.erb
+<h1><%=t :hello_world %></h1>
+<p><%= flash[:notice] %></p
+<p><%= l Time.now, :format => :short %></p>
+</ruby>
+
+E vamos adicionar o formato de hora em nosso arquivo de tradução em “piratês” (o Rails já tem o formato definido para o inglês):
+
+<ruby>
+# config/locale/pirate.yml
+pirate:
+  time:
+    formats:
+      short: "arrrround %H'ish"
+</ruby>
+
+O que irá mostrar:
+
+!images/i18n/demo_localized_pirate.png(rails i18n demo localized time to pirate)!
+
+DICA: Nesse momento você deve precisar adicionar mais formatos de data e hora para fazer o backend do I18n funcionar como esperado (pelo menos para o local “piratês”). Mas há uma grande chance que alguém já fez o  trabalho de traduzir os *textos-padrão do Rails para o seu local*. No repositório do “rails-i18n no GitHub":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale você encontrará dicionários prontos para vários locais. Basta colocar um deles no diretório +config/locale/+ que o local estará pronto para ser utilizado.
+
+h4. Views Localizadas
+
+O Rails 2.3 traz um novo método mais conveninente para fazer a localização: views localizadas (templates). Digamos que você tem um _BooksController_ na sua aplicação. Sua ação _index_ irá renderizar o conteúdo do template +app/views/books/index.html.erb+. Quando você colocar uma _versão localizada_ desse template no mesmo diretório, por exemplo, *+index.es.html.erb+*, o Rails irá renderizar essa versão se o local estiver definido como +:es+. Quanto o local estiver definido como o padrão, a versão genérica +index.html.erb+ será utilizada. (Versões futuras do Rails poderão trazer essa localização _automágica_ para conteúdo do diretório +public+, por exemplo.)
+
+Você pode utilizar esse recurso quando tiver uma grande quantidade de conteúdo estático, por exemplo, o que seria complicado de colocar dentro de dicionários YAML ou Ruby. Porém, tenha em mente que qualquer modificação no template terá de ser propagada para todas suas versões.
+
+h4. Organização dos Arquivos de Local
+
+Ao utilizar o SimpleStore padrão que vêm com a biblioteca I18n, os dicionários serão armazenados em arquivos texto em disco. Colocar as traduções de todas as partes da sua aplicação em apenas um arquivo pode ser difícil de gerenciar, mas você pode armazená-los usando uma hierarquia que faça sentido para você.
+
+Por exemplo, seu diretório +config/locale+ poderia ser como esse:
+
+<pre>
+|-defaults
+|---es.rb
+|---en.rb
+|-models
+|---book
+|-----es.rb
+|-----en.rb
+|-views
+|---defaults
+|-----es.rb
+|-----en.rb
+|---books
+|-----es.rb
+|-----en.rb
+|---users
+|-----es.rb
+|-----en.rb
+|---navigation
+|-----es.rb
+|-----en.rb
+</pre>
+
+Dessa forma você pode separar modelos e os nomes de seus atributos dos textos das views, e todos eles dos “textos-padrão” (como formatos de data e hora). Outros sistemas de armazenamento para a biblioteca I18n podem oferecer diferentes meios de se fazer essa separação.
+
+OBSERVAÇÃO: O mecanismo de carga padrão do Rails não carrega os arquivos de local em sub-diretórios, de forma que você precisa dizer explicitamente a ele para procurar os arquivos neles:
+
+<ruby>
+  # config/environment.rb
+  config.i18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', '**', '*.{rb,yml}')]
+</ruby>
+
+Dê uma olhada no “Wiki do Rails I18n":http://rails-i18n.org/wiki para obter uma lista das ferramentas disponíveis para gerenciar traduções.
+
+h3. Visão Geral das Funcionalidades da API do I18n
+
+A essa altura você deve ter um bom entendimento de como utilizar a biblioteca I18n, sabendo tudo o que precisa fazer para internacionalizar uma aplicação Rails básica. Nos próximos capítulos iremos mostrar de maneira mais aprofundada algumas das funcionalidades.
+
+Entre as funcionalidades abordadas estão:
+
+* Pesquisando traduções
+* Interpolando dados nas traduções
+* Pluralizando traduções
+* Localizando datas, números, moeda, etc.
+
+h4. Pesquisando Traduçõe
+
+h5. Pesquisa Básica, Escopos e Chaves Aninhadas
+
+As traduções são pesquisadas através de chaves que podem ser tanto Strings quanto Symbols, assim, essas duas chamadas são equivalentes:
+
+<ruby>
+I18n.t :message
+I18n.t 'message'
+</ruby>
+
+O método +translate+ também aceita a opção +:scope+ (escopo) que pode conter uma ou mais chaves adicionais que serão utilizadas para definir um “namespace” ou escopo da chave de tradução:
+
+<ruby>
+I18n.t :invalid, :scope => [:activerecord, :errors, :messages]
+</ruby>
+
+Isso irá pesquisar a mensagem +:invalid+ message dentro das mensagens de erro do Active Record.
+
+Além disso, tanto a chave de pesquisa quanto o escopo podem ser especificadas usando pontos para separar seus elementos, como por exemplo:
+
+<ruby>
+I18n.translate :"activerecord.errors.messages.invalid"
+</ruby>
+
+De maneira que as chamadas a seguir são equivalentes:
+
+<ruby>
+I18n.t 'activerecord.errors.messages.invalid'
+I18n.t 'errors.messages.invalid', :scope => :active_record
+I18n.t :invalid, :scope => 'activerecord.errors.messages'
+I18n.t :invalid, :scope => [:activerecord, :errors, :messages]
+</ruby>
+
+h5. Valor Padrão
+
+Quando a opção +:default+ é informada, seu valor será retornado caso a tradução solicitada não seja encontrada.:
+
+<ruby>
+I18n.t :missing, :default => 'Not here'
+# => 'Not here'
+</ruby>
+
+Se o valor passado em +:default+ for um Symbol, ele será utilizado como uma chave e traduzido. É possível passar mais de uma opção como valor padrão, e aquele que resultar em um valor válido será retornado.
+
+Assim, o código a seguir primeiro irá tentar traduzir a chave +:missing+ e depois a chave +:also_missing+. Se nenhuma delas gerar um resultado válido, a string “Not here” será retornada.
+
+<ruby>
+I18n.t :missing, :default => [:also_missing, 'Not here']
+# => 'Not here'
+</ruby>
+
+h5. Pesquisa em Massa e por Namespace
+
+Para pesquisar várias traduções de uma só vez, você pode passar uma array de chaves:
+
+<ruby>
+I18n.t [:odd, :even], :scope => 'activerecord.errors.messages'
+# => ["must be odd", "must be even"]
+</ruby>
+
+Além disso, uma chave pode ser traduzida para um grupo de traduções em um hash. Assim, é possível retornar _todas_ as traduções de mensagens de erro do Active Record como um Hash com:
+
+<ruby>
+I18n.t 'activerecord.errors.messages'
+# => { :inclusion => "is not included in the list", :exclusion => ... }
+</ruby>
+
+h5. Pesquisa "Lazy"
+
+O Rails 2.3 implementa uma maneira conveniente de pesquisar traduções dentro de _views_. Se você tivesse um dicionário como esse::
+
+<yaml>
+es:
+  books:
+    index:
+      title: "Título"
+</yaml>
+
+Você poderia pesquisar a chave +books.index.title+ *dentro* do template +app/views/books/index.html.erb+ da seguinte maneira (preste atenção ao ponto):
+
+<ruby>
+<%= t '.title' %>
+</ruby>
+
+h4. Interpolação
+
+Em muitos casos você quer abstrair suas traduções de forma que *seja possível interpolar variáveis com as traduções*. Por isso, a API do I18n oferece uma funcionalidade de interpolação.
+
+Todas as opções além de +:default+ e +:scope+ passadas ao método +#translate+ serão interpoladas na tradução:
+
+<ruby>
+I18n.backend.store_translations :en, :thanks => 'Thanks {{name}}!'
+I18n.translate :thanks, :name => 'Jeremy'
+# => 'Thanks Jeremy!'
+</ruby>
+
+Se a tradução utiliza +:default+ ou +:scope+ como uma variável de interpolação, uma exceção +18n::ReservedInterpolationKey+ será gerada. Se a tradução precisar de uma variável de interpolação, mas ela não for passada ao método +#translate+, uma exceção +I18n::MissingInterpolationArgument+ será gerada.
+
+h4. Pluralização
+
+Em inglês há apenas uma forma de singular e plural dada uma string, por exemplo, “1 message” e “2 messages”. Outras línguas ("Arabico":http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html#ar, "Japonês":http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html#ja, "Russo":http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html#ru e muitas outras) tem diferentes formas gramaticais que possuem mais ou menos “formas de plural”:http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html. Assim, a API do I18n fornece uma funcionalidade de pluralização flexível.
+
+A variável de interpolação +:count+ desempenha um papel especial pelo fato de que é utilizada tanto para a interpolação quanto para a escolha de uma regra de pluralização definida pela CLDR.:
+
+<ruby>
+I18n.backend.store_translations :en, :inbox => {
+  :one => '1 message',
+  :other => '{{count}} messages'
+}
+I18n.translate :inbox, :count => 2
+# => '2 messages'
+</ruby>
+
+O algorítimo para pluralizações em +:en+ é simples:
+
+<ruby>
+entry[count == 1 ? 0 : 1]
+</ruby>
+
+De maneira que todas as traduções cuja contagem for definida como +:one+ são consideradas singular, e os outros casos como plural (incluindo quando a contagem for igual à zero).
+
+Se a pesquisa de uma chave não retornar um Hash adequadamente formatado para pluralização, será gerada uma exceção do tipo +18n::InvalidPluralizationData+.
+
+h4. Definindo e Passando um Local
+
+O local pode definido tanto “globalmente” no +I18n.locale+ (que utiliza +Thread.current+ assim como +Time.zone+) ou pode ser passado como uma opção para os métodos +#translate+ e +#localize+.
+
+Se nenhum local for passado, o valor de +I18n.locale+ será utilizado:
+
+<ruby>
+I18n.locale = :de
+I18n.t :foo
+I18n.l Time.now
+</ruby>
+
+Passando o local explicitamente fica assim:
+
+<ruby>
+I18n.t :foo, :locale => :de
+I18n.l Time.now, :locale => :de
+</ruby>
+
+O valor padrão do +I18n.locale+ é o valor de +I18n.default_locale+, cujo padrão, por sua vez, é +:en+. O local padrão pode ser definido da seguinte maneira:
+
+<ruby>
+I18n.default_locale = :de
+</ruby>
+
+h3. Como Armazenar Traduções Customizadas
+
+O Simple backend que já vem com o Active Support permite que você armazene as traduções tanto em Ruby puro quanto em YAML. [2]
+
+Um Hash Ruby contendo traduções poderia ser assim:
+
+<ruby>
+{
+  :pt => {
+    :foo => {
+      :bar => "baz"
+    }
+  }
+}
+</ruby>
+
+O equivalente num arquivo YAML seria assim:
+
+<ruby>
+pt:
+  foo:
+    bar: baz
+</ruby>
+
+Como vê, em ambos casos a chave do primeiro nível é o local. O namespace é +:foo+ e a chave de tradução é +:bar+ para o texto “baz”.
+
+Esse é um exemplo “real” extraído do arquivo YAML de traduções +en.yml+ do Active Support:
+
+<ruby>
+en:
+  date:
+    formats:
+      default: "%Y-%m-%d"
+      short: "%b %d"
+      long: "%B %d, %Y"
+</ruby>
+
+Assim, todos os comandos abaixo são equivalentes e retornariam o formato de data +:short+, cujo valor é +"%B %d"+:
+
+<ruby>
+I18n.t 'date.formats.short'
+I18n.t 'formats.short', :scope => :date
+I18n.t :short, :scope => 'date.formats'
+I18n.t :short, :scope => [:date, :formats]
+</ruby>
+
+Em geral recomendamos o uso do YAML como formato para armazenar as traduções. Porém, existem casos em que você pode desejar armazenar lambdas Ruby como parte dos seus parâmetros de local, como por exemplo, em formatos especiais de data.
+
+h4. Traduções para Modelos Active Record
+
+Você pode utilizar os métodos +Modelo.human_name+ e +Modelo.human_attribute_name(atributo)+ para pesquisar de maneira transparente o nome do modelo e seus atributos.
+
+Por exempo, se você adicionar as seguintes traduções:
+
+<ruby>
+en:
+  activerecord:
+    models:
+      user: Dude
+    attributes:
+      user:
+        login: "Handle"
+      # will translate User attribute "login" as "Handle"
+</ruby>
+
+O método +User.human_name+ retornará "Dude" e o método +User.human_attribute_name(:login)+ retornará "Handle".
+
+h5. Escopo das Mensagens de Erro
+
+As mensagens de erro das validações do Active Record também podem ser traduzidas facilmente. O Active Record fornece alguns namespaces onde você pode colocar as mensagens diferentes para certos modelo, atributos e/ou validações. Isso também funciona de maneira transparente quando se utiliza single table inheritance.
+
+Essa funcionalidade dá a você meios poderosos e flexíveis para ajustar as mensagens de acordo com as necessidades da sua aplicação. Considere um modelo User com uma validação +validates_presence_of+ para o atributo nome:
+
+<ruby>
+class User < ActiveRecord::Base
+  validates_presence_of :name
+end
+</ruby>
+
+A chave para a mensagem de erro nesse caso é +:blank+. O Active Record irá procurar essa chave nos seguintes namespaces:
+
+<ruby>
+activerecord.errors.models.[nome_do_modelo].attributes.[nome_do_atributo]
+activerecord.errors.models.[nome_do_modelo]
+activerecord.errors.messages
+</ruby>
+
+Assim no nosso exemplo, seguindo a ordem, ele irá tentar pesquisar as seguintes chaves e retornar a primeira tradução encontrada:
+
+<ruby>
+activerecord.errors.models.user.attributes.name.blank
+activerecord.errors.models.user.blank
+activerecord.errors.messages.blank
+</ruby>
+
+Se seus modelos estiverem utilizando herança, as mensagens serão pesquisadas ao longo da cadeia de ascendência. Por exemplo, você poderia ter um modelo Admin herdando de User:
+
+<ruby>
+class Admin < User
+  validates_presence_of :name
+end
+</ruby>
+
+Nesse caso o Active Record irá procurar as mensagens na seguinte ordem:
+
+<ruby>
+activerecord.errors.models.admin.attributes.title.blank
+activerecord.errors.models.admin.blank
+activerecord.errors.models.user.attributes.title.blank
+activerecord.errors.models.user.blank
+activerecord.errors.messages.blank
+</ruby>
+
+Assim você pode oferecer traduções especiais para as várias mensagens de erro em diferentes pontos da cadeia de herança de seus modelos, diferenciados também por atributo, modelo ou escopo padrão.
+
+h5. Interpolação de Mensagens de Erro
+
+Os nomes traduzidos do modelo e do atributo sempre estão disponíveis para interpolação.
+
+Assim, ao invés de mostrar a mensagem padrão +"can not be blank"+ você poderia utilizar o nome do atributo para mostrar a mensagem: +"Please fill in your {{atributo}}"+.
+
+* +count+, quando disponível, pode ser utilizado para pluralização quando a regra existir:
+
+|_. validação                 |_.opções              |_.mensagem                  |_.interpolação|
+| validates_confirmation_of    | -                         | :confirmation             | -|
+| validates_acceptance_of      | -                         | :accepted                 | -|
+| validates_presence_of        | -                         | :blank                    | -|
+| validates_length_of          | :within, :in              | :too_short                | count|
+| validates_length_of          | :within, :in              | :too_long                 | count|
+| validates_length_of          | :is                       | :wrong_length             | count|
+| validates_length_of          | :minimum                  | :too_short                | count|
+| validates_length_of          | :maximum                  | :too_long                 | count|
+| validates_uniqueness_of      | -                         | :taken                    | -|
+| validates_format_of          | -                         | :invalid                  | -|
+| validates_inclusion_of       | -                         | :inclusion                | -|
+| validates_exclusion_of       | -                         | :exclusion                | -|
+| validates_associated         | -                         | :invalid                  | -|
+| validates_numericality_of    | -                         | :not_a_number             | -|
+| validates_numericality_of    | :greater_than             | :greater_than             | count|
+| validates_numericality_of    | :greater_than_or_equal_to | :greater_than_or_equal_to | count|
+| validates_numericality_of    | :equal_to                 | :equal_to                 | count|
+| validates_numericality_of    | :less_than                | :less_than                | count|
+| validates_numericality_of    | :less_than_or_equal_to    | :less_than_or_equal_to    | count|
+| validates_numericality_of    | :odd                      | :odd                      | -|
+| validates_numericality_of    | :even                     | :even                     | -|
+
+h5. Traduções para o Helper +error_messages_for+ do Active Record
+
+Se você estiver utilizando o helper +error_messages_for+ do Active Record, você certamente irá querer acrescentar traduções a ele.
+
+O Rails já vem com as seguintes traduções:
+
+<yaml>
+en:
+  activerecord:
+    errors:
+      template:
+        header:
+          one:   "1 error prohibited this {{model}} from being saved"
+          other: "{{count}} errors prohibited this {{model}} from being saved"
+        body:    "There were problems with the following fields:"
+</yaml>
+
+h4. Visão Geral de Outros Métodos do Rails que Oferecem Suporte ao I18n
+
+O Rails utiliza strings fixas e outras localizações, como strings de formatação e outras informações de formato em um punhado de helpers, e aqui temos uma pequena lista deles.
+
+h5. Métodos Helper do Action View
+
+* +distance_of_time_in_words+ traduz e pluraliza seus resultado e interpola o número de segundos, minutos, horas e assim por diante. Vide "datetime.distance_in_words":http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L51 para obter as traduções.
+
+* +datetime_select+ e +select_month+ utilizam os nomes traduzidos dos meses para popular a select tag resultante. Vide "date.month_names":http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml#L15 para obter as traduções. O método +datetime_select+ também utiliza a opção +order+ de  "date.order":http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml#L18 (a não ser que essa opção seja passada explicitamente). Todos os helper de seleção de datas traduzem seu prompt utilizando o escopo    ~datetime.prompts":http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L83 quando aplicável.
+
+* Os helpers +number_to_currency+, +number_with_precision+, +number_to_percentage+, +number_with_delimiter+, e +number_to_human_size+ utilizam as definições de formatação de número localizados sob o escopo "number":http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L2.
+
+h5. Métodos do Active Record
+
+* +human_name+ e +human_attribute_name+ usam as traduções para os nomes do modelo e dos atributos se eles estiverem disponíveis no escopo "activerecord.models":http://github.com/rails/rails/blob/master/activerecord/lib/active_record/locale/en.yml#L43. Eles também suportam traduções para classes herdadas (ou seja, utilizadas com STI) como explicado acima em "Escopo das Mensagens de Erro".
+
+* +ActiveRecord::Errors#generate_message+ (que é utilizado pelas validações do Active Record mas também pode ser utilizado manualmente) usa +human_name+ e +human_attribute_name+ (veja acima). Ela também traduz a mensagem de erro e suporta traduções para classes herdadas, como explicado acima em "Escopo das Mensagens de Erro".
+
+*+ ActiveRecord::Errors#full_messages+ adiciona o nome do atributo no começo da mensagem de erro usando um separador que será obtido através da chave "activerecord.errors.format.separator":http://github.com/rails/rails/blob/master/actionpack/lib/action_view/locale/en.yml#L91 (cujo padrão é +'&nbsp;'+).
+
+h5. Métodos do Active Support
+
+* +Array#to_sentence+ utiliza as definições de formato disponíveis sob o escopo "support.array":http://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml#L30.
+
+
+h3. Customizando as Configurações do I18n
+
+h4. Utilizando Backends Diferentes
+
+Por várias razões, o Simple backend que já vem com Active Support só faz o “mínimo necessário para funcionar” para o Ruby on Rails [3] ... o que quer dizer que só se pode garantir seu funcionamento para o inglês e, por consequência, para línguas similares à ele. Além disso, ele é capaz de ler as traduções mas não consegue armazená-las de maneira dinâmica em qualquer formato.
+
+Porém, isso não significa que você está preso à essas limitações. A gem Ruby I18n permite a troca da implementação do Simple backend por outra que se encaixe melhor à suas necessidades. Você poderia, por exemplo, trocá-lo pelo backend Static do Globalize.
+
+<ruby>
+I18n.backend = Globalize::Backend::Static.new
+</ruby>
+
+h4. Usando Outros Handlers de Exceções
+
+ A API do I18n define as seguintes exceções, que serão geradas pelos backends quando ocorrem as seguintes situações inesperadas:
+
+<ruby>
+MissingTranslationData       # nenhuma tradução foi encontrada para a chave solicitada
+InvalidLocale                # o local definido em I18n.locale é inválido (por exemplo, nil)
+InvalidPluralizationData     # a opção :count foi passada mas os dados de tradução não são adequados para pluralização
+MissingInterpolationArgument # a tradução precisa de um argumento de interpolação que não foi passado
+ReservedInterpolationKey     # a tradução contém uma variável de interpolação cujo nome é reservado (por exemplo, : scope ou :default)
+UnknownFileType              # O backend não sabe lidar com o tipo de arquivo que foi adicionado ao I18n.load_path
+</ruby>
+
+A API do I18n irá capturar todas essas exceções quando forem geradas pelo backend e as repassará ao método  default_exception_handler. Esse método, por sua vez, irá regerar todas as exceções à exceção de +MissingTranslationData+, que quando for capturada retornará a mensagem de erro contendo a chave e o escopo que não foram encontrados.
+
+Isso acontece porque durante o desenvolvimento você normalmente irá querer suas views renderizadas mesmo quando faltarem traduções.
+
+Porém, em outros contextos, você poderá querer alterar esse comportamento. Por exemplo, o handler padrão de exceções não permite detectar facilmente as traduções inexistentes durante a execução de testes automatizados. Nesses casos, um outro handler de exceções pode ser especificado, sendo que ele deve ser um método do módulo I18n:
+
+<ruby>
+module I18n
+  def gere_a_excecao(*args)
+    raise args.first
+  end
+end
+
+I18n.exception_handler = :gere_a_excecao
+</ruby>
+
+Esse método iria regerar todas as exceções capturadas, incluindo +MissingTranslationData+.
+
+Outro exemplo onde o comportamento padrão é inconveniente é no TranslationHelper do Rails, que oferece o método +#t+ (além do +#translate+). Quando uma exceção +MissingTranslationData+ ocorre nesse contexto, o helper irá encapsular a mensagem em um span com a classe de CSS +translation_missing+.
+
+Para fazer isso, o helper força o método +I18n#translate+ à gerar exceções não importando qual o handler de exceções definido, passando a opção +:raise+:
+
+<ruby>
+I18n.t :foo, :raise => true # sempre regera exceções provenientes do backend
+</ruby>
+
+h3. Conclusão
+
+Agora você já deve ter uma boa visão geral sobre como o suporte ao I18n funciona no Ruby on Rails e está preparado para começar a traduzir seu projeto.
+
+Se estiver faltando algo ou você encontrar um erro nesse guia, por favor, cadastre um ticket no nosso "rastreador de problemas":http://i18n.lighthouseapp.com/projects/14948-rails-i18n/overview. Se você quiser discutir alguns pontos ou tem dúvidas, por favor assine nossa "mailinglist":http://groups.google.com/group/rails-i18n.
+
+
+h3. Contribuindo para Rails I18n
+
+O suporte ao I18n no Ruby on Rails foi introduzido na versão 2.2 e ainda está evoluindo. Esse projeto segue as boas práticas de desenvolvimento do Ruby on Rails de utilizar soluções de plugins e aplicações reais primeiro, e só então escolher as melhores e mais utilizadas características e funcionalidades para serem inclusas no core.
+
+Assim, encorajamos todos à experimentar novas idéias e funcionalidades em plugins e outras bibliotecas e disponibilizá-las para a comunidade. (Não esqueça de anunciar seu trabalho na nossa "mailing list":http://groups.google.com/group/rails-i18n!)
+
+Se o seu próprio local (língua) não estiver entre os nossos "exemplos de tradução":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale repository for Ruby on Rails, por favor, faça um "_fork_":http://github.com/guides/fork-a-project-and-submit-your-modifications do repositório, adicione os dados e envie um "pull request":http://github.com/guides/pull-requests.
+
+
+h3. Referências
+
+* "rails-i18n.org":http://rails-i18n.org - Homepage do projeto rails-i18n project. Você pode encontrar várias referências úteis no "wiki":http://rails-i18n.org/wiki.
+* "rails-i18n Google group":http://groups.google.com/group/rails-i18n - Mailing list do projeto.
+* "Github: rails-i18n":http://github.com/svenfuchs/rails-i18n/tree/master - Repositório do código do projeto rails-i18n. O mais importante é que você vai encontrar vários "exemplos de tradução":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale para Rails que devem funcionar para na maioria das aplicações.
+* "Lighthouse: rails-i18n":http://i18n.lighthouseapp.com/projects/14948-rails-i18n/overview – Rastreador de problemas do projeto rails-i18n.
+* "Github: i18n":http://github.com/svenfuchs/i18n/tree/master - Repositório da gem do I18n.
+* "Lighthouse: i18n":http://i18n.lighthouseapp.com/projects/14947-ruby-i18n/overview - Rastreador de problemas da gem do i18n.
+
+
+h3. Autores
+
+* "Sven Fuchs":http://www.workingwithrails.com/person/9963-sven-fuchs (primeiro autor)
+* "Karel Minařík":http://www.workingwithrails.com/person/7476-karel-mina-k
+* “Rafaelr Rosa”:http://www.workingwithrails.com/person/12164-rafael-rosa (tradutor)
+
+Se você achou esse guia útil, por favor pense em recomendar seus autores no "workingwithrails":http://www.workingwithrails.com.
+
+
+h3. Notas
+
+fn1. Ou, para citar a "Wikipedia":http://en.wikipedia.org/wiki/Internationalization_and_localization: _"Internacionalização é o processo de planejar uma aplicação de software para que ela possa ser adaptada à várias línguas e regiões sem mudanças de engenharia. Localização é o processo de adaptar o software para uma região ou língua específica adicionando componentes específicos ao local e traduzindo textos."_
+
+fn2. Outros backends podem possibilitar ou mesmo exigir o uso de outros formatos. O backend GetText, por exemplo, permite a leitura de arquivos GetText.
+
+fn3. Uma dessas razões é que não queremos carregar nada além do necessário em aplicações que não precisam das funcionalidades do I18n, de forma que precisamos manter a biblioteca I18n o mais simples possível para o inglês. Outra razão é que é praticamente impossível implementar uma solução única para todos so problemas relacionados ao I18n para todas as línguas existentes. Assim, uma solução que nos permite trocar facilmente toda a implementação é bastante apropriada. Isso também facilita experiências com funcionalidades customizadas e extensões.
+
+
+h3. Changelog
+
+"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213/tickets/23

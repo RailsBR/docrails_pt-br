@@ -474,7 +474,7 @@ Este código define a variável de instância +@posts+ como um array de todos os
 
 TIP: Para mais informações sobre busca de registros com Active Record, veja "Interface para Queries do Active Record":active_record_querying.html.
 
-O bloco +respond_to+ gerencia ambas as chamadas HTML e XML para esta ação. Se você navegar para +http://localhost:3000/posts.xml+, verá todos os posts em formato XML. O formato HTML busca por uma view em +app/views/posts/+ com um nome que corresponda ao nome da ação. O Rails faz com que todas as variáveis de instância da ação estejam disponíveis para a view. Aqui está o +app/view/posts/index.html.erb+:
+O bloco +respond_to+ gerencia ambas as chamadas HTML e XML para esta ação. Se você navegar para +http://localhost:3000/posts.xml+, verá todos os posts em formato XML. O formato HTML busca por uma view em +app/views/posts/+ com um nome que corresponda ao nome da ação. O Rails faz com que todas as variáveis de instância da ação estejam disponíveis para a view. Aqui está o +app/views/posts/index.html.erb+:
 
 <erb>
 <h1>Listing posts</h1>

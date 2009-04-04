@@ -1,0 +1,311 @@
+h2. Rails on Rack
+
+Esse guia cobre a integração do Rails com o Rack e interface com outros componentes Rack. Ao completar este guia, você será capaz de:
+
+* Criar aplicações com Rails Metal
+* Usar middlewares Rack em suas aplicações Rails
+* Entender a pilha interna de middlewares do Action Pack
+* Definir uma pilha de middlewares personalizada
+
+endprologue.
+
+WARNING: Esse guia pressupõe um conhecimento funcional do protocolo Rack e conceitos acerca do Rack, como middlewares, mapas de urls e Rack::Builder
+
+h3. Introdução ao Rack
+
+bq. O Rack fornece uma interface mínima, modular e adaptável para desenvolver aplicações web em Ruby. Por encapsular requisições e respostas HTTP da forma mais simples possível, ele unifica e destila uma API para servidores web, frameworks web, e softwares intermediários (os chamados middlewares) em uma única chamada de método.
+
+- "Documentação da API do Rack":http://rack.rubyforge.org/doc/
+
+Explicar Rack não é o verdadeiro escopo deste guia. Caso você não seja familiar com o básico do Rack, você deve verificar os seguintes links:
+
+* "Site Oficial do Rack":http://rack.github.com
+* "Introducing Rack":http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html
+* "Ruby on Rack #1 - Hello Rack!":http://m.onkey.org/2008/11/17/ruby-on-rack-1
+* "Ruby on Rack #2 - The Builder":http://m.onkey.org/2008/11/18/ruby-on-rack-2-rack-builder
+
+h3. Rails on Rack
+
+h4. Objeto Rack em aplicações Rails
+
+<tt>ActionController::Dispatcher.new</tt> é o principal objeto Rack em uma aplicação Rails. Qualquer servidor web que siga o protocolo Rack deveria estar usando o objeto +ActionController::Dispatcher.new+ para servir uma aplicação Rails.</p>
+
+h4. +script/server+
+
+<tt>script/server</tt> executa o trabalho básico de criar um objeto +Rack::Builder+ e iniciar o servidor web. Esse é o equivalente Rails ao script Rack +rackup+.
+
+A seguir é mostrado como +script/server+ cria uma instância do +Rack::Builder+
+
+<ruby>
+app = Rack::Builder.new {
+  use Rails::Rack::LogTailer unless options[:detach]
+  use Rails::Rack::Debugger if options[:debugger]
+
+  map "/" do
+    use Rails::Rack::Static
+    run ActionController::Dispatcher.new
+  end
+}.to_app
+</ruby>
+
+Os middlewares usados no código acima são úteis primariamente apenas em ambiente de desenvolvimento. A tabela a seguir explica suas finalidades:
+
+|_.Middleware|_.Propósito|
+|Rails::Rack::LogTailer|Anexar a saída do arquivo de log ao console|
+|Rails::Rack::Static|Servir arquivos estáticos do diretório +RAILS_ROOT/public+|
+|Rails::Rack::Debugger|Iniciar debugger|
+
+h4. +rackup+
+
+Para usar o +rackup+ em vez do +script/server+ do Rails, você pode colocar o seguinte conteúdo no arquivo +config.ru+, na raiz da sua aplicação Rails:
+
+<ruby>
+# RAILS_ROOT/config.ru
+require "config/environment"
+
+use Rails::Rack::LogTailer
+use Rails::Rack::Static
+run ActionController::Dispatcher.new
+</ruby>
+
+E inicie o servidor:
+
+<shell>
+[lifo@null application]$ rackup
+</shell>
+
+Para saber mais sobre diferentes opções do +rackup+:
+
+<shell>
+[lifo@null application]$ rackup --help
+</shell>
+
+h3. Pilha de middlewares do Action Controller
+
+Muitos dos componentes internos do Action Controller são implementados como middlewares do Rack. +ActionController::Dispatcher+ utiliza o +ActionController::MiddlewareStack+ para combinar vários middlewares internos e externos para formar uma aplicação Rack Rails completa.
+
+NOTE: +ActionController::MiddlewareStack+ é o equivalente no Rails ao +Rack::Builder+, mas construído para melhor flexibilidade e com mais características para adequar-se aos requisitos do Rails.
+
+h4. Inspecionando a pilha de Middlewares
+
+O Rails possui uma tarefa rake muito conveniente para inspecionar a pilha de middlewares em uso:
+
+<shell>
+$ rake middleware
+</shell>
+
+Para uma aplicação Rails recém gerada, isso deve produzir algo como:
+
+<ruby>
+use Rack::Lock
+use ActionController::Failsafe
+use ActionController::Session::CookieStore, , {:secret=>"<secret>", :session_key=>"_<app>_session"}
+use Rails::Rack::Metal
+use ActionController::RewindableInput
+use ActionController::ParamsParser
+use Rack::MethodOverride
+use Rack::Head
+use ActiveRecord::QueryCache
+run ActionController::Dispatcher.new
+</ruby>
+
+O propósito de cada um desses middlewares é explicado na seção "Middlewares internos":#pilha-interna-de-middlwares.
+
+h4. Configurando a pilha de Middlewares
+
+O Rails fornece uma interface simples de configuração +config.middleware+ para adicionar, remover e modificar os middlewares na pilha de middlewares por meio do +environment.rb+ ou do arquivo de configuração específico do ambiente em  <tt>environments/&lt;ambiente&gt;.rb</tt>.
+
+h5. Adicionando um Middleware
+
+Você pode adicionar um novo middleware à pilha de middlewares usando qualquer um dos métodos a seguir:
+
+* +config.middleware.use(new_middleware, args)+ - Adiciona o novo middleware no fim da pilha de middlewares.
+
+* +config.middleware.insert_before(existing_middleware, new_middleware, args)+ - Adiciona o novo middleware antes do middleware especificado na pilha de middlewares.
+
+* +config.middleware.insert_after(existing_middleware, new_middleware, args)+ - Adiciona o novo middleware depois do middleware existente especificado na pilha de middlewares.
+
+<strong>Exemplo:</strong>
+
+<ruby>
+# environment.rb
+
+# Coloca Rack::BounceFavicon no fim
+config.middleware.use Rack::BounceFavicon
+
+# Adiciona Lifo::Cache após ActiveRecord::QueryCache.
+# Passa { :page_cache => false } como argumento ao Lifo::Cache.
+config.middleware.insert_after ActiveRecord::QueryCache, Lifo::Cache, :page_cache => false
+</ruby>
+
+h5. Trocando um Middleware
+
+Você pode trocar um middleware existente na pilha de middlewares usando +config.middleware.swap+.
+
+<strong>Exemplo:</strong>
+
+<ruby>
+# environment.rb
+
+# Substitui ActionController::Failsafe por Lifo::Failsafe
+config.middleware.swap ActionController::Failsafe, Lifo::Failsafe
+</ruby>
+
+h5. A Pilha de Middlewares é um Array
+
+A pilha de middlewares se comporta como um +Array+ normal. Você pode usar quaisquer métodos de +Array+ para inserir, reordenar, ou remover itens da pilha. Os métodos descritos anteriormente são apenas métodos de conveniência.
+
+Por exemplo, a linha a seguir remove o middleware que possua o nome da classe igual ao informado:
+
+<ruby>
+config.middleware.delete(middleware)
+</ruby>
+
+h4. Pilha Interna de Middlwares
+
+Muitas das funcionalidades do Action Controller são implementadas como Middlewares. A tabela a seguir explica o propósito de cada um deles:
+
+|_.Middleware|_.Propósito|
+|Rack::Lock|Sets +env["rack.multithread"]+ sinaliza para +true+ e encapsula a aplicação dentro de um Mutex.|
+|ActionController::Failsafe|Retorna o Status HTTP +500+ ao cliente se uma exceção for lançada durante o processamento.|
+|ActiveRecord::QueryCache|Habilita o cache de consultas do ActiveRecord.|
+|ActionController::Session::CookieStore|Utiliza sessão armazenada em cookies.|
+|ActionController::Session::MemCacheStore|Utiliza sessão armazenada no memcached.|
+|ActiveRecord::SessionStore|Utiliza sessão armazenada em banco de dados.|
+|Rack::MethodOverride|Estabelece um método HTTP baseado no parâmetro +_method+ ou +env["HTTP_X_HTTP_METHOD_OVERRIDE"]+.|
+|Rack::Head|Discarta o corpo da resposta se o cliente enviar uma requisição +HEAD+.|
+
+TIP: É possível usar qualquer um dos middlewares acima na sua pilha personalizada do Rack.
+
+h4. Customizando a pilha interna de middlewares
+
+É possível substituir toda a pilha de middlewares por uma pilha personalizada usando +ActionController::Dispatcher.middleware=+.
+
+<strong>Exemplo:</strong>
+
+Coloque o seguinte em um initializer:
+
+<ruby>
+# config/initializers/stack.rb
+ActionController::Dispatcher.middleware = ActionController::MiddlewareStack.new do |m|
+  m.use ActionController::Failsafe
+  m.use ActiveRecord::QueryCache
+  m.use Rack::Head
+end
+</ruby>
+
+Agora, inspecionando a pilha de middlewares:
+
+<shell>
+$ rake middleware
+(in /Users/lifo/Rails/blog)
+use ActionController::Failsafe
+use ActiveRecord::QueryCache
+use Rack::Head
+run ActionController::Dispatcher.new
+</shell>
+
+h4. Usando o Rack Builder
+
+A seguir é mostrado como usar o +Rack::Builder+ em vez do +MiddlewareStack+ fornecido pelo Rails.
+
+<strong>Limpe a pilha existente de middlewares do Rails</strong>
+
+<ruby>
+# environment.rb
+config.middleware.clear
+</ruby>
+
+<br />
+<strong>Adicione o arquivo +config.ru+ à raiz do seu projeto +RAILS_ROOT+</strong>
+
+<ruby>
+# config.ru
+use MyOwnStackFromStratch
+run ActionController::Dispatcher.new
+</ruby>
+
+h3. Aplicações Rails Metal
+
+Aplicações Rails Metal são aplicações Rack mínimas especificamente projetadas para integração com uma aplicação Rails típica. Como aplicações Rails Metal ignoram toda a pilha do Action Controller, é possível servir uma requisição sem a sobrecarga do framework Rails. Isso é especialmente útil nos raros casos onde o problema é o desempenho de toda a pilha do framework Rails.
+
+O railscast de Ryan Bates "Rails Metal":http://railscasts.com/episodes/150-rails-metal fornece um bom passo a passo sobre a utilização do Rails Metal.
+
+h4. Gerando uma aplicação Metal
+
+O Rails fornece um gerador chamado +metal+ para criar uma nova aplicação Metal:
+
+<shell>
+$ script/generate metal poller
+</shell>
+
+Esse comando gerará o arquivo +poller.rb+ no diretório +app/metal+:
+
+<ruby>
+# Permite que o fragmento metal execute de forma isolada
+require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Rails)
+
+class Poller
+  def self.call(env)
+    if env["PATH_INFO"] =~ /^\/poller/
+      [200, {"Content-Type" => "text/html"}, ["Hello, World!"]]
+    else
+      [404, {"Content-Type" => "text/html"}, ["Not Found"]]
+    end
+  end
+end
+</ruby>
+
+Aplicações Metal dentro do diretório +app/metal+ de plugins também serão descobertos e adicionados à lista.
+
+Aplicações Metal são uma otimização. Você deve certificar-se de "entender as implicações relacionadas ao desempenho"::http://weblog.rubyonrails.org/2008/12/20/performance-of-rails-metal antes de usá-las.
+
+h4. Ordem de execução
+
+Todas aplicações Metal são executadas pelo middleware +Rails::Rack::Metal+, que é parte da cadeia +ActionController::MiddlewareStack+.
+
+Abaixo o método primário, responsável por executar as aplicações Metal:
+
+<ruby>
+def call(env)
+  @metals.keys.each do |app|
+    result = app.call(env)
+    return result unless result[0].to_i == 404
+  end
+  @app.call(env)
+end
+</ruby>
+
+No código acima, +@metals+ é um hash ordenado de aplicações Metal. Devido à ordenação padrão por ordem alfabética, +aaa.rb+ virá antes de +bbb.rb+ na cadeia Metal.
+
+Todavia, é possível alterar a ordem padrão no seu ambiente. Simplesmente adicione uma linha como a seguinte ao arquivo +config/environment.rb+
+
+<ruby>
+config.metals = ["Bbb", "Aaa"]
+</ruby>
+
+Cada string no array deve ser o nome da sua classe metal. Se utilizar a configuração anterior, será avisado de que aplicações metal não listadas não serão carregadas.
+
+WARNING: Aplicações Metal não podem retornar o Status HTTP +404+ para um cliente, pois ele é usado para continuar a execução da cadeia Metal. Por favor, use controllers Rails normais ou um middleware personalizado se retornar +404+ for um requisito.
+
+h3. Recursos
+
+h4. Aprendendo Rack
+
+* "Site Oficial do Rack":http://rack.github.com
+* "Introducing Rack":http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html
+* "Ruby on Rack #1 - Hello Rack!":http://m.onkey.org/2008/11/17/ruby-on-rack-1
+* "Ruby on Rack #2 - The Builder":http://m.onkey.org/2008/11/18/ruby-on-rack-2-rack-builder
+
+h4. Entendendo os Middlewares
+
+* "Railscast sobre Middlewares Rack":http://railscasts.com/episodes/151-rack-middleware
+
+h3. Changelog
+
+"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/58
+
+* 28 de Março de 2009: Revisado por "Daniel Lopes":translators.html#danielvlopes
+* 28 de Março de 2009: Traduzido por "Fernando Luizão":translators.html#fernandoluizao
+* 7 de Fevereiro de 2009: Segunda versão por "Pratik":credits.html#lifo
+* 11 de Janeiro 2009: Primeira versão por "Pratik":credits.html#lifo
