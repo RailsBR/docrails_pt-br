@@ -238,7 +238,7 @@ class Account < ActiveRecord::Base
 end
 </ruby>
 
-The +validates_exclusion_of+ helper has an option +:in+ that receives the set of values that will not be accepted for the validated attributes. The +:in+ option has an alias called +:within+  that you can use for the same purpose, if you'd like to. This example uses the +:message+ option to show how you can include the attribute's value.
+The +validates_exclusion_of+ helper has an option +:in+ that receives the set of values that will not be accepted for the validated attributes. The +:in+ option has an alias called +:within+ that you can use for the same purpose, if you'd like to. This example uses the +:message+ option to show how you can include the attribute's value.
 
 The default error message for +validates_exclusion_of+  is "_is not included in the list_".
 
@@ -530,7 +530,7 @@ class Invoice < ActiveRecord::Base
 end
 </ruby>
 
-You can even create your own validation helpers and reuse them in several different models. Here is an example where we create a custom validation helper to validate the format of fields that represent email addresses:
+You can even create your own validation helpers and reuse them in several different models. Here is an example where we create a custom validation helper to validate the format of fields that represent a ratio (value between 1 to n):
 
 <ruby>
 ActiveRecord::Base.class_eval do
