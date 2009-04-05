@@ -619,8 +619,8 @@ end
 <p>Testar a resposta da sua requisição validando a presença de elementos <span class="caps">HTML</span> e o seu conteúdo é um modo útil de testar as views da sua aplicação. A assertion <tt>assert_select</tt> permite que você faça isso usando uma sintaxe simples e poderosa.</p>
 <div class='note'><p>Você pode encontrar referências a <tt>assert_tag</tt> em outra documentação, mas agora ela está desatualizada pois foi substituída pela <tt>assert_select</tt>.</p></div>
 <p>Há duas formas de se usar a <tt>assert_select</tt>:</p>
-<tt>assert_select(selector, [equality], [message])`</tt>garante que a condição de igualdade é atingida nos elementos capturados pelo selector. O selector pode ser um seletor <span class="caps">CSS</span> (String), uma expressão com valores para substituição, ou um objeto <tt>HTML::Selector</tt>.
-<tt>assert_select(element, selector, [equality], [message])</tt>garante que a condição de igualdade é atendida para os elementos capturados pelo selector começando pelo <em>element</em> (instância de <tt>HTML::Node</tt>) e seus descendentes.
+<p><tt>assert_select(selector, [equality], [message])`</tt> garante que a condição de igualdade é atingida nos elementos capturados pelo selector. O selector pode ser um seletor <span class="caps">CSS</span> (String), uma expressão com valores para substituição, ou um objeto <tt>HTML::Selector</tt>.</p>
+<p><tt>assert_select(element, selector, [equality], [message])</tt> garante que a condição de igualdade é atendida para os elementos capturados pelo selector começando pelo <em>element</em> (instância de <tt>HTML::Node</tt>) e seus descendentes.</p>
 <p>Por exemplo, você poderia verificar o conteúdo no elemento title do seu response com:</p>
 <div class="code_container"><code class="ruby">
 assert_select 'title', &quot;Bem vindo ao Guia de Testes do Rails&quot;
