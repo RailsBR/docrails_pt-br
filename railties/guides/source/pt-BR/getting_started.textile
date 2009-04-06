@@ -1269,7 +1269,7 @@ Você também precisará modificar o +views/posts/_form.html.erb+ para incluir a
 
 Com estas modificações feitas, você verá que pode editar um post e suas tags diretamente na mesma view.
 
-NOTE: Você pode querer usar javascript para adicionar dinamicamente novas tags em um único formulário. Para um exemplo desta e outras técnicas avançadas, veja a "aplicação de exemplo de modelos aninhados":http://github.com/alloy/complex-form-examples/tree/nested_attributes.
+NOTE: Você pode querer usar JavaScript para adicionar dinamicamente novas tags em um único formulário. Para um exemplo desta e outras técnicas avançadas, veja a "aplicação de exemplo de formulários complexos":http://github.com/alloy/complex-form-examples/tree/master.
 
 h3. Qual o próximo passo?
 
