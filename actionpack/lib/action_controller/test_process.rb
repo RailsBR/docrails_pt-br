@@ -13,6 +13,7 @@ module ActionController #:nodoc:
 
       @query_parameters   = {}
       @session            = TestSession.new
+      @session_options    ||= {}
 
       initialize_default_values
       initialize_containers
@@ -110,6 +111,7 @@ module ActionController #:nodoc:
     end
 
     def recycle!
+      @env["action_controller.request.request_parameters"] = {}
       self.query_parameters   = {}
       self.path_parameters    = {}
       @headers, @request_method, @accepts, @content_type = nil, nil, nil, nil
@@ -258,11 +260,11 @@ module ActionController #:nodoc:
 
     # Returns binary content (downloadable file), converted to a String
     def binary_content
-      raise "Response body is not a Proc: #{body.inspect}" unless body.kind_of?(Proc)
+      raise "Response body is not a Proc: #{body_parts.inspect}" unless body_parts.kind_of?(Proc)
       require 'stringio'
 
       sio = StringIO.new
-      body.call(self, sio)
+      body_parts.call(self, sio)
 
       sio.rewind
       sio.read
