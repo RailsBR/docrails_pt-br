@@ -1078,9 +1078,23 @@ class Part &lt; ActiveRecord::Base
 end
 </code></div>
 <p>Cada instância do model terá os seguintes métodos:</p>
-<p>dirty_workaround_for_nontextile_81
- 
-h6(#mtodos-para-colunas-adicionais). 4.4.1.1 Métodos para colunas adicionais</p>
+<div class="code_container"><code class="ruby">
+assemblies(force_reload = false)
+assemblies&lt;&lt;(object, ...)
+assemblies.delete(object, ...)
+assemblies=objects
+assembly_ids
+assembly_ids=ids
+assemblies.clear
+assemblies.empty?
+assemblies.size
+assemblies.find(...)
+assemblies.exist?(...)
+assemblies.build(attributes = {}, ...)
+assemblies.create(attributes = {})
+</code></div>
+
+<h6 id="mtodos-para-colunas-adicionais">4.4.1.1 Métodos para colunas adicionais</h6>
 <p>Se a tabela de junção de uma associação <tt>has_and_belongs_to_many</tt> possui colunas adicionais além das duas chaves estrangeiras, estas colunas serão adicionadas como atributos nos registros retornados pela associação. Registros retornados com atributos adicionais serão sempre somente leitura, porque o Rails não pode salvar alterações nestes atributos.</p>
 <div class='warning'><p>O uso de atributos extra em uma tabela de junção em uma associação <tt>has_and_belongs_to_many</tt> foi depreciado. Se você precisa deste tipo de comportamento complexo em uma tabela que une dois models em uma relação muitos para muitos, você deve usar uma associação <tt>has_many :through</tt> ao invés de <tt>has_and_belongs_to_many</tt>.</p></div>
 <h6 id="ttemcollectionemforce-reload--falsett">4.4.1.2 <tt><em>collection</em>(force_reload = false)</tt></h6>

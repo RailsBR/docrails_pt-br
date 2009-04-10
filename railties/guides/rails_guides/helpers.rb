@@ -29,6 +29,6 @@ module RailsGuides
     def code(&block)
       c = capture(&block)
       content_tag(:code, c)
-    end
+    end        
   end
 end
