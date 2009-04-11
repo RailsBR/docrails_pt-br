@@ -4,11 +4,6 @@ h2. Sobre os tradutores/revisores (pt-br)
 Gostariamos de agradecer às seguintes pessoas, por terem dedicado seu tempo e esforço para traduzirem os guias originais para a Língua Portuguesa, tornando possível que um número maior de desenvolvedores tenha acesso a essa fonte de informação sobre o Rails
 <% end %>
 
-<% author('Daniel Lopes', 'danielvlopes') do %>
-Daniel Lopes é parceiro da empresa "Area Criações":http://www.areacriacoes.com.br e escreve com frequência no blog "blog.areacriacoes.com.br":http://blog.areacriacoes.com.br, falando sobre Ruby on Rails, Flex, Javascript, Flash e assuntos relacionados a web e design.
-Trabalha como desenvolvedor Rails/Flex/Js/Flash e webdesigner além de ser instrutor dos curso de Adobe Flex e RubyOnRails na E-genial (www.egenial.com.br).
-<% end %>
-
 <% author('Adolfo Sousa', 'adolfosousa') do %>
 Adolfo Sousa desenvolve sistemas web utilizando a plataforma Java. Atualmente trabalha para a Locaweb desenvolvendo produtos da área de Telecomunicações.
 Tem dedicado parte do seu tempo livre ao estudo da linguagem Ruby e das ferramentas existentes neste novo universo.
@@ -16,8 +11,9 @@ Interessa-se por linguagens de programação, desenvolvimento guiado por testes,
 Também escreve no "seu blog":http://www.adolfosousa.com.br/blog.
 <% end %>
 
-<% author('Fabio Kreusch', 'fabiokr') do %>
-Fabio Kreusch é estudante do curso de Sistemas de Informação na Universidade Federal de Santa Catarina, e trabalha com desenvolvimento web. Desenvolveu sistemas com Java, e atualmente dedica-se ao aprendizado e utilização prática de conceitos e ferramentas de desenvolvimento ágil, incluindo o framework Ruby on Rails. Escreve em "seu blog":http://fabio.kreusch.com.br/.
+<% author('Cairo Lincoln de Morais Noleto', 'caironoleto') do %>
+Cairo Noleto é um desenvolvedor web que trabalha com Ruby on Rails, Python, PHP e até com ASP. Escreve com frequência no "Cairo'sBlog":http://www.caironoleto.com onde fala de Ruby On Rails, PHP, Agile e muito mais coisas.
+Se você quer saber mais, pode vasculhar o "Twitter":http://www.twitter.com/caironoleto e olhar seus projetos no "GitHub:http://www.github.com/caironoleto".
 <% end %>
 
 <% author('Carlos Antonio da Silva', 'carlosantoniodasilva') do %>
@@ -31,8 +27,13 @@ Tem disponibilizado parte de seu tempo livre para estudos sobre a linguagem Ruby
 Cássio Marques é um desenvolvedor que trabalha com diversas linguagens de programação, entre elas Ruby, Java e C. Atualmente tem realizado a maioria dos seus trabalhos desenvolvendo aplicações web utilizando Ruby on Rails. É formado em Computação Científica pela Universidade de Taubaté. Você pode acompanhá-lo pelo "twitter":http://www.twitter.com/cassiomarques ou lendo seu "blog":http://cassiomarques.wordpress.com. 
 <% end %>
 
-<% author('Rafael Rosa', 'rafaelrosafu') do %>
-Rafael Rosa é formado em administração de empresas pela Faculdade de Administração, Economia e Contabilidade da Universidade de São Paulo, e trabalha com desenvolvimento de sistemas há mais de 13 anos. Já trabalhou com Delphi, .NET e atualmente trabalha com Ruby on Rails. Além de participar da comunidade Ruby/Rails ele também acompanha a comunidade ALT.NET. Atualmente é um dos colaboradores do "Ruby Inside Brasil":http://www.rubyinside.com.br e mantém um "blog sobre Ruby, Rails, ALT.NET e cinema":http://www.rafaelrosafu.com. Ele dedica 90% de suas horas vagas ao cinema e os outros 10% aprendendo francês. Você pode acompanhá-lo no "Twitter":http://www.twitter.com/rafaelrosafu.
+<% author('Daniel Lopes', 'danielvlopes') do %>
+Daniel Lopes é parceiro da empresa "Area Criações":http://www.areacriacoes.com.br e escreve com frequência no blog "blog.areacriacoes.com.br":http://blog.areacriacoes.com.br, falando sobre Ruby on Rails, Flex, Javascript, Flash e assuntos relacionados a web e design.
+Trabalha como desenvolvedor Rails/Flex/Js/Flash e webdesigner além de ser instrutor dos curso de Adobe Flex e RubyOnRails na E-genial (www.egenial.com.br).
+<% end %>
+
+<% author('Fabio Kreusch', 'fabiokr') do %>
+Fabio Kreusch é estudante do curso de Sistemas de Informação na Universidade Federal de Santa Catarina, e trabalha com desenvolvimento web. Desenvolveu sistemas com Java, e atualmente dedica-se ao aprendizado e utilização prática de conceitos e ferramentas de desenvolvimento ágil, incluindo o framework Ruby on Rails. Escreve em "seu blog":http://fabio.kreusch.com.br/.
 <% end %>
 
 <% author('Fernando Luizão', 'fernandoluizao') do %>
@@ -41,4 +42,8 @@ Fernando Luizão é formado em Ciências da Computação pela Universidade Estad
 
 <% author('José Eleudson G. Queiroz', 'eleudsonqueiroz') do %>
 Eleudson Queiroz é formado em Informática pela Universidade de Fortaleza, UNIFOR. Atualmente cursa mestrado em gestão e administração de sistemas informáticos na Univerdidade Carlos III de Madrid, por meio de uma bolsa de estudos do LASPAU Leadership Fellowship Program da Harvad University e Fundação W. K. Kellogg. Mantém o "blog":http://www.eleudson.com.br onde escreve sobre administração de sistemas, programação (principalmente em Ruby on Rails), experiência de viver na Espanha e sobre projetos de desenvolvimento sustentável, entre outros assuntos.
+<% end %>
+
+<% author('Rafael Rosa', 'rafaelrosafu') do %>
+Rafael Rosa é formado em administração de empresas pela Faculdade de Administração, Economia e Contabilidade da Universidade de São Paulo, e trabalha com desenvolvimento de sistemas há mais de 13 anos. Já trabalhou com Delphi, .NET e atualmente trabalha com Ruby on Rails. Além de participar da comunidade Ruby/Rails ele também acompanha a comunidade ALT.NET. Atualmente é um dos colaboradores do "Ruby Inside Brasil":http://www.rubyinside.com.br e mantém um "blog sobre Ruby, Rails, ALT.NET e cinema":http://www.rafaelrosafu.com. Ele dedica 90% de suas horas vagas ao cinema e os outros 10% aprendendo francês. Você pode acompanhá-lo no "Twitter":http://www.twitter.com/rafaelrosafu.
 <% end %>
