@@ -1,6 +1,6 @@
 module RailsGuides
   LIGHTHOUSE_PROJECT_PATH = "http://railsguides-pt_br.lighthouseapp.com/projects/19768/tickets/"
-  module HelpersPtBR
+  module HelpersPtBr
     def guide_pt_br(name, url, options = {}, &block)
       link = content_tag(:a, :href => url) { name }
       result = content_tag(:dt, link)

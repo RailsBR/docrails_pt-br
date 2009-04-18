@@ -567,9 +567,13 @@ require 'bleak_house' if ENV['BLEAK_HOUSE']
 RAILS_ENV=production BLEAK_HOUSE=1 ruby-bleak-house ./script/server
 </code></div>
 <p>Certifique-se de executar algumas centenas de requisições para ter uma amostra melhor de dados, e então digite <tt>CTRL-C</tt>. O servidor será finalizado e o Bleak House irá gerar uma saída em <tt>/tmp</tt>:</p>
-<p>dirty_workaround_for_nontextile_40
- 
-Para analisá-lo, execute o comando listado. As 20 linhas com maior probabilidade de estouro serão listadas:</p>
+<div class="code_container"><code class="html">
+** BleakHouse: working...
+** BleakHouse: complete
+** Bleakhouse: run 'bleak /tmp/bleak.5979.0.dump' to analyze.
+</code></div>
+
+<p>Para analisá-lo, execute o comando listado. As 20 linhas com maior probabilidade de estouro serão listadas:</p>
 <div class="code_container"><code class="html">
   191691 total objects
   Final heap size 191691 filled, 220961 free

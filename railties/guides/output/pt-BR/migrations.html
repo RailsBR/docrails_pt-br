@@ -307,10 +307,18 @@ rename_column :products, :upccode, :upc_code
 <p>Você não precisa ficar repetindo o nome da tabela e de seus grupos em todas as expressões relacionadas à alteração de uma tabela em particular. Os nomes individuais de alteração são também mais curtos, por exemplo, <tt>remove_column</tt> se torna somente <tt>remove</tt> e <tt>add_index</tt> se torna <tt>index</tt>.</p>
 <h4 id="helpers-especiais">3.3 Helpers Especiais</h4>
 <p>O Active Record fornece alguns atalhos para as funcionalidades mais corriqueiras. Por exemplo, é muito comum adicionar as colunas <tt>created_at</tt> e <tt>updated_at</tt> e há um método que faz exatamente isso:</p>
-<p>dirty_workaround_for_nontextile_19
-vai criar uma nova tabela products com aquelas duas colunas (mais a coluna <tt>id</tt>) enquanto</p>
-<p>dirty_workaround_for_nontextile_20
-adiciona as colunas em uma tabela existente.</p>
+<div class="code_container"><code class="ruby">
+change_table :products do |t|
+  t.timestamps
+end
+</code></div>
+<p>vai criar uma nova tabela products com aquelas duas colunas (mais a coluna <tt>id</tt>) enquanto</p>
+<div class="code_container"><code class="ruby">
+change_table :products do |t|
+  t.timestamps
+end
+</code></div>
+<p>adiciona as colunas em uma tabela existente.</p>
 <p>O outro helper é chamado de <tt>references</tt> (também disponível como <tt>belongs_to</tt>). Na sua forma mais simples, adiciona alguma legibilidade</p>
 <div class="code_container"><code class="ruby">
 create_table :products do |t|
@@ -318,15 +326,46 @@ create_table :products do |t|
 end
 </code></div>
 <p>criará uma coluna <tt>category_id</tt> do tipo apropriado. Note que você passa o nome do model, não o nome da coluna. O Active Recorde adiciona o <tt>_id</tt> pra você. Se você tem associações polimórficas <tt>belongs_to</tt>, então <tt>references</tt> irá adicionar as duas colunas necessárias:</p>
-<p>dirty_workaround_for_nontextile_22
-irá adicionar a coluna <tt>attachment_id</tt> e a coluna <tt>attachment_type</tt> do tipo string com o valor padrão &#8216;Photo&#8217;.</p>
+<div class="code_container"><code class="ruby">
+create_table :products do |t|
+  t.references :attachment, :polymorphic =&gt; {:default =&gt; 'Photo'}
+end
+</code></div>
+<p>irá adicionar a coluna <tt>attachment_id</tt> e a coluna <tt>attachment_type</tt> do tipo string com o valor padrão &#8216;Photo&#8217;.</p>
 <div class='note'><p>O helper <tt>references</tt> realmente não cria restrições de chave estrangeira. Você precisará usar <tt>execute</tt> para isso ou um plugin que adiciona <a href="#active-record-e-integridade-referencial">foreign key support</a>.</p></div>
 <p>Se os helpers fornecidos pelo Active Record não forem suficientes, você pode utilizar a função <tt>execute</tt> para rodar <span class="caps">SQL</span> arbitrárias.</p>
 <p>Para mais detalhes e exemplos de métodos individuais dê uma olhada na documentação da <span class="caps">API</span>, em particular a documentação para <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html">ActiveRecord::ConnectionAdapters::SchemaStatements</a> (que fornece os métodos disponíveis nos métodos <tt>up</tt> e <tt>down</tt>), <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html">ActiveRecord::ConnectionAdapters::TableDefinition</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>create_table</tt>) e  <a href="http://api.rubyonrails.com/classes/ActiveRecord/ConnectionAdapters/Table.html">ActiveRecord::ConnectionAdapters::Table</a> (que fornece os métodos disponíveis no objeto passado pelo <tt>change_table</tt>).</p>
 <h4 id="escrevendo-o-seu-mtodo-down">3.4 Escrevendo o seu Método <tt>down</tt></h4>
 <p>O método <tt>down</tt> da sua migration deve reverter as transformações realizadas pelo método <tt>up</tt>. Em outras palavras, o schema do banco de dados deve se manter inalterado se você fizer um <tt>up</tt> seguido de um <tt>down</tt>. Por exemplo, se você criar uma tabela no método up você deverá excluí-la no método <tt>down</tt>. É uma estratégia inteligente fazer as coisas na ordem inversa do que feito no método <tt>up</tt>. Por exemplo</p>
-<p>dirty_workaround_for_nontextile_23
-Algmas vezes a sua migration fará algumas coisas irreversíveis. Por exemplo, ela pode apagar alguns dados. Em casos como esse em que você não pode reverter uma migration, você pode lançar <tt>IrreversibleMigration</tt> no seu método <tt>down</tt>. Se alguém tentar reverter a sua migration uma mensagem de erro será mostrada informando que a reversão não poderá ser realizada.</p>
+<div class="code_container"><code class="ruby">
+class ExampleMigration &lt; ActiveRecord::Migration
+
+  def self.up
+    create_table :products do |t|
+      t.references :category
+    end
+    #add a foreign key
+    execute &lt;&lt;-SQL
+      ALTER TABLE products
+        ADD CONSTRAINT fk_products_categories
+        FOREIGN KEY (category_id)
+        REFERENCES categories(id)
+    SQL
+
+    add_column :users, :home_page_url, :string
+
+    rename_column :users, :email, :email_address
+  end
+
+  def self.down
+    rename_column :users, :email_address, :email
+    remove_column :users, :home_page_url
+    execute &quot;ALTER TABLE products DROP FOREIGN KEY fk_products_categories&quot;
+    drop_table :products
+  end
+end
+</code></div>
+<p>Algmas vezes a sua migration fará algumas coisas irreversíveis. Por exemplo, ela pode apagar alguns dados. Em casos como esse em que você não pode reverter uma migration, você pode lançar <tt>IrreversibleMigration</tt> no seu método <tt>down</tt>. Se alguém tentar reverter a sua migration uma mensagem de erro será mostrada informando que a reversão não poderá ser realizada.</p>
 <h3 id="executando-migrations">4 Executando Migrations</h3>
 <p>O Rails fornece um conjunto de tasks rake para trabalhar com migrations, o que se resume a rodar certos conjuntos de migrations. A primeiríssima task rake que você usará será provavelmente a <tt>db:migrate</tt>. Na sua forma mais básica, ela simplesmente executa o método <tt>up</tt> para todas as migrações que ainda não foram rodadas. Se não existirem estas migrations ainda não executadas, ela se encerra.</p>
 <p>Note que ao rodar a task <tt>db:migrate</tt>, também será executada a <tt>db:schema:dump</tt>, que irá alterar o arquivo db/schema.rb para bater com a estrutura do seu banco de dados.</p>

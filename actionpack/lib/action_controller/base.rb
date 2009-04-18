@@ -408,7 +408,7 @@ module ActionController #:nodoc:
 
       # Return an array containing the names of public methods that have been marked hidden from the action processor.
       # By default, all methods defined in ActionController::Base and included modules are hidden.
-      # More methods can be hidden using <tt>hide_actions</tt>.
+      # More methods can be hidden using <tt>hide_action</tt>.
       def hidden_actions
         read_inheritable_attribute(:hidden_actions) || write_inheritable_attribute(:hidden_actions, [])
       end
@@ -984,6 +984,7 @@ module ActionController #:nodoc:
       # of sending it as the response body to the browser.
       def render_to_string(options = nil, &block) #:doc:
         render(options, &block)
+        response.body
       ensure
         response.content_type = nil
         erase_render_results
@@ -1020,7 +1021,7 @@ module ActionController #:nodoc:
 
       # Clears the rendered results, allowing for another render to be performed.
       def erase_render_results #:nodoc:
-        response.body = nil
+        response.body = []
         @performed_render = false
       end
 
@@ -1247,13 +1248,12 @@ module ActionController #:nodoc:
         response.status = interpret_status(status || DEFAULT_RENDER_STATUS_CODE)
 
         if append_response
-          response.body ||= ''
-          response.body << text.to_s
+          response.body_parts << text.to_s
         else
           response.body = case text
-            when Proc then text
-            when nil  then " " # Safari doesn't pass the headers of the return if the response is zero length
-            else           text.to_s
+            when Proc then  text
+            when nil  then  [" "] # Safari doesn't pass the headers of the return if the response is zero length
+            else            [text.to_s]
           end
         end
       end
@@ -1338,6 +1338,7 @@ module ActionController #:nodoc:
         end
       end
 
+      # Returns true if a render or redirect has already been performed.
       def performed?
         @performed_render || @performed_redirect
       end
@@ -1346,6 +1347,7 @@ module ActionController #:nodoc:
         @action_name = (params['action'] || 'index')
       end
 
+      # Returns a set of the methods defined as actions in your controller
       def action_methods
         self.class.action_methods
       end
@@ -1372,6 +1374,7 @@ module ActionController #:nodoc:
         @request_origin ||= "#{request.remote_ip} at #{Time.now.to_s(:db)}"
       end
 
+      # Returns the request URI used to get to the current location
       def complete_request_uri
         "#{request.protocol}#{request.host}#{request.request_uri}"
       end

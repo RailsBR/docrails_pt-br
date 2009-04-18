@@ -29,11 +29,11 @@ h3. Comece aqui
 h3. Models
 
 <dl>
-  <% guide_pt_br("Migrations para bancos de dados no Rails", 'migrations.html', :revision_ticket => 16) do %>
+  <% guide("Migrations para bancos de dados no Rails", 'migrations.html') do %>
   Este guia cobre como você pode usar as migrações do Active Record para alterar seu banco de dados de uma forma organizada e estruturada.
 <% end %>
 
-<% guide_pt_br("Validações e Callbacks do Active Record", 'activerecord_validations_callbacks.html', :revision_ticket => 30) do %>
+<% guide("Validações e Callbacks do Active Record", 'activerecord_validations_callbacks.html') do %>
   Este guia explica como você pode utilizar as validações e callbacks do Active Record.
 <% end %>
 
@@ -41,7 +41,7 @@ h3. Models
   Este guia cobre todas as associações fornecidas pelo Active Record.
 <% end %>
 
-<% guide_pt_br("Interface para Queries do Active Record", 'active_record_querying.html', :revision_ticket => 29) do %>
+<% guide("Interface para Queries do Active Record", 'active_record_querying.html') do %>
   Este guia cobre como o Active Record trabalha com querys no banco de dados.
 <% end %>
 </dl>
@@ -50,14 +50,14 @@ h3. Views
 
 <dl>
 <% guide_pt_br("Layouts e Renderização no Rails", 'layouts_and_rendering.html', :translation_ticket => 5) do %>
-Este guia cobre o básico dos recursos de layout do Action Controller e Action View, incluindo renderização e redirecionamento, usando blocos +content_for+, e trabalhando com partials.
+Este guia cobre o básico dos recursos de layout do Action Controller e Action View, incluindo renderização e redirecionamento, usando blocos +content_for+, e trabalhando com partials. (Em tradução)
 <p>
   Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/layouts_and_rendering.html" %>
 </p>
 <% end %>
 
 <% guide("Action View Form Helpers", 'http://guides.rubyonrails.org/form_helpers.html', :ticket => 1) do %>
-Guia para utilização dos Form helpers do Rails. (Ainda não traduzido)
+Guia para utilização dos Form helpers do Rails. (Ainda em desenvolvimento)
 <% end %>
 </dl>
 
@@ -77,15 +77,16 @@ h3. Aprofundando-se
 
 <dl>
 
-  <% guide_pt_br("API de Internacionalização do Rails", 'i18n.html', :translation_ticket => 28) do %>
+  <% guide("Rails on Rack", 'rails_on_rack.html') do %>
+  Este guia cobre a integração do Rails com Rack e sua interface com componentes Rack.
+	<% end %>
+	
+  <% guide_pt_br("API de Internacionalização do Rails", 'i18n.html', :revision_ticket => 32) do %>
   Este guia cobre como adicionar internacionalização em sua aplicação. Sua aplicação irá ser capaz de traduzir conteúdo para diferentes idiomas, alterar regras de pluralização, usar formatação correta de datas para cada país e muito mais.
-  <p>
-    Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/i18n.html" %>
-  </p>
 	<% end %>
 
 	<% guide("Action Mailer Basics", 'http://guides.rubyonrails.org/action_mailer_basics.html', :ticket => 25) do %>
-	  Este guia descreve como utilizar o Action Mailer para enviar e receber emails. (Ainda não traduzido)
+	  Este guia descreve como utilizar o Action Mailer para enviar e receber emails. (Ainda em desenvolvimento)
 	<% end %>
 
 	<% guide("Testando Aplicações Rails", 'testing.html', :ticket => 8) do %>
@@ -105,33 +106,26 @@ h3. Aprofundando-se
 	<% end %>
 
 	<% guide("The Basics of Creating Rails Plugins", 'http://guides.rubyonrails.org/plugins.html', :ticket => 32) do %>
-	  Este guia cobre como criar plugins para estender as funcionalidades do Rails. (Ainda não traduzido)
+	  Este guia cobre como criar plugins para estender as funcionalidades do Rails. (Ainda em desenvolvimento)
 	<% end %>
 
-	<% guide("Configuring Rails Applications", 'http://guides.rubyonrails.org/configuring.html') do %>
-	  Este guia cobre as opções básicas de configuração para uma aplicação Rails. (Ainda não traduzido)
-	<% end %>
-
-  <% guide_pt_br("Rails on Rack", 'rails_on_rack.html', :translation_ticket => 27) do %>
-  Este guia cobre a integração do Rails com Rack e sua interface com componentes Rack.
-  <p>
-    Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/rails_on_rack.html"%>
-  </p>
+	<% guide_pt_br("Configuring Rails Applications", "configuring.html", :translation_ticket => 31 ) do %>
+	  Este guia cobre as opções básicas de configuração para uma aplicação Rails. (Em tradução)
+		<p>
+		  Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/configuring.html" %>
+		</p>	
 	<% end %>
 
 	<% guide("Rails Command Line Tools and Rake tasks", 'http://guides.rubyonrails.org/command_line.html', :ticket => 29) do %>
-	  Este guia cobre as ferramentas de linha de comando e tarefas rake disponibilizadas pelo Rails. (Ainda não traduzido)
+	  Este guia cobre as ferramentas de linha de comando e tarefas rake disponibilizadas pelo Rails. (Ainda em desenvolvimento)
 	<% end %>
 
 	<% guide("Caching with Rails", 'http://guides.rubyonrails.org/caching_with_rails.html', :ticket => 10) do %>
-	  Varia técnicas de caching disponibilizadas pelo Rails. (Ainda não traduzido)
+	  Varia técnicas de caching disponibilizadas pelo Rails. (Ainda em desenvolvimento)
 	<% end %>
 
-  <% guide_pt_br("Contribuindo para o Rails", 'contributing_to_rails.html', :translation_ticket => 24) do %>
+  <% guide_pt_br("Contribuindo para o Rails", 'contributing_to_rails.html', :revision_ticket => 34) do %>
   Rails não é um "framework de alguém". Este guia cobre as várias formas que você possui para se envolver no contínuo processo de desenvolvimento do Rails.
-  <p>
-    Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/contributing_to_rails.html" %>
-  </p>
 	<% end %>
 </dl>
 

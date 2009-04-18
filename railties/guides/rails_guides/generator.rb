@@ -48,7 +48,7 @@ module RailsGuides
 
         if guide =~ /\.erb\.textile/
           # Generate the erb pages with textile formatting - e.g. index/authors
-          result = view.render(:layout => 'layout', :file => name)
+          result = view.render(:layout => 'layout', :file => guide)
           f.write textile(result)
         else
           body = File.read(File.join(view_path, guide))
@@ -57,7 +57,7 @@ module RailsGuides
 
           result = view.render(:layout => 'layout', :text => textile(body))
           f.write result
-          warn_about_broken_links(result)
+          warn_about_broken_links(result) if ENV.key?("WARN_BROKEN_LINKS")
         end
       end
     end
@@ -146,7 +146,7 @@ module RailsGuides
       anchors = Set.new
       html.scan(/<h\d\s+id="([^"]+)/).flatten.each do |anchor|
         if anchors.member?(anchor)
-          puts "*** DUPLICATE HEADER ID: #{anchor}, please consider rewording"
+          puts "*** DUPLICATE HEADER ID: #{anchor}, please consider rewording" if ENV.key?("WARN_DUPLICATE_HEADERS")
         else
           anchors << anchor
         end
