@@ -925,7 +925,7 @@ O modo padrão baseado no +test/unit+ não é a única maneira de testar aplica�
 * "NullDB":http://avdi.org/projects/nulldb/, uma maneira de acelerar os testes ao evitar o uso de banco de dados.
 * "Factory Girl":http://github.com/thoughtbot/factory_girl/tree/master, como alternativa às fixtures.
 * "Shoulda":http://www.thoughtbot.com/projects/shoulda, uma extensão ao +test/unit+ com helpers, macros e assertions adicionais.
-* "RSpec": http://rspec.info/, um framework para behavior-driven development
+* "RSpec":http://rspec.info/, um framework para behavior-driven development
 
 h3. Changelog
 
