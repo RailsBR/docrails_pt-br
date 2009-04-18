@@ -76,7 +76,7 @@ O Active Record fornece métodos que executam tarefas comuns para definição do
 
 Se você precisar executar tarefas específicas para seu banco de dados (por exemplo, criar uma "foreign key":#active-record-e-integridade-referencial) então a função +execute+ permite que você execute SQL arbitrárias. A migration é apenas uma classe comum em Ruby, então você não está limitado a apenas estas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus models).
 
-Em banco de dados que suportam transações com parâmetros para mudar o schema (como o PostreSQL), as migrations entram em uma transação. Se o banco de dados não suporta isso (por exemplo MySQL e SQLite) então quando a migration falhar, as partes que tiveram sucesso não poderão ser revertidas. Você terá que desfazer estas mudanças manualmente.
+Em banco de dados que suportam transações com parâmetros para mudar o schema (como PostreSQL ou SQLite3), as migrations entram em uma transação. Se o banco de dados não suporta isso (por exemplo MySQL) então quando a migration falhar, as partes que tiveram sucesso não poderão ser revertidas. Você terá que desfazer estas mudanças manualmente.
 
 h4. O que há em um Nome
 
