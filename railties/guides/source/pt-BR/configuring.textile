@@ -1,0 +1,236 @@
+h2. Configurando Aplicações Rails
+
+Esse guia cobre as características de configuração e inicialização disponíveis para as aplicações Rails. Utilizando esse guia, você será capaz de:
+
+* Ajustar o comportamento de suas aplicações Rails
+* Adicionar código que será executado durante a inicialização da aplicação
+
+endprologue.
+ 
+
+h3. Locais para Código de Inicialização
+
+O Rails oferece (ao menos) 5 bons lugares para colocar código de inicialização:
+
+* Pré-inicializadores
+* environment.rb
+* Arquivos de configurações específicos para cada ambiente
+* Inicializadores (load_application_initializers)
+* Pós-inicializadores
+
+h3. Usando Pré-inicializadores
+
+O Rails permite que você utilize um pré-inicializador para executar código antes que o próprio framework seja carregado. Todo código salvo em +RAILS_ROOT/config/preinitializer.rb+ será executado primeiro, antes que qualquer componente do framework seja carregado (como o Active Record, Action Pack, etc). É nesse arquivo que você poderá alterar o comportamento das classes que são utilizadas no processo de inicialização.
+
+h3. Configurando Componentes do Rails
+
+Em geral, configurar o Rails significa configurar seus componentes, assim com o próprio Rails. O arquivo +environment.rb+ e os arquivos de configuração de ambientes específicos (como o +config/environments/production.rb+) permitirão que você configure diversos parâmetros que serão passados para todos os componentes. Por exemplo, o arquivo +environment.rb+ padrão do Rails 2.3 inclui uma configuração:
+
+<ruby>
+config.time_zone = 'UTC'
+</ruby>
+
+Essa é uma configuração para o próprio Rails. Se você quiser passar parâmetros para componentes específicos do Rails, você pode fazê-lo através do mesmo objeto +config+:
+
+<ruby>
+config.active_record.colorize_logging = false
+</ruby>
+ 
+O Rails utilizará esse parâmetro para configurar o Active Record.
+ 
+h4. Configurando o Active Record
+ 
+<tt>ActiveRecord::Base</tt> incluí várias opções de configuração:
+ 
+* +logger+ recebe um objeto de log que funcione de acordo com as interfaces do Log4r ou da classe Logger, o log padrão do Ruby 1.8.x, que por sua vez será passado para todas as conexões de banco de dados criadas. Você pode obter esse logger de duas formas, chamando o método +logger+ na classe ActiveRecord de um model ou em uma instância de ActiveRecord. Para desativar o log, passe nil.
+ 
+* +primary_key_prefix_type+ permite que você modifique o nome das colunas de chave primária. Por padrão, o Rails assume que elas se chamam +id+, mas existem duas outras opções:
+** +:table_name+ fará com que a chave primária para a classe Customer seja +customerid+
+** +:table_name_with_underscore+ fará com que a chave primária para a classe Customer seja class +customer_id+
+ 
+* +table_name_prefix+ permite que seja configurada uma string que será pré fixada ao nome das tabelas. Se você passar +northwest_+, a classe Customer vai procurar pela tabela +northwest_customers+. O padrão é uma string vazia.
+ 
+* +table_name_suffix+ permite que seja configurada uma string que será pós fixada ao nome das tabelas. Se você passar +_northwest+, a classe Customer vai procurar pela tabela +customers_northwest+. O padrão é uma string vazia.
+ 
+* +pluralize_table_names+ define se o Rails irá procurar as tabelas no banco de dados com o nome no plural ou no singular. Se configurado como +true+ (o padrão), então a classe Customer vai utilizar a tabela +customers+. Se configurado como +false+, ela irá utilizar a tabela +customer+.
+ 
+* +colorize_logging+ (+true+ por padrão) especifica se deve ou não ser utilizado códigos de cor ANSI quando for gerado o log do ActiveRecord.
+ 
+* +default_timezone+ determina se deve utilizar +Time.local+ (se configurado como +:local+) ou +Time.utc+ (se configurado como +:utc+) quando forem recuperados datas e horas do banco de dados. O padrão é +:local+.
+ 
+* +schema_format+ define o formato utilizado para fazer o dump da estrutura do banco de dados para um arquivo. As opções são +:ruby+ (o padrão) para gerar uma versão independente de banco de dados mas que utiliza migrações, ou +:sql+ que utilizará comandos SQL que podem variar de acordo com o banco de dados utilizado.
+ 
+* +timestamped_migrations+ define se as migrações são nomeadas com números inteiros ou timestamps. O padrão é +true+, para utilizar timestamps, que são os mais indicado se vários desenvolvedores trabalham na mesma aplicação.
+ 
+* +lock_optimistically+ define se o ActiveRecord irá utilizar optimistic locking. O padrão é +true+.
+ 
+O adaptador para MySQL adiciona uma configuração a mais:
+ 
+* +ActiveRecord::ConnectionAdapters::MysqlAdapter.emulate_booleans+ define se o ActiveRecord irá tratar todas as colunas +tinyint(1)+ do banco de dados MySQL como campos booleans. O padrão é +true+.
+ 
+O schema dumper adiciona uma opção de configuração a mais:
+ 
+* +ActiveRecord::SchemaDumper.ignore_tables+ recebe um array de tabelas que não devem ser incluídas nos arquivos de estrutura gerados. Essa configuração é ignorada a não ser que +ActiveRecord::Base.schema_format == :ruby+.
+ 
+h4. Configurando o Action Controller
+ 
+A classe <tt>ActionController::Base</tt> incluí várias opções de configuração:
+ 
+* +asset_host+ define uma string que será pré-fixada a todas URLs geradas pelos helpers em +AssetHelper+. Isso existe para que seja possível mover todos os arquivos javascript, CSS e imagem para um servidor de contéudo separado.
+ 
+* +consider_all_requests_local+ normalmente é configurado como +true+ durante o desenvolvimento e +false+ durante a produção. Quando configurado como +true+, informações detalhadas de todos os erros gerados serão retornados na resposta HTTP. Para obter um controle mais detalhado, configure essa opção como +false+ e utilize +local_request?+ para especificar quais requisições devem retornar informações de debug quando ocorrer um erro.
+ 
+* +allow_concurrency+ deve ser configurado como +true+ para permitir a execução de ações concorrentes (threadsafe). Por padrão é configurado como +false+. Porém, provavelmente, você não vai querer alterar essa configuração diretamente, porque é necessário fazer uma série de outros ajustes para que o modo threadsafe funcione corretamente. Ao invés disso, você deve usar apenas +config.threadsafe!+ dentro do seu arquivo +production.rb+, que fará todos os ajustes necessários.
+ 
+WARNING: Operações threadsafe são incompatíveis com o funcionamento normal do modo de desenvolvimento Rails. Mais especificamente, o carregamento automático de dependencias e o recarregamento de classes são desativados automaticamente quando +config.threadsafe!+ é chamado.
+ 
+* +param_parsers+ define um array de handlers que podem extrair informações das requisições HTTP recebidas e adicioná-las ao hash +params+. Por padrão, parsers para multipart forms, URL-encoded forms, XML e JSON ficam ativos.
+ 
+* +default_charset+ define o charset padrão utilizado em todas as renderizações. O padrão é "utf-8".
+ 
+* +logger+ recebe um objeto de log que funcione de acordo com as interfaces do Log4r ou da classe Logger, o log padrão do Ruby 1.8.x, que por sua vez será utilizado para fazer o log do Action Controller. Para desativar o log, passe nil.
+ 
+* +resource_action_separator+ define o token que será utilizado para separar recursos e ações durante a construção ou interpretação de URLs RESTful. O padrão é "/".
+ 
+* +resource_path_names+ é um hash com os nomes padrão para várias ações RESTful. Por padrão, a ação de criação é chamada +new+ e a ação de edição é chamada +edit+.
+ 
+* +request_forgery_protection_token+ define o nome do parâmetro utilizado no RequestForgery. Chamar o método +protect_from_forgery+ configura ele como +:authenticity_token+ por padrão.
+ 
+* +optimise_named_routes+ ativa algumas otimizações ao gerar a tabela de rotas. Por padrão é definido como +true+.
+ 
+* +use_accept_header+ define as regras para determinar o formato da resposta. Se definido como +true+, que é o padrão, então +respond_to+ e +Request#format+ levará o header Accept em consideração. Se definido como +false+ o formato será definido apenas analisando o conteúdo de +param[:format]+. Se não houver nenhum parâmetro +format+ o formato da resposta será HTML ou Javascript, dependendo se a solicitação é uma chamada AJAX ou não.
+ 
+* +allow_forgery_protection+ habilita ou desabilita a proteção contra CSRF. Por padrão, ela é definida como +false+ em modo de teste e como +true+ nos outros modos.
+ 
+* +relative_url_root+ pode ser utilizado para dizer ao Rails que você está publicando o sistema em um subdiretório. O padrão é +ENV['RAILS_RELATIVE_URL_ROOT']+.
+
+O controle de cache tem dois parâmetros adicionais:
+
+* +ActionController::Caching::Pages.page_cache_directory+ define o diretório onde o Rails criará as páginas em cache para o seu web server. O padrão é  +Rails.public_path+ (o que normalmente é definido como +RAILS_ROOT + "/public"+).
+ 
+* +ActionController::Caching::Pages.page_cache_extension+ define a extensão utilizada para as páginas geradas para cache, que é ignorada se a requisição possuir uma extensão. O padrão é +.html+.
+
+O dispatcher possui um parâmetro:
+
+* +ActionController::Dispatcher.error_file_path+ define o caminho onde o Rails irá procurar os arquivos para mostrar erros, como +404.html+. O padrão é +Rails.public_path+.
+
+O armazenamento de sessions pelo Active Record também pode ser configurado:
+
+* +CGI::Session::ActiveRecordStore::Session.data_column_name+ define o nome da coluna utilizada para armazenar os dados da seção. O padrão é 'data' .
+
+h4. Configurando o Action View
+
+Existem poucas configurações para o Action View, começando com quatro para o +ActionView::Base+:
+
+* +debug_rjs+ especifica se as chamadas RJS devem ser encapsuladas em um bloco try/catch que gera um alert() com a exceção gerada, e depois a gera novamente. O padrão é +false+.
+ 
+* +warn_cache_misses+ diz ao Rails para mostrar um warning toda vez que uma ação resulta em um cache miss no diretório onde estão as views. O padrão é +false+.
+ 
+* +field_error_proc+ define um gerador HTML para mostrar erros provenientes do Active Record. O padrão é <tt>Proc.new{ |html_tag, instance| "&lt;div class=\"fieldWithErrors\"&gt;#{html_tag}&lt;/div>" }</tt>
+ 
+* +default_form_builder+ diz ao Rails qual form builder ele deve usar por padrão. O padrão é +ActionView::Helpers::FormBuilder+.
+
+O handler de templates ERB oferece um parâmetro:
+
+* +ActionView::TemplateHandlers::ERB.erb_trim_mode+ define o trim mode utilizado pelo ERB, sendo que o padrão é +'-'+. Veja a "documentação do ERB":http://www.ruby-doc.org/stdlib/libdoc/erb/rdoc/ para obter maiores informações.
+
+h4. Configurando o Action Mailer
+
+A classe <tt>ActionMailer::Base</tt> incluí várias opções de configuração:
+
+* +template_root+ define o diretório raiz onde estão armazenados os templates utilizados pelo Action Mailer.
+ 
+* +logger+ recebe um objeto de log que funcione de acordo com as interfaces do Log4r ou da classe Logger, o log padrão do Ruby 1.8.x, que por sua vez será utilizado para fazer o log do Action Mailer. Para desativar o log, passe nil.
+ 
+* +smtp_settings+ permite a configuração detalhada para o modo de envio +:smtp+. Aceita um hash de opções, que pode incluir os seguintes parâmetros:
+** +:address+ - Permite a utilização de um servidor de e-mails remoto. O padrão é "localhost".
+** +:port+ - Para quando seu servidor de e-mail não operar utilizando a porta 25, o que é bastante improvável.
+** +:domain+ - Se você precisar definir um domínio HELO, você pode fazê-lo com esse parâmetro.
+** +:user_name+ - Se o seu servidor de e-mail exige autenticação, defina o nome do usuário nesse parâmetro.
+** +:password+ - Se o seu servidor de e-mail exige autenticação, defina a senha do usuário nesse parâmetro.
+** +:authentication+ - Se o seu servidor de e-mail exige autenticação, você deve especificar o tipo de autenticação nesse parâmetro, que pode ser uma das seguintes opções: +:plain+, +:login+ ou +:cram_md5+.
+ 
+* +sendmail_settings+ permite a configuração detalhada para o modo de envio +sendmail+. Aceita um hash de opções, que pode incluir os seguintes parâmetros:
+** +:location+ - A localização do executável do sendmail. O padrão é +/usr/sbin/sendmail+.
+** +:arguments+ - Os argumentos a serem passados na linha de comando. O padrão é +-i -t+.
+ 
+* +raise_delivery_errors+ define se deve gerar um erro se o envio dos e-mails não pode ser completado. O padrão é +true+.
+ 
+* +delivery_method+ define o método de envio utilizado. As opções possíveis são +:smtp+ (padrão), +:sendmail+, e +:test+.
+ 
+* +perform_deliveries+ define se os e-mail serão efetivamente enviados ou não. O padrão é +true+, mas pode ser conveniente alterá-lo para +false+ durante a realização de testes.
+ 
+* +default_charset+ informa ao Action Mailer qual charset deverá ser utilizado para o corpo da mensagem e o encoding do assunto. O padrão é +utf-8+.
+ 
+* +default_content_type+ define o tipo de conteúdo usado para a parte principal do mensagem. O padrão é "text/plain"
+ 
+* +default_mime_version+ é a versão padrão do MIME da mensagem. O padrão é +1.0+.
+ 
+* +default_implicit_parts_order+ quando a mensagem é construída de maneira implícita (isto é, quando as várias partes são montadas a partir de templates que especificam o tipo do conteúdo nos respectivos nomes de arquivo) esse parâmetro controla como as partes serão ordenadas. O padrão é +["text/html", "text/enriched", "text/plain"]+. Itens que aparecem primeiro no array tem uma prioridade maior no client de e-mails e aparecem por último na mime encoded message.
+ 
+h4. Configurando o Active Resource
+
+Só existe um parâmetro para a classe +ActiveResource::Base+:
+
+* <tt>logger</tt> recebe um objeto de log que funcione de acordo com as interfaces do Log4r ou da classe Logger, o log padrão do Ruby 1.8.x, que por sua vez será utilizado para fazer o log do Action Resource. Para desativar o log, passe nil.
+
+h4. Configurando o Active Support
+
+Existem algumas configurações disponíveis para o Active Support:
+
+* +ActiveSupport::BufferedLogger.silencer+ se defindo como +false+ desabilita a capacidade de _não_ permitir (silenciar) o registro de logs, nos blocos. O padrão é +true+.
+
+NOTE: Nota do Revisor: Com este parâmetro, você pode evitar que algum bloco deixe de registrar as ocorrências no log, mesmo se estiver utilizando a opção :silent => true. Veja um exemplo de uso de +:silent+ com o "método benchmark":http://api.rubyonrails.org/classes/ActionView/Helpers/BenchmarkHelper.html. 
+
+* +ActiveSupport::Cache::Store.logger+ define o objeto de log utilizado nas operações de armazenamento de cache.
+ 
+* +ActiveSupport::Logger.silencer+ se definido como +false+ desabilita a capacidade de _não_ permitir (silenciar) o registro de logs, nos blocos. O padrão é +true+.
+
+h4. Configurando o Active Model
+
+Atualmente o Active Model possui apenas um parâmetro:
+
+* +ActiveModel::Errors.default_error_messages+ é uma array contendo todas as mensagens de erro de validação.
+
+h3. Usando Inicializadores
+
+Depois de carregar o framework e as gems e plugins da sua aplicação, o Rails carrega os inicializadores. Um inicializador é um arquivo de código Ruby armazenado no diretório +/config/initializers+ da sua aplicação. Você pode utilizá-los para carregar configurações que devem ser feitas depois que o framework e os plugins foram carregados.
+
+NOTE: Se desejar, você pode utilizar subdiretórios para organizar seus inicializadores, uma vez que o Rails irá pesquisar todos os diretórios a partir de +initializers+.
+
+TIP: Se você precisa carregar os inicializadores em uma ordem específica, você deve utilizar o nome dos arquivos para fazê-lo. Por exemplo, +01_critical.rb+ será carregado antes de +02_normal.rb+.
+
+h3. Usando um Pós-Inicializador
+
+Pós inicializadores são executados (adivinhe) depois que todos os inicializadores forem carregados. Você pode passar um bloco +after_initialize+ (ou uma array de blocos) através de +config.after_initialize+ em qualquer arquivo de configuração do Rails:
+
+<ruby>
+config.after_initialize do
+  SomeClass.init
+end
+</ruby>
+
+WARNING: Algumas partes da sua aplicação, como observers e o sistema de rotas, ainda não estarão carregados até que o bloco +after_initialize+ seja executado.
+
+h3. Parâmetros de Ambiente do Rails
+
+Algumas partes do Rails também podem ser configuradas externamente através de variáveis de ambientes. As seguintes variáveis de ambiente são reconhecidas por várias partes do Rails:
+
+* +ENV['RAILS_ENV']+ define o ambiente de execução do Rails (production, development, test, e assim por diante).
+ 
+* +ENV['RAILS_RELATIVE_URL_ROOT']+ é utilizado pelo código de roteamento para reconhecer URLs quando você publica sua aplicação em um sub-diretório.
+ 
+* +ENV["RAILS_ASSET_ID"]+ irá sobrescrever os timestamps padrão utilizados pelo Rails para controlar a expiração do cache de conteúdo que pode ser baixado, como, por exemplo, imagens.
+ 
+* +ENV["RAILS_CACHE_ID"]+ e +ENV["RAILS_APP_VERSION"]+ são utilizados para gerar chaves de cache expandidas pelo sistema de cache do Rails. Isso permite que você possua vários caches separados para uma mesma aplicação.
+ 
+* +ENV['RAILS_GEM_VERSION']+ define a versão das gems do Rails que devem ser utilizadas, se o parâmetro +RAILS_GEM_VERSION+ não for definido no seu arquivo +environment.rb+.
+
+h3. Changelog
+
+"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/28
+
+* April 19, 2009: Revisão da tradução para o português por "Eleudson Queiroz":credits.html#eleudsonqueiroz 
+* April 11, 2009: Portuguese translation by "Rafael Rosa":credits.html#rafaelrosafu
+* January 3, 2009: First reasonably complete draft by "Mike Gunderloy":credits.html#mgunderloy
+* November 5, 2008: Rough outline by "Mike Gunderloy":credits.html#mgunderloy
