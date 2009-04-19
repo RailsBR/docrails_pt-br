@@ -1080,8 +1080,8 @@ h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213/tickets/26-active-record-validations-and-callbacks
 
-* April 05, 2009: Callbacks translation revision by Eleudson Queiroz
-* March 24, 2009: Callbacks translation by Rafael Rosa
+* April 05, 2009: Callbacks translation revision by "Eleudson Queiroz":credits.html#eleudsonqueiroz
+* March 24, 2009: Callbacks translation by "Rafael Rosa":credits.html#rafaelrosafu
 * March 7, 2009: Callbacks revision by Trevor Turk
 * February 10, 2009: Observers revision by Trevor Turk
 * February 5, 2009: Initial revision by Trevor Turk
