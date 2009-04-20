@@ -6,7 +6,6 @@ Este guia cobre diferentes maneiras de recuperar dados do banco de dados usando 
 * Especificar a ordenação, atributos retornados, agrupamento e outras propriedades dos registros encontrados
 * Utilizar eager loading para reduzir o número de queries ao banco de dados necessárias para recuperar os dados
 * Utilizar dynamic finders
-* Criar named scopes para adicionar comportamento de pesquisa personalizado aos seus models
 * Verificar a existência de registros específicos
 * Realizar diversos cálculos sobre Active Record models
 

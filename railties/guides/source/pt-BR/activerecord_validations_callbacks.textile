@@ -530,11 +530,11 @@ class Invoice < ActiveRecord::Base
 end
 </ruby>
 
-Você também pode criar seus próprios helpers de validação e reutilizá-los em diferentes modelos. Nesse exemplo estamos criando um helper de validação customizado para validar o formato de campos que representam um raio (valor de 1 a n):
+Você também pode criar seus próprios helpers de validação e reutilizá-los em diferentes modelos. Por exemplo, em uma aplicação que administre pesquisas será útil avaliar se determinados campos correspodem a determinadas escolhas:
 
 <ruby>
 ActiveRecord::Base.class_eval do
-  def self.validates_as_radio(attr_name, n, options={})
+	def self.validates_as_choice(attr_name, n, options={})
     validates_inclusion_of attr_name, {:in => 1..n}.merge(options)
   end
 end
@@ -544,7 +544,7 @@ Basta reabrir a classe +ActiveRecord::Base+ e definir o método de classe como f
 
 <ruby>
 class Movie < ActiveRecord::Base
-  validates_as_radio :rating, 5
+  validates_as_choice :rating, 5
 end
 </ruby>
 

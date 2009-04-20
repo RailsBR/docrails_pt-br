@@ -593,6 +593,7 @@ A associação +belongs_to+ suporta estas opções:
 * +:polymorphic+
 * +:readonly+
 * +:select+
+* +:touch+
 * +:validate+
 
 h6. :autosave
@@ -723,6 +724,28 @@ h6. :select
 A opção +:select+ permite que você sobrescreva a cláusula SQL +SELECT+ que é usada para retornar dados sobre o objeto associado. Por padrão, o Rails retorna todas as colunas.
 
 TIP: Se você definir a opção +:select+ em uma associação +belongs_to+ , você também deve definir a opção +foreign_key+ para garantir resultados corretos.
+
+h6. +:touch+
+
+Se você definir a opção +:touch+ para +:true+, então o timestamp +updated_at+ ou +updated_on+ do objeto associado será definido pelo pelo horário atual quando este objeto for salvo ou destruído:
+
+<ruby>
+class Order < ActiveRecord::Base
+  belongs_to :customer, :touch => true
+end
+
+class Customer < ActiveRecord::Base
+  has_many :orders
+end
+</ruby>
+
+Neste caso, salvando ou excluindo uma comprar (order) irá atualizar o timestamp do cliente (customer) associado. Você também pode especificar um atributo de timestamp particular para a atualização:
+
+<ruby>
+class Order < ActiveRecord::Base
+  belongs_to :customer, :touch => :orders_updated_at
+end
+</ruby>
 
 h6. :validate
 
@@ -1739,6 +1762,8 @@ h3. Changelog
 
 "Ticket no Lighthouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/11
 
+* Abril 20, 2009: Traduzido a opção +:touch+ por "Daniel Lopes":translators.html#danielvlopes
+* Abril 19, 2009: Adicionado opção +:touch+ para associação +belongs_to+ por "Mike Gunderloy":credits.html#mgunderloy
 * Março 13, 2009: Revisão da tradução por "Fabio Kreusch":translators.html#fabiokr
 * February  28, 2009: Atualização da tradução com a opção +:autosave+ "Daniel Lopes":translators.html#danielvlopes
 * Fevereiro 1, 2009: Adicionado a opção +:autosave+ "Mike Gunderloy":credits.html#mgunderloy
