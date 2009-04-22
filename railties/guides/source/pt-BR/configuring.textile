@@ -167,7 +167,7 @@ A classe <tt>ActionMailer::Base</tt> incluí várias opções de configuração:
 * +default_mime_version+ é a versão padrão do MIME da mensagem. O padrão é +1.0+.
  
 * +default_implicit_parts_order+ quando a mensagem é construída de maneira implícita (isto é, quando as várias partes são montadas a partir de templates que especificam o tipo do conteúdo nos respectivos nomes de arquivo) esse parâmetro controla como as partes serão ordenadas. O padrão é +["text/html", "text/enriched", "text/plain"]+. Itens que aparecem primeiro no array tem uma prioridade maior no client de e-mails e aparecem por último na mime encoded message.
- 
+
 h4. Configurando o Active Resource
 
 Só existe um parâmetro para a classe +ActiveResource::Base+:
