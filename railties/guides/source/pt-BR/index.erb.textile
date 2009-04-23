@@ -49,11 +49,11 @@ h3. Models
 h3. Views
 
 <dl>
-<% guide_pt_br("Layouts e Renderização no Rails", 'layouts_and_rendering.html', :translation_ticket => 5) do %>
-Este guia cobre o básico dos recursos de layout do Action Controller e Action View, incluindo renderização e redirecionamento, usando blocos +content_for+, e trabalhando com partials. (Em tradução)
+<% guide_pt_br("Layouts e Renderização no Rails", '', :translation_ticket => 5) do %>
 <p>
-  Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/layouts_and_rendering.html" %>
+  *Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/layouts_and_rendering.html" %>*
 </p>
+Este guia cobre o básico dos recursos de layout do Action Controller e Action View, incluindo renderização e redirecionamento, usando blocos +content_for+, e trabalhando com partials. (Em tradução)
 <% end %>
 
 <% guide("Action View Form Helpers", 'http://guides.rubyonrails.org/form_helpers.html', :ticket => 1) do %>
@@ -68,7 +68,7 @@ h3. Controllers
   Este guia explica como os controllers trabalham e como eles se encaixam no ciclo de requisição de sua aplicação. Ele inclue sessões, filtros, cookies, streaming de dados, como trabalhar com exceções levantadas por um request, entre outros tópicos.
 <% end %>
 
-<% guide_pt_br("Roteamento Rails de Fora para Dentro", 'routing.html', :revision_ticket => 23) do %>
+<% guide_pt_br("Roteamento Rails de Fora para Dentro", 'routing.html') do %>
 Este guia cobre as maravilhas do sistema de roteamento do Rails. Se você quer entender como usar as rotas em suas aplicações Rails, comece por aqui.
 <% end %>
 </dl>
@@ -80,7 +80,7 @@ h3. Aprofundando-se
   <% guide("Rails on Rack", 'rails_on_rack.html') do %>
   Este guia cobre a integração do Rails com Rack e sua interface com componentes Rack.
 	<% end %>
-	
+
   <% guide_pt_br("API de Internacionalização do Rails", 'i18n.html', :revision_ticket => 32) do %>
   Este guia cobre como adicionar internacionalização em sua aplicação. Sua aplicação irá ser capaz de traduzir conteúdo para diferentes idiomas, alterar regras de pluralização, usar formatação correta de datas para cada país e muito mais.
 	<% end %>
@@ -109,11 +109,8 @@ h3. Aprofundando-se
 	  Este guia cobre como criar plugins para estender as funcionalidades do Rails. (Ainda em desenvolvimento)
 	<% end %>
 
-	<% guide_pt_br("Configuring Rails Applications", "configuring.html", :translation_ticket => 31 ) do %>
+	<% guide_pt_br("Configuring Rails Applications", "configuring.html") do %>
 	  Este guia cobre as opções básicas de configuração para uma aplicação Rails. (Em tradução)
-		<p>
-		  Você pode ver o original em inglês <%= link_to "aqui", "http://guides.rubyonrails.org/configuring.html" %>
-		</p>	
 	<% end %>
 
 	<% guide("Rails Command Line Tools and Rake tasks", 'http://guides.rubyonrails.org/command_line.html', :ticket => 29) do %>
@@ -125,7 +122,6 @@ h3. Aprofundando-se
 	<% end %>
 
   <% guide_pt_br("Contribuindo para o Rails", 'contributing_to_rails.html', :revision_ticket => 34) do %>
-  Rails não é um "framework de alguém". Este guia cobre as várias formas que você possui para se envolver no contínuo processo de desenvolvimento do Rails.
+  	Rails não é um "framework de alguém". Este guia cobre as várias formas que você possui para se envolver no contínuo processo de desenvolvimento do Rails.
 	<% end %>
 </dl>
-

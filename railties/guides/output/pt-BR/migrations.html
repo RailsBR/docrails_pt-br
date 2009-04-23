@@ -47,7 +47,7 @@
               <dd><a href="association_basics.html">Associações do Active Record</a></dd>
               <dd><a href="active_record_querying.html">Interface de Queries do Active Record</a></dd>
               <dt>Views</dt>
-              <dd><a href="layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
+              <dd><a href="http://guides.rubyonrails.org/layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
               <dd><a href="form_helpers.html">Form Helpers do Action View</a></dd>
               <dt>Controllers</dt>
               <dd><a href="action_controller_overview.html">Visão Geral do Action Controller</a></dd>
@@ -149,7 +149,7 @@ A migration é uma subclasse de ActiveRecord::Migration que implementa dois mét
 	<li><tt>remove_index</tt></li>
 </ul>
 <p>Se você precisar executar tarefas específicas para seu banco de dados (por exemplo, criar uma <a href="#active-record-e-integridade-referencial">foreign key</a>) então a função <tt>execute</tt> permite que você execute <span class="caps">SQL</span> arbitrárias. A migration é apenas uma classe comum em Ruby, então você não está limitado a apenas estas funções. Por exemplo, após adicionar uma coluna, você pode escrever código para setar o valor dessa coluna para dados existentes (se necessário usando seus models).</p>
-<p>Em banco de dados que suportam transações com parâmetros para mudar o schema (como o PostreSQL), as migrations entram em uma transação. Se o banco de dados não suporta isso (por exemplo MySQL e SQLite) então quando a migration falhar, as partes que tiveram sucesso não poderão ser revertidas. Você terá que desfazer estas mudanças manualmente.</p>
+<p>Em banco de dados que suportam transações com parâmetros para mudar o schema (como PostreSQL ou SQLite3), as migrations entram em uma transação. Se o banco de dados não suporta isso (por exemplo MySQL) então quando a migration falhar, as partes que tiveram sucesso não poderão ser revertidas. Você terá que desfazer estas mudanças manualmente.</p>
 <h4 id="o-que-h-em-um-nome">1.2 O que há em um Nome</h4>
 <p>Migrations são armazenadas em arquivos dentro de <tt>db/migrate</tt>, um para cada classe de migration. O nome dos arquivos é tem a forma de <tt>YYYYMMDDHHMMSS_create_products.rb</tt>, ou seja, uma hora <span class="caps">UTC</span> identificando a migration, seguida de um underscore, seguido pelo nome da migration. O nome da classe de migration deve bater com a última parte do arquivo. Por exemplo, <tt>20080906120000_create_products.rb</tt> deverá definir <tt>CreateProducts</tt> e <tt>20080906120001_add_details_to_products.rb</tt> deverá definir <tt>AddDetailsToProducts</tt>. Se você acha que necessita mudar o nome do arquivo, então você <em>deve</em> atualizar o nome da classe dentro do arquivo, ou então o Rails irá se queixar de uma classe inexistente.</p>
 <p>Internamente, o Rails usa apenas o número da migration (data) para identificá-la. Antes do Rails 2.1, os números das migrations eram iniciados com 1 e incrementados cada vez que era gerada uma nova migration. Com vários desenvolvedores, era fácil haver conflitos, o que te forçava a reverter as migrations e renumerá-las. Com o Rails 2.1, isto é evitado usando a hora de geração da migration para identificá-las. Você pode mudar para o esquema da velha numeração setando <tt>config.active_record.timestamped_migrations</tt> para <tt>false</tt> no <tt>environment.rb</tt>.</p>

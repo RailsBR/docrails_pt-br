@@ -47,7 +47,7 @@
               <dd><a href="association_basics.html">Associações do Active Record</a></dd>
               <dd><a href="active_record_querying.html">Interface de Queries do Active Record</a></dd>
               <dt>Views</dt>
-              <dd><a href="layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
+              <dd><a href="http://guides.rubyonrails.org/layouts_and_rendering.html">Layouts e Renderização no Rails</a></dd>
               <dd><a href="form_helpers.html">Form Helpers do Action View</a></dd>
               <dt>Controllers</dt>
               <dd><a href="action_controller_overview.html">Visão Geral do Action Controller</a></dd>
@@ -551,6 +551,7 @@ end
 	<li><tt>:polymorphic</tt></li>
 	<li><tt>:readonly</tt></li>
 	<li><tt>:select</tt></li>
+	<li><tt>:touch</tt></li>
 	<li><tt>:validate</tt></li>
 </ul>
 <h6 id="autosave">4.1.2.1 :autosave</h6>
@@ -645,7 +646,24 @@ end
 <h6 id="select">4.1.2.10 :select</h6>
 <p>A opção <tt>:select</tt> permite que você sobrescreva a cláusula <span class="caps">SQL</span> <tt>SELECT</tt> que é usada para retornar dados sobre o objeto associado. Por padrão, o Rails retorna todas as colunas.</p>
 <div class='info'><p>Se você definir a opção <tt>:select</tt> em uma associação <tt>belongs_to</tt> , você também deve definir a opção <tt>foreign_key</tt> para garantir resultados corretos.</p></div>
-<h6 id="validate">4.1.2.11 :validate</h6>
+<h6 id="touch">4.1.2.11 <tt>:touch</tt></h6>
+<p>Se você definir a opção <tt>:touch</tt> para <tt>:true</tt>, então o timestamp <tt>updated_at</tt> ou <tt>updated_on</tt> do objeto associado será definido pelo pelo horário atual quando este objeto for salvo ou destruído:</p>
+<div class="code_container"><code class="ruby">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :touch =&gt; true
+end
+
+class Customer &lt; ActiveRecord::Base
+  has_many :orders
+end
+</code></div>
+<p>Neste caso, salvando ou excluindo uma comprar (order) irá atualizar o timestamp do cliente (customer) associado. Você também pode especificar um atributo de timestamp particular para a atualização:</p>
+<div class="code_container"><code class="ruby">
+class Order &lt; ActiveRecord::Base
+  belongs_to :customer, :touch =&gt; :orders_updated_at
+end
+</code></div>
+<h6 id="validate">4.1.2.12 :validate</h6>
 <p>Se você definir a opção <tt>:validate</tt> para <tt>true</tt>, então os objetos associados serão validados sempre que você salvar este objeto. Por padrão, esta opção é <tt>false</tt>: objetos associados não serão validados quando este objeto for gravado.</p>
 <h5 id="como-saber-se-existe-um-objeto-associado">4.1.3 Como saber se existe um objeto associado?</h5>
 <p>Para saber se existe um objeto associado, simplesmente verifique a associação com association.nil?:</p>
@@ -1352,6 +1370,8 @@ end
 <h3 id="changelog">5 Changelog</h3>
 <p><a href="http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/11">Ticket no Lighthouse</a></p>
 <ul>
+	<li>Abril 20, 2009: Traduzido a opção <tt>:touch</tt> por <a href="translators.html#danielvlopes">Daniel Lopes</a></li>
+	<li>Abril 19, 2009: Adicionado opção <tt>:touch</tt> para associação <tt>belongs_to</tt> por <a href="credits.html#mgunderloy">Mike Gunderloy</a></li>
 	<li>Março 13, 2009: Revisão da tradução por <a href="translators.html#fabiokr">Fabio Kreusch</a></li>
 	<li>February  28, 2009: Atualização da tradução com a opção <tt>:autosave</tt> <a href="translators.html#danielvlopes">Daniel Lopes</a></li>
 	<li>Fevereiro 1, 2009: Adicionado a opção <tt>:autosave</tt> <a href="credits.html#mgunderloy">Mike Gunderloy</a></li>
