@@ -72,7 +72,7 @@ mysql> GRANT ALL PRIVILEGES ON activerecord_unittest2.*
 
 Se você está utilizando outro banco de dados, verifique os arquivos em +activerecord/test/connections+ no código fonte do Rails para informações padrão de conexão. Você pode editar estes arquivos se você _for obrigado_ a fornecer credenciais diferentes na sua máquina, mas obviamente você não deve enviar tais modificações de volta para o Rails.
 
-Agora se você voltar a raiz do código do Rails na sua máquina e executar +rake+ sem nenhum parâmetro, deve ver cada teste em todos os componentes do Rails passarem. Se você quiser executar todos os testes do ActiveRecord (ou apenas um) com outro adaptador de banco de dados, execute isto a partir do diretório +activerecord+:
+Agora se você voltar a raiz do código do Rails na sua máquina e executar +rake+ sem nenhum parâmetro, deve ver passar cada teste em todos os componentes do Rails. Se você quiser executar todos os testes do ActiveRecord (ou apenas um) com outro adaptador de banco de dados, execute isto a partir do diretório +activerecord+:
 
 <shell>
 rake test_sqlite3
@@ -85,7 +85,7 @@ Você pode mudar +sqlite3+ por +jdbcmysql+, +jdbcsqlite3+, +jdbcpostgresql+, +my
 
 NOTE: Se você está trabalhando com código do Active Record, deve se assegurar que os testes passem pelo menos para MySQL, PostgreSQL, SQLite 2, e SQLite 3. Diferenças sutis entre os vários adaptadores de bancos de dados Active Record tem estado por trás da rejeição de muitos patches que pareciam OK quando testados somente com o MySQL.
 
-h3. Ajudando a Resolver Problemas Existentes
+h3. Ajudando a Resolver Problemas Existentesoplkk,l
 
 Como próximo passo além de reportar problemas, você pode ajudar a equipe core a resolver problemas existentes. Se você checar a lista de "tickets abertos":http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets?q=state%3Aopen no Lighthouse, encontrará centenas de problemas já exigindo atenção. O que você pode fazer por estes? Na verdade, bastante:
 
@@ -97,7 +97,7 @@ Se algo é muito vago, você pode ajudar espremendo em algo específico? Talvez 
 
 Se você encontrar um relatório de bug sem um teste, é muito útil contribuir com um teste de falha. Isto é também um grande modo de começar a explorar o código do Rails: olhar os arquivos de testes existentes irá ensinar-lhe como escrever mais testes para o Rails. Novos testes são melhor contribuídos na forma de um patch, como explicado posteriormente na seção "Contribuindo para o Código do Rails".
 
-Qualquer coisa que você possa fazer para tornar um relatório de bug mais sucinto ou fácil de reproduzir é uma ajuda as pessoas tentando escrever código para corrigir esses bugs - quer você mesmo acabe escrevendo o código ou não.
+Qualquer coisa que você possa fazer para tornar um relatório de bug mais sucinto ou fácil de reproduzir é uma ajuda às pessoas tentando escrever código para corrigir esses bugs - quer você mesmo acabe escrevendo o código ou não.
 
 h4. Testando Patches
 
@@ -116,7 +116,7 @@ git am < their-patch-file.diff
 Após aplicar um patch, teste-o! Aqui estão algumas coisas para pensar:
 
 * O patch realmente funciona?
-* Você está feliz com os testes? Pode seguir o que eles estão testando? Existem testes faltando?
+* Você está feliz com os testes? Pode seguir o que eles estão testando? Falta algum teste?
 * A documentação ainda parece correta para você?
 * Você gosta da implementação? Pode pensar em uma maneira mais agradável e rápida de implementar uma parte da mudança?
 
@@ -126,7 +126,7 @@ Uma vez que você estiver satisfeito que o patch contém uma boa mudança, comen
 Eu gosto da maneira que você reestruturou esse código no generate_finder_sql, muito mais agradável. Os testes parecem bons também.
 </blockquote>
 
-Se seu comentário simplesmente disser "+1", então a probabilidade é que outros revisores não vão levá-lo muito a sério. Mostre que você tirou o tempo para revisar o patch. Uma vez que três pessoas o tenham aprovado, adicione a tag "verified" (verificado). Isto irá chamar a atenção de um membro da equipe core que revisará as mudanças olhando para os mesmos tipos de coisas.
+Se seu comentário simplesmente disser "+1", então a probabilidade é que outros revisores não vão levá-lo muito a sério. Mostre que você tirou o tempo para revisar o patch. Uma vez que três pessoas o tenham aprovado, adicione a tag "verified" (verificado). Isto irá chamar a atenção de um membro da equipe core, que revisará as mudanças olhando para os mesmos tipos de coisas.
 
 h3. Contribuindo para a Documentação do Rails
 
@@ -136,7 +136,7 @@ TIP: "docrails":http://github.com/lifo/docrails/tree/master é o branch de docum
 
 h4. Os Rails Guides
 
-Os "Rails Guides":http://guides.rubyonrails.org/ são um conjunto de recursos online que são designados a tornar as pessoas produtivas com o Rails e a compreender como todas as peças se encaixam. Estes guias (incluindo este aqui!) são escritos como parte do projeto "docrails":http://github.com/lifo/docrails/tree/master. Se você tem uma idéia para um novo guia, ou melhoramentos para um guia existente, pode consultar a "página de contribuição":contribute.html para instruções sobre como participar.
+Os "Rails Guides":http://guides.rubyonrails.org/ são um conjunto de recursos online que são designados a tornar as pessoas produtivas com o Rails e a compreenderem como todas as peças se encaixam. Estes guias (incluindo este aqui!) são escritos como parte do projeto "docrails":http://github.com/lifo/docrails/tree/master. Se você tem uma idéia para um novo guia, ou melhoramentos para um guia existente, pode consultar a "página de contribuição":contribute.html para instruções sobre como participar.
 
 h4. A Documentação da API do Rails
 
@@ -146,7 +146,7 @@ Para contribuir com uma atualização para a documentação da API, você pode c
 
 h3. O Wiki Rails
 
-O "wiki Rails":http://wiki.rubyonrails.org/ é uma coleção de informações sobre o Rails geradas pelos usuários e aberta para edição. Ela abrange tudo desde começar com o Rails até FAQs, how-tos e plugins populares. Para contribuir com o wiki, simplesmente encontre alguma informação útil que já não esteja lá e adicione-a. Existem diretrizes de estilo para ajudar a manter o wiki um recurso coerente; veja a seção "contribuindo para o wiki":http://wiki.rubyonrails.org/#contributing_to_the_wiki para mais detalhes.
+O "wiki Rails":http://wiki.rubyonrails.org/ é uma coleção de informações sobre o Rails geradas pelos usuários e aberta para edição. Ela abrange tudo desde começar com o Rails até FAQs, how-tos e plugins populares. Para contribuir com o wiki, simplesmente encontre alguma informação útil que ainda não esteja lá e adicione-a. Existem diretrizes de estilo para ajudar a manter o wiki um recurso coerente; veja a seção "contribuindo para o wiki":http://wiki.rubyonrails.org/#contributing_to_the_wiki para mais detalhes.
 
 h3. Contribuindo para o Código do Rails
 
@@ -154,7 +154,7 @@ Quando você estiver pronto para aventurar-se, uma das formas mais úteis para c
 
 h4. Aprenda a Linguagem e o Framework
 
-Aprenda no mínimo _alguma coisa_ sobre Ruby e Rails. Se você não compreender a sintaxe da linguagem, idiomas comuns do Ruby, e o código que já existe no Rails, é improvável que você será capaz de criar um bom patch (isto é, um que será aceito). Você não tem que conhecer cada detalhe da linguagem e do framework; um pouco do código do Rails é diabolicamente complexo. Mas provavelmente o Rails não é apropriado como o primeiro lugar para escrever código Ruby. Você deve ao menos entender (embora não necessariamente memorizar) "A Linguagem de Programação Ruby":http://www.amazon.com/gp/product/0596516177?ie=UTF8&linkCode=as2&camp=1789&creative=390957&creativeASIN=0596516177 e ter navegado pelo código fonte do Rails.
+Aprenda no mínimo _alguma coisa_ sobre Ruby e Rails. Se você não compreender a sintaxe da linguagem, expressões comuns do Ruby, e o código que já existe no Rails, é improvável que você será capaz de criar um bom patch (isto é, um que será aceito). Você não tem que conhecer cada detalhe da linguagem e do framework; um pouco do código do Rails é extremamente complexo. Mas provavelmente o Rails não é apropriado como o primeiro lugar para escrever código Ruby. Você deve ao menos entender (embora não necessariamente memorizar) "A Linguagem de Programação Ruby":http://www.amazon.com/gp/product/0596516177?ie=UTF8&linkCode=as2&camp=1789&creative=390957&creativeASIN=0596516177 e ter navegado pelo código fonte do Rails.
 
 h4. Faça um Fork do Código Fonte do Rails
 
@@ -164,20 +164,20 @@ Faça um fork do Rails. Você não estará colocando seus patches diretamente no
 git checkout -b my_new_branch
 </shell>
 
-Realmente não importa que nome você utilizar, porque este branch existirá somente em seu computador local.
+Realmente não importa que nome você utilize, porque este branch existirá somente em seu computador local.
 
 h4. Escreva Seu Código
 
 Agora ocupe-se e adicione seu código para o Rails (ou edite o código existente). Você está no seu branch agora, então pode escrever tudo que quiser (você pode verificar para ter certeza que está no branch correto com +git branch -a+). Mas se você está planejando submeter sua modificação de volta para inclusão no Rails, mantenha algumas coisas em mente:
 
 * Obtenha o código certo
-* Utilize os idiomas e helpers do Rails
+* Utilize as expressões e helpers do Rails
 * Inclua testes que falhem sem o seu código, e passem com ele
 * Atualize a documentação
 
 h4. Checagem de Sanidade
 
-Você não deve ser a única pessoa que olha o código antes de enviá-lo. Você conhece ao menos um outro desenvolvedor Rails, certo? Mostre para eles o que você está fazendo e peça por feedback. Fazer isto em particular antes de enviar um patch publicamente é o "teste de fumaça" para um patch: se você não pode convencer outro desenvolver da beleza de seu código, também é improvável que você convença a equipe core.
+Você não deve ser a única pessoa que olha o código antes de enviá-lo. Você conhece ao menos um outro desenvolvedor Rails, certo? Mostre para ele o que você está fazendo e lhe peça um feedback. Fazer isto em particular, antes de enviar um patch publicamente, é o "teste de fumaça" para um patch: se você não pode convencer outro desenvolver da beleza de seu código, também é improvável que você convença a equipe core.
 
 h4. Faça um Commit de Suas Mudanças
 
@@ -214,7 +214,7 @@ git commit -a
 git format-patch master --stdout > my_new_patch.diff
 </shell>
 
-Faça um teste de sanidade nos resultados desta operação: abra o arquivo diff no seu editor de escolha e tenha certeza que nenhuma mudança não planejada apareceu.
+Faça um teste de sanidade nos resultados desta operação: abra o arquivo diff no editor de sua escolha e tenha certeza que nenhuma mudança não planejada apareceu.
 
 h4. Crie um Ticket no Lighthouse
 
@@ -234,6 +234,7 @@ h3. Changelog
 
 "Ticket do Lighthouse":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/64
 
+* 25 de Abril de 2009: Revisão da tradução para português por "Eleudson Queiroz":translators.html#eleudsonqueiroz
 * 24 de Março de 2009: Tradução para português por "Carlos A. da Silva":translators.html#carlosantoniodasilva
 * 2 de Março de 2009: Rascunho inicial por "Mike Gunderloy":credits.html#mgunderloy
 
