@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object/blank'
+
 # = XmlMini ReXML implementation
 module ActiveSupport
   module XmlMini_REXML #:nodoc:
@@ -56,7 +58,9 @@ module ActiveSupport
           hash
         else
           # must use value to prevent double-escaping
-          merge!(hash, CONTENT_KEY, element.texts.sum(&:value))
+          texts = ''
+          element.texts.each { |t| texts << t.value }
+          merge!(hash, CONTENT_KEY, texts)
         end
       end
 
