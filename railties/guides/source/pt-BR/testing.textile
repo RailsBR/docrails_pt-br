@@ -414,6 +414,8 @@ h4. Assertions Específicas do Rails
 
 Rails adiciona algumas assertions ao framework +test/unit+:
 
+NOTE: +assert_valid(record)+ has been deprecated. Please use +assert(record.valid?)+ instead.
+
 |_.Assertion                                           |_.Objetivo|
 |+assert_valid(record)+                                |Verifica se o registro passado é valido segundo os padrões do Active Record e retorna mensagens de erro caso não seja.|
 |+assert_difference(expressions, difference = 1, message = nil) {...}+            |Testa a diferença numérica do valor de retorno de uma expressão, produzido pela execução do bloco.|

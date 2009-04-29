@@ -1199,6 +1199,17 @@ end
 
 Se você usar +:conditions+ no estilo hash, então a criação do registro através desta associação terá automaticamente o escopo usando o hash. Neste caso, usando  +@customer.confirmed_orders.create+ ou +@customer.confirmed_orders.build+ vai criar pedidos que tenham a coluna confirmed igual a +true+.
 
+Se você precisar avaliar condições dinamicamente em runtime, você pode usar inteporlação de strings em aspas simples:
+
+<ruby>
+class Customer < ActiveRecord::Base
+  has_many :latest_orders, :class_name => "Order",
+    :conditions => 'orders.created_at > #{10.hours.ago.to_s(:db).inspect}'
+end
+</ruby>
+
+Certifique-se de estar usando aspas simples.
+
 h6. +:counter_sql+
 
 Normalmente o Rails gera automaticamente o SQL apropriado para contar os membros de uma associação. Com a opção +:counter_sql+, você pode especificar o comando SQL para fazer o "count" da sua forma.

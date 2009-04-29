@@ -363,12 +363,12 @@ OBSERVAÇÃO: O Rails adiciona um método helper +t+ (+translate+) à suas views
 Então, vamos adicionar a tradução inexistente ao nossos arquivos-dicionário (ou seja, fazer a parte da “localização”):
 
 <ruby>
-# config/locale/en.yml
+# config/locales/en.yml
 en:
   hello_world: Hello World
   hello_flash: Hello Flash
 
-# config/locale/pirate.yml
+# config/locales/pirate.yml
 pirate:
   hello_world: Ahoy World
   hello_flash: Ahoy Flash
@@ -400,7 +400,7 @@ OK! Agora vamos adicionar um timestamp à uma view, para que possamos demonstrar
 E vamos adicionar o formato de hora em nosso arquivo de tradução em “piratês” (o Rails já tem o formato definido para o inglês):
 
 <ruby>
-# config/locale/pirate.yml
+# config/locales/pirate.yml
 pirate:
   time:
     formats:
@@ -411,7 +411,7 @@ O que irá mostrar:
 
 !images/i18n/demo_localized_pirate.png(rails i18n demo localized time to pirate)!
 
-DICA: Nesse momento você deve precisar adicionar mais formatos de data e hora para fazer o backend do I18n funcionar como esperado (pelo menos para o local “piratês”). Mas há uma grande chance que alguém já fez o  trabalho de traduzir os *textos-padrão do Rails para o seu local*. No repositório do “rails-i18n no GitHub":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale você encontrará dicionários prontos para vários locais. Basta colocar um deles no diretório +config/locale/+ que o local estará pronto para ser utilizado.
+DICA: Nesse momento você deve precisar adicionar mais formatos de data e hora para fazer o backend do I18n funcionar como esperado (pelo menos para o local “piratês”). Mas há uma grande chance que alguém já fez o  trabalho de traduzir os *textos-padrão do Rails para o seu local*. No repositório do “rails-i18n no GitHub":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale você encontrará dicionários prontos para vários locais. Basta colocar um deles no diretório +config/locales/+ que o local estará pronto para ser utilizado.
 
 h4. Views Localizadas
 
@@ -423,7 +423,7 @@ h4. Organização dos Arquivos de Local
 
 Ao utilizar o SimpleStore padrão que vêm com a biblioteca I18n, os dicionários serão armazenados em arquivos texto em disco. Colocar as traduções de todas as partes da sua aplicação em apenas um arquivo pode ser difícil de gerenciar, mas você pode armazená-los usando uma hierarquia que faça sentido para você.
 
-Por exemplo, seu diretório +config/locale+ poderia ser como esse:
+Por exemplo, seu diretório +config/locales+ poderia ser como esse:
 
 <pre>
 |-defaults
