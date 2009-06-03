@@ -1,6 +1,6 @@
 h2. A API de Internacionalização do Rails (I18n)
 
-A gem I18n (abreviação para _internationalization_) do Ruby que acompanha o Ruby on Rails (a partir do Rails 2.2) oferece um framework extensível e fácil de usar para *traduzir suas aplicações para uma outra língua além do inglês* ou para permitir *suporte à múltiplas línguas* na sua aplicação.
+A gem I18n (abreviação para _internationalization_) que acompanha o Ruby on Rails (a partir do Rails 2.2) oferece um framework extensível e fácil de usar para *traduzir suas aplicações para uma outra língua além do inglês* ou para permitir *suporte à múltiplas línguas* na sua aplicação.
 
 O processo de “internacionalização” normalmente significa abstrair da aplicação todas as strings e outras partes que dependem das particularidades de cada local e língua, como o formato de datas  ou moeda. O processo de “localização” significa providenciar traduções e formatação adequadas à cada uma dessa partes. [1]
 
@@ -34,7 +34,7 @@ h4. A Arquitetura Geral da Biblioteca
 
 A gem Ruby I18n é dividida em duas partes:
 
-* A API publicado framework I18 -- um module Ruby com métodos públicos que definem como a biblioteca funciona
+* A API pública do framework I18n -- um módulo Ruby com métodos públicos que definem como a biblioteca funciona
 * Um backend padrão (que é intencionalmente chamado _Simple_ backend (backend simples)) que implementa esses métodos
 
 Como usuário você sempre deverá acessar apenas os métodos públicos do módulo I18n, mas é útil conhecer as funcionalidades do backend.
@@ -92,11 +92,11 @@ A biblioteca I18n define o *inglês* como *local padrão*, ou seja, se você nã
 
 OBSERVAÇÃO: A biblioteca I18n assume uma *postura pragmática* (após “alguma discussão":http://groups.google.com/group/rails-i18n/browse_thread/thread/14dede2c7dbe9470/80eec34395f64f3c?hl=en) ao usar como chaves de local apenas a parte _locale_ (“língua”), como +:en+, +:pl+, e não a parte _region_ (região) como em +:en-US+ ou +:en-UK+, que tradicionalmente são utilizadas para separar “línguas” e “configurações regionais” ou “dialetos”. Muitas aplicações internacionais utilizam apenas o elemento “língua” de um local, como em +:cz+, +:th+ or +:es+ (para Tcheco, Tailandês ou Espanhol). Porém, existem diferenças que podem ser importantes entre os diferentes grupos linguísticos. Por exemplo, no local +:en-US+ você teria $ como símbolo de moeda, enquanto em +:en-UK+ você teria £. Nada o impede de separar informações regionais e outros detalhes dessa maneira: tudo que você precisa fazer é fornecer todas as informações do local "English - United Kingdom" em um dicionário +:en-UK+. Vários “plugins para Rails I18n":http://rails-i18n.org/wiki como o "Globalize2":http://github.com/joshmh/globalize2/tree/master podem ajudá-lo a implementar isso.
 
-O *caminho de carga dos arquivos de tradução* (+I18n.load_path+) é apenas uma Array Ruby de caminhos para seus arquivos de tradução, que serão carregados automaticamente e disponibilizados à sua aplicação.Você pode usar qualquer nomenclatura de arquivos e diretórios que faça sentido para você.
+O *caminho de carga dos arquivos de tradução* (+I18n.load_path+) é apenas uma Array Ruby de caminhos para seus arquivos de tradução, que serão carregados automaticamente e disponibilizados à sua aplicação. Você pode usar qualquer nomenclatura de arquivos e diretórios que faça sentido para você.
 
-OBSERVAÇÃO: O backend irá fazer o lazy-load dessas traduções no momento em que uma tradução for solicitada pela primeira vez. Isso permite que o backend seja trocado por outro após a definição do caminho de carga.
+OBSERVAÇÃO: O backend irá fazer o carregamento de uma tradução no momento em que ela for solicitada pela primeira vez. Isso permite que o backend seja trocado por outro mesmo após a definição do caminho de carga.
 
-Os arquivos +environment.rb+ padrão contém instruções sobre como adicionar locais a partir de outros diretórios e como mudar o local padrão. Basta descomentar e editar as linhas relacionadas.
+Os arquivos +environment.rb+ padrões contém instruções sobre como adicionar locais a partir de outros diretórios e como mudar o local padrão. Basta descomentar e editar as linhas relacionadas.
  
 <ruby>
 # The internationalization framework can be changed
@@ -279,11 +279,11 @@ IMPORTANTE: No momento essa solução tem uma grande *desvantagem*. Devido à im
 
 h4. Definindo o Local com Base em Informações Fornecidas pelo Client
 
-Em casos específicos, faz sentido definir o local de acordo com as informações fornecidas pelo client, e não com base numa URL. Essa informação pode vir, por exemplo, das configurações de línguas prediletas do usuário (definidas no browser), podem ser baseadas em informações geográficas inferidas a partir do seu IP, ou o usuário pode simplesmente escolher o local na interface da aplicação e salvando essa escolha na sua conta. Essa abordagem é mais adequada para aplicações web ou serviços, e não para websites -- veja as observações sobre _sessions_, _cookies_ e arquitetura RESTful mais acima.
+Em casos específicos, faz sentido definir o local de acordo com as informações fornecidas pelo cliente, e não com base numa URL. Essa informação pode vir, por exemplo, das configurações de línguas prediletas do usuário (definidas no browser), podem ser baseadas em informações geográficas inferidas a partir do seu IP, ou o usuário pode simplesmente escolher o local na interface da aplicação e salvando essa escolha na sua conta. Essa abordagem é mais adequada para aplicações web ou serviços, e não para websites -- veja as observações sobre _sessions_, _cookies_ e arquitetura RESTful mais acima.
 
 h5. Utilizando +Accept-Language+
 
-Uma das fontes de informações sobre o client seria um cabeçalho HTTP +Accept-Language+. As pessoas podem “definí-lo em seus browsers":http://www.w3.org/International/questions/qa-lang-priorities ou em outros tipos de client (como o _curl_).
+Uma das fontes de informações sobre o client seria um cabeçalho HTTP +Accept-Language+. As pessoas podem “definí-lo em seus browsers":http://www.w3.org/International/questions/qa-lang-priorities ou em outros tipos de clientes (como o _curl_).
 
 Uma implementação comum para se utilizar um cabeçalho +Accept-Language+ seria:
 
@@ -303,7 +303,7 @@ Obviamente em um ambiente de produção você precisaria de um código muito mai
 
 h5. Usando o Banco de Dados GeoIP ou Similares
 
-Outra maneira de escolher o local a partir das informações do client seria utilizar um banco de dados para relacionar o IP do client à uma região, como o "GeoIP Lite Country":http://www.maxmind.com/app/geolitecountry. A mecânica do código seria bastante similar ao mostrado acima -- você procuraria o IP do usuário no banco de dados e veria qual o local mais adequado de acordo com o país/região/cidade retornado.
+Outra maneira de escolher o local a partir das informações do client seria utilizar um banco de dados para relacionar o IP do cliente à uma região, como o "GeoIP Lite Country":http://www.maxmind.com/app/geolitecountry. A mecânica do código seria bastante similar ao mostrado acima -- você procuraria o IP do usuário no banco de dados e veria qual o local mais adequado de acordo com o país/região/cidade retornado.
 
 h5. Conta do Usuário
 
@@ -339,7 +339,7 @@ end
 
 h4. Adicionando Traduções
 
-É evidente que existem *duas string que estão localizadas para o inglês*. Para internacionalizar esse código, devemos *substituir essas strings* com chamadas ao helper #t do Rails passando uma chave de pesquisa que faça sentido para a tradução:
+É evidente que existem *duas strings que estão localizadas para o inglês*. Para internacionalizar esse código, devemos *substituir essas strings* com chamadas ao helper #t do Rails passando uma chave de pesquisa que faça sentido para a tradução:
 
 <ruby>
 # app/controllers/home_controller.rb
@@ -411,11 +411,11 @@ O que irá mostrar:
 
 !images/i18n/demo_localized_pirate.png(rails i18n demo localized time to pirate)!
 
-DICA: Nesse momento você deve precisar adicionar mais formatos de data e hora para fazer o backend do I18n funcionar como esperado (pelo menos para o local “piratês”). Mas há uma grande chance que alguém já fez o  trabalho de traduzir os *textos-padrão do Rails para o seu local*. No repositório do “rails-i18n no GitHub":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale você encontrará dicionários prontos para vários locais. Basta colocar um deles no diretório +config/locales/+ que o local estará pronto para ser utilizado.
+DICA: Nesse momento você deve precisar adicionar mais formatos de data e hora para fazer o backend do I18n funcionar como esperado (pelo menos para o local “piratês”). Mas há uma grande chance de que alguém já tenha feito o trabalho de traduzir os *textos-padrão do Rails para o seu local*. No repositório do “rails-i18n no GitHub":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale você encontrará dicionários prontos para vários locais. Basta colocar um deles no diretório +config/locales/+ que o local estará pronto para ser utilizado.
 
 h4. Views Localizadas
 
-O Rails 2.3 traz um novo método mais conveninente para fazer a localização: views localizadas (templates). Digamos que você tem um _BooksController_ na sua aplicação. Sua ação _index_ irá renderizar o conteúdo do template +app/views/books/index.html.erb+. Quando você colocar uma _versão localizada_ desse template no mesmo diretório, por exemplo, *+index.es.html.erb+*, o Rails irá renderizar essa versão se o local estiver definido como +:es+. Quanto o local estiver definido como o padrão, a versão genérica +index.html.erb+ será utilizada. (Versões futuras do Rails poderão trazer essa localização _automágica_ para conteúdo do diretório +public+, por exemplo.)
+O Rails 2.3 traz um novo método mais conveniente para fazer a localização: views localizadas (templates). Digamos que você tem um _BooksController_ na sua aplicação. Sua ação _index_ irá renderizar o conteúdo do template +app/views/books/index.html.erb+. Quando você colocar uma _versão localizada_ desse template no mesmo diretório, por exemplo, *+index.es.html.erb+*, o Rails irá renderizar essa versão se o local estiver definido como +:es+. Quando o local estiver definido como o padrão, a versão genérica +index.html.erb+ será utilizada. (Versões futuras do Rails poderão trazer essa localização _automágica_ para o conteúdo do diretório +public+, por exemplo.)
 
 Você pode utilizar esse recurso quando tiver uma grande quantidade de conteúdo estático, por exemplo, o que seria complicado de colocar dentro de dicionários YAML ou Ruby. Porém, tenha em mente que qualquer modificação no template terá de ser propagada para todas suas versões.
 
@@ -461,7 +461,7 @@ Dê uma olhada no “Wiki do Rails I18n":http://rails-i18n.org/wiki para obter u
 
 h3. Visão Geral das Funcionalidades da API do I18n
 
-A essa altura você deve ter um bom entendimento de como utilizar a biblioteca I18n, sabendo tudo o que precisa fazer para internacionalizar uma aplicação Rails básica. Nos próximos capítulos iremos mostrar de maneira mais aprofundada algumas das funcionalidades.
+A essa altura você deve ter um bom entendimento de como utilizar a biblioteca I18n, sabendo tudo o que precisa fazer para internacionalizar uma aplicação Rails básica. Nos próximos capítulos iremos mostrar suas funcionalidades de maneira mais aprofundada.
 
 Entre as funcionalidades abordadas estão:
 
@@ -470,7 +470,7 @@ Entre as funcionalidades abordadas estão:
 * Pluralizando traduções
 * Localizando datas, números, moeda, etc.
 
-h4. Pesquisando Traduçõe
+h4. Pesquisando Traduções
 
 h5. Pesquisa Básica, Escopos e Chaves Aninhadas
 
@@ -688,7 +688,7 @@ O método +User.human_name+ retornará "Dude" e o método +User.human_attribute_
 
 h5. Escopo das Mensagens de Erro
 
-As mensagens de erro das validações do Active Record também podem ser traduzidas facilmente. O Active Record fornece alguns namespaces onde você pode colocar as mensagens diferentes para certos modelo, atributos e/ou validações. Isso também funciona de maneira transparente quando se utiliza single table inheritance.
+As mensagens de erro das validações do Active Record também podem ser traduzidas facilmente. O Active Record fornece alguns namespaces onde você pode colocar mensagens diferentes para certos modelos, atributos e/ou validações. Isso também funciona de maneira transparente quando se utiliza single table inheritance.
 
 Essa funcionalidade dá a você meios poderosos e flexíveis para ajustar as mensagens de acordo com as necessidades da sua aplicação. Considere um modelo User com uma validação +validates_presence_of+ para o atributo nome:
 
@@ -905,3 +905,7 @@ fn3. Uma dessas razões é que não queremos carregar nada além do necessário 
 h3. Changelog
 
 "Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213/tickets/23
+
+* 02 de Junho de 2009: Revisado por "Fernando Luizão":translators.html#fernandoluizao
+* 28 de Março de 2009: Traduzido por "Rafael Rosa":translators.html#rafaelrosafu
+
