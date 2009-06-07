@@ -56,12 +56,28 @@ namespace :db do
       when 'mysql'
         @charset   = ENV['CHARSET']   || 'utf8'
         @collation = ENV['COLLATION'] || 'utf8_general_ci'
+        creation_options = {:charset => (config['charset'] || @charset), :collation => (config['collation'] || @collation)}
         begin
           ActiveRecord::Base.establish_connection(config.merge('database' => nil))
-          ActiveRecord::Base.connection.create_database(config['database'], :charset => (config['charset'] || @charset), :collation => (config['collation'] || @collation))
+          ActiveRecord::Base.connection.create_database(config['database'], creation_options)
           ActiveRecord::Base.establish_connection(config)
-        rescue
-          $stderr.puts "Couldn't create database for #{config.inspect}, charset: #{config['charset'] || @charset}, collation: #{config['collation'] || @collation} (if you set the charset manually, make sure you have a matching collation)"
+        rescue Mysql::Error => sqlerr
+          if sqlerr.errno == Mysql::Error::ER_ACCESS_DENIED_ERROR
+            print "#{sqlerr.error}. \nPlease provide the root password for your mysql installation\n>"
+            root_password = $stdin.gets.strip
+            grant_statement = "GRANT ALL PRIVILEGES ON #{config['database']}.* " \
+              "TO '#{config['username']}'@'localhost' " \
+              "IDENTIFIED BY '#{config['password']}' WITH GRANT OPTION;"
+            ActiveRecord::Base.establish_connection(config.merge(
+                'database' => nil, 'username' => 'root', 'password' => root_password))
+            ActiveRecord::Base.connection.create_database(config['database'], creation_options)
+            ActiveRecord::Base.connection.execute grant_statement
+            ActiveRecord::Base.establish_connection(config)
+          else
+            $stderr.puts sqlerr.error
+            $stderr.puts "Couldn't create database for #{config.inspect}, charset: #{config['charset'] || @charset}, collation: #{config['collation'] || @collation}"
+            $stderr.puts "(if you set the charset manually, make sure you have a matching collation)" if config['charset']
+          end
         end
       when 'postgresql'
         @encoding = config[:encoding] || ENV['CHARSET'] || 'utf8'
@@ -156,8 +172,8 @@ namespace :db do
     Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
   end
 
-  desc 'Drops and recreates the database from db/schema.rb for the current environment.'
-  task :reset => ['db:drop', 'db:create', 'db:schema:load']
+  desc 'Drops and recreates the database from db/schema.rb for the current environment and loads the seeds.'
+  task :reset => [ 'db:drop', 'db:setup' ]
 
   desc "Retrieves the charset for the current environment's database"
   task :charset => :environment do
@@ -204,6 +220,15 @@ namespace :db do
         abort %{Run "rake db:migrate" to update your database then try again.}
       end
     end
+  end
+
+  desc 'Create the database, load the schema, and initialize with the seed data'
+  task :setup => [ 'db:create', 'db:schema:load', 'db:seed' ]
+
+  desc 'Load the seed data from db/seeds.rb'
+  task :seed => :environment do
+    seed_file = File.join(Rails.root, 'db', 'seeds.rb')
+    load(seed_file) if File.exist?(seed_file)
   end
 
   namespace :fixtures do
@@ -273,7 +298,9 @@ namespace :db do
         ENV['PGPORT']     = abcs[RAILS_ENV]["port"].to_s if abcs[RAILS_ENV]["port"]
         ENV['PGPASSWORD'] = abcs[RAILS_ENV]["password"].to_s if abcs[RAILS_ENV]["password"]
         search_path = abcs[RAILS_ENV]["schema_search_path"]
-        search_path = "--schema=#{search_path}" if search_path
+        unless search_path.blank?
+          search_path = search_path.split(",").map{|search_path| "--schema=#{search_path.strip}" }.join(" ")
+        end
         `pg_dump -i -U "#{abcs[RAILS_ENV]["username"]}" -s -x -O -f db/#{RAILS_ENV}_structure.sql #{search_path} #{abcs[RAILS_ENV]["database"]}`
         raise "Error dumping database" if $?.exitstatus == 1
       when "sqlite", "sqlite3"

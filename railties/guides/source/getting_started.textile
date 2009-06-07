@@ -154,7 +154,7 @@ And if you’re using PostgreSQL for data storage, run this command:
 $ rails blog -d postgresql
 </shell>
 
-TIP. You can see all of the switches that the Rails application builder accepts by running <tt>rails -h</tt>.
+TIP: You can see all of the switches that the Rails application builder accepts by running <tt>rails -h</tt>.
 
 After you create the blog application, switch to its folder to continue work directly in that application:
 
@@ -259,7 +259,7 @@ One of the traditional places to start with a new language is by getting some te
 $ script/generate controller home index
 </shell>
 
-TIP. If you're on Windows, or your Ruby is set up in some non-standard fashion, you may need to explicitly pass Rails +script+ commands to Ruby: +ruby script/generate controller home index+.
+TIP: If you're on Windows, or your Ruby is set up in some non-standard fashion, you may need to explicitly pass Rails +script+ commands to Ruby: +ruby script/generate controller home index+.
 
 Rails will create several files for you, including +app/views/home/index.html.erb+. This is the template that will be used to display the results of the +index+ action (method) in the +home+ controller. Open this file in your text editor and edit it to contain a single line of code:
 
@@ -279,7 +279,7 @@ This will fire up an instance of the Mongrel web server by default (Rails can al
 
 !images/rails_welcome.png(Welcome Aboard screenshot)!
 
-TIP. To stop the web server, hit Ctrl+C in the terminal window where it's running. In development mode, Rails does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
+TIP: To stop the web server, hit Ctrl+C in the terminal window where it's running. In development mode, Rails does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
 
 The "Welcome Aboard" page is the _smoke test_ for a new Rails application: it makes sure that you have your software configured correctly enough to serve a page. To view the page you just created, navigate to +http://localhost:3000/home/index+.
 
@@ -383,7 +383,7 @@ NOTE: Because you're working in the development environment by default, this com
 
 h4. Adding a Link
 
-To hook the posts up to the home page you've already created, you can add a link to the home page. Open +/app/views/home/index.html.erb+ and modify it as follows:
+To hook the posts up to the home page you've already created, you can add a link to the home page. Open +app/views/home/index.html.erb+ and modify it as follows:
 
 <code lang="ruby">
 <h1>Hello, Rails!</h1>
@@ -400,7 +400,7 @@ Now you're ready to start working with posts. To do that, navigate to +http://lo
 
 This is the result of Rails rendering the +index+ view of your posts. There aren't currently any posts in the database, but if you click the +New Post+ link you can create one. After that, you'll find that you can edit posts, look at their details, or destroy them. All of the logic and HTML to handle this was built by the single +script/generate scaffold+ command.
 
-TIP. In development mode (which is what you're working in by default), Rails reloads your application with every browser request, so there's no need to stop and restart the web server.
+TIP: In development mode (which is what you're working in by default), Rails reloads your application with every browser request, so there's no need to stop and restart the web server.
 
 Congratulations, you're riding the rails! Now it's time to see how it all works.
 
@@ -510,7 +510,7 @@ This view iterates over the contents of the +@posts+ array to display content an
 * +link_to+ builds a hyperlink to a particular destination
 * +edit_post_path+ is a helper that Rails provides as part of RESTful routing. You’ll see a variety of these helpers for the different actions that the controller includes.
 
-TIP. For more details on the rendering process, see "Layouts and Rendering in Rails":layouts_and_rendering.html.
+TIP: For more details on the rendering process, see "Layouts and Rendering in Rails":layouts_and_rendering.html.
 
 h4. Customizing the Layout
 
@@ -944,7 +944,7 @@ map.resources :posts, :has_many => :comments
 
 This creates +comments+ as a _nested resource_ within +posts+. This is another part of capturing the hierarchical relationship that exists between posts and comments.
 
-TIP: For more information on routing, see the "Rails Routing from the Outside In":routing_outside_in.html guide.
+TIP: For more information on routing, see the "Rails Routing from the Outside In":routing.html guide.
 
 h4. Generating a Controller
 
@@ -1290,13 +1290,13 @@ Now that you've seen your first Rails application, you should feel free to updat
 
 * The "Ruby On Rails guides":http://guides.rubyonrails.org
 * The "Ruby on Rails mailing list":http://groups.google.com/group/rubyonrails-talk
-* The #rubyonrails channel on irc.freenode.net
+* The "#rubyonrails":irc://irc.freenode.net/#rubyonrails channel on irc.freenode.net
 * The "Rails Wiki":http://wiki.rubyonrails.org/
 
 Rails also comes with built-in help that you can generate using the rake command-line utility:
 
-* Running +rake doc:guides+ will put a full copy of the Rails Guides in the +/doc/guides+ folder of your application. Open +/doc/guides/index.html+ in your web browser to explore the Guides.
-* Running +rake doc:rails+ will put a full copy of the API documentation for Rails in the +/doc/api+ folder of your application. Open +/doc/api/index.html+ in your web browser to explore the API documentation.
+* Running +rake doc:guides+ will put a full copy of the Rails Guides in the +doc/guides+ folder of your application. Open +doc/guides/index.html+ in your web browser to explore the Guides.
+* Running +rake doc:rails+ will put a full copy of the API documentation for Rails in the +doc/api+ folder of your application. Open +doc/api/index.html+ in your web browser to explore the API documentation.
 
 h3. Changelog
 

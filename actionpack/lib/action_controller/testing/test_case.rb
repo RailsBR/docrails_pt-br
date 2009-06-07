@@ -56,7 +56,7 @@ module ActionController
   #
   # ActionController::TestCase will automatically infer the controller under test
   # from the test class name. If the controller cannot be inferred from the test
-  # class name, you can explicity set it with +tests+.
+  # class name, you can explicitly set it with +tests+.
   #
   #   class SpecialEdgeCaseWidgetsControllerTest < ActionController::TestCase
   #     tests WidgetController
@@ -105,20 +105,7 @@ module ActionController
   class TestCase < ActiveSupport::TestCase
     include TestProcess
 
-    module Assertions
-      %w(response selector tag dom routing model).each do |kind|
-        include ActionController::Assertions.const_get("#{kind.camelize}Assertions")
-      end
-
-      def clean_backtrace(&block)
-        yield
-      rescue ActiveSupport::TestCase::Assertion => error
-        framework_path = Regexp.new(File.expand_path("#{File.dirname(__FILE__)}/assertions"))
-        error.backtrace.reject! { |line| File.expand_path(line) =~ framework_path }
-        raise
-      end
-    end
-    include Assertions
+    include ActionDispatch::Assertions
 
     # When the request.remote_addr remains the default for testing, which is 0.0.0.0, the exception is simply raised inline
     # (bystepping the regular exception handling from rescue_action). If the request.remote_addr is anything else, the regular
@@ -195,7 +182,7 @@ module ActionController
         @controller.send(:initialize_current_url)
       end
     end
-    
+
     # Cause the action to be rescued according to the regular rules for rescue_action when the visitor is not local
     def rescue_action_in_public!
       @request.remote_addr = '208.77.188.166' # example.com

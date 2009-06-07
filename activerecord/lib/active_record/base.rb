@@ -1,6 +1,16 @@
 require 'yaml'
 require 'set'
 require 'active_support/dependencies'
+require 'active_support/time'
+require 'active_support/core_ext/class/attribute_accessors'
+require 'active_support/core_ext/class/delegating_attributes'
+require 'active_support/core_ext/class/inheritable_attributes'
+require 'active_support/core_ext/array/extract_options'
+require 'active_support/core_ext/hash/deep_merge'
+require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/string/behavior'
+require 'active_support/core_ext/symbol'
 
 module ActiveRecord #:nodoc:
   # Generic Active Record exception class.
@@ -688,14 +698,9 @@ module ActiveRecord #:nodoc:
       #   Person.exists?(['name LIKE ?', "%#{query}%"])
       #   Person.exists?
       def exists?(id_or_conditions = {})
-        connection.select_all(
-          construct_finder_sql(
-            :select     => "#{quoted_table_name}.#{primary_key}",
-            :conditions => expand_id_conditions(id_or_conditions),
-            :limit      => 1
-          ),
-          "#{name} Exists"
-        ).size > 0
+        find_initial(
+          :select => "#{quoted_table_name}.#{primary_key}",
+          :conditions => expand_id_conditions(id_or_conditions)) ? true : false
       end
 
       # Creates an object (or multiple objects) and saves it to the database, if validations pass.
@@ -1030,8 +1035,23 @@ module ActiveRecord #:nodoc:
       #
       # To start from an all-closed default and enable attributes as needed,
       # have a look at +attr_accessible+.
+      #
+      # If the access logic of your application is richer you can use <tt>Hash#except</tt>
+      # or <tt>Hash#slice</tt> to sanitize the hash of parameters before they are
+      # passed to Active Record.
+      # 
+      # For example, it could be the case that the list of protected attributes
+      # for a given model depends on the role of the user:
+      #
+      #   # Assumes plan_id is not protected because it depends on the role.
+      #   params[:account] = params[:account].except(:plan_id) unless admin?
+      #   @account.update_attributes(params[:account])
+      #
+      # Note that +attr_protected+ is still applied to the received hash. Thus,
+      # with this technique you can at most _extend_ the list of protected
+      # attributes for a particular mass-assignment call.
       def attr_protected(*attributes)
-        write_inheritable_attribute(:attr_protected, Set.new(attributes.map(&:to_s)) + (protected_attributes || []))
+        write_inheritable_attribute(:attr_protected, Set.new(attributes.map {|a| a.to_s}) + (protected_attributes || []))
       end
 
       # Returns an array of all the attributes that have been protected from mass-assignment.
@@ -1063,6 +1083,21 @@ module ActiveRecord #:nodoc:
       #
       #   customer.credit_rating = "Average"
       #   customer.credit_rating # => "Average"
+      #
+      # If the access logic of your application is richer you can use <tt>Hash#except</tt>
+      # or <tt>Hash#slice</tt> to sanitize the hash of parameters before they are
+      # passed to Active Record.
+      # 
+      # For example, it could be the case that the list of accessible attributes
+      # for a given model depends on the role of the user:
+      #
+      #   # Assumes plan_id is accessible because it depends on the role.
+      #   params[:account] = params[:account].except(:plan_id) unless admin?
+      #   @account.update_attributes(params[:account])
+      #
+      # Note that +attr_accessible+ is still applied to the received hash. Thus,
+      # with this technique you can at most _narrow_ the list of accessible
+      # attributes for a particular mass-assignment call.
       def attr_accessible(*attributes)
         write_inheritable_attribute(:attr_accessible, Set.new(attributes.map(&:to_s)) + (accessible_attributes || []))
       end
@@ -1357,14 +1392,14 @@ module ActiveRecord #:nodoc:
         classes
       rescue
         # OPTIMIZE this rescue is to fix this test: ./test/cases/reflection_test.rb:56:in `test_human_name_for_column'
-        # Appearantly the method base_class causes some trouble.
+        # Apparently the method base_class causes some trouble.
         # It now works for sure.
         [self]
       end
 
       # Transforms attribute key names into a more humane format, such as "First name" instead of "first_name". Example:
       #   Person.human_attribute_name("first_name") # => "First name"
-      # This used to be depricated in favor of humanize, but is now preferred, because it automatically uses the I18n
+      # This used to be deprecated in favor of humanize, but is now preferred, because it automatically uses the I18n
       # module now.
       # Specify +options+ with additional translating options.
       def human_attribute_name(attribute_key_name, options = {})
@@ -1537,12 +1572,12 @@ module ActiveRecord #:nodoc:
         end
 
         def reverse_sql_order(order_query)
-          reversed_query = order_query.to_s.split(/,/).each { |s|
+          order_query.to_s.split(/,/).each { |s|
             if s.match(/\s(asc|ASC)$/)
               s.gsub!(/\s(asc|ASC)$/, ' DESC')
             elsif s.match(/\s(desc|DESC)$/)
               s.gsub!(/\s(desc|DESC)$/, ' ASC')
-            elsif !s.match(/\s(asc|ASC|desc|DESC)$/)
+            else
               s.concat(' DESC')
             end
           }.join(',')
@@ -1888,7 +1923,7 @@ module ActiveRecord #:nodoc:
                   else
                     find(:#{finder}, options.merge(finder_options))
                   end
-                  #{'result || raise(RecordNotFound, "Couldn\'t find #{name} with #{attributes.to_a.collect {|pair| "#{pair.first} = #{pair.second}"}.join(\', \')}")' if bang}
+                  #{'result || raise(RecordNotFound, "Couldn\'t find #{name} with #{attributes.to_a.collect { |pair| pair.join(\' = \') }.join(\', \')}")' if bang}
                 end
               }, __FILE__, __LINE__
               send(method_id, *arguments)
@@ -2172,7 +2207,7 @@ module ActiveRecord #:nodoc:
         #     default_scope :order => 'last_name, first_name'
         #   end
         def default_scope(options = {})
-          self.default_scoping << { :find => options, :create => (options.is_a?(Hash) && options.has_key?(:conditions)) ? options[:conditions] : {} }
+          self.default_scoping << { :find => options, :create => options[:conditions].is_a?(Hash) ? options[:conditions] : {} }
         end
 
         # Test whether the given method and optional key are scoped.
@@ -2610,11 +2645,11 @@ module ActiveRecord #:nodoc:
       # Note: The new instance will share a link to the same attributes as the original class. So any change to the attributes in either
       # instance will affect the other.
       def becomes(klass)
-        returning klass.new do |became|
-          became.instance_variable_set("@attributes", @attributes)
-          became.instance_variable_set("@attributes_cache", @attributes_cache)
-          became.instance_variable_set("@new_record", new_record?)
-        end
+        became = klass.new
+        became.instance_variable_set("@attributes", @attributes)
+        became.instance_variable_set("@attributes_cache", @attributes_cache)
+        became.instance_variable_set("@new_record", new_record?)
+        became
       end
 
       # Updates a single attribute and saves the record without going through the normal validation procedure.

@@ -9,13 +9,47 @@ By referring to this guide you will learn:
 
 endprologue.
 
-h3. Extensions to +Kernel+
+h3. Extensions to All Objects
 
-...
+h4. +blank?+ and +present?+
 
-h3. Extensions to +Object+
+The following values are considered to be blank in a Rails application:
 
-...
+* +nil+ and +false+,
+
+* strings composed only of whitespace, i.e. matching +/\A\s*\z/+,
+
+* empty arrays and hashes, and
+
+* any other object that responds to +empty?+ and it is empty.
+
+WARNING: Note that numbers are not mentioned, in particular 0 and 0.0 are *not* blank.
+
+For example, this method from +ActionDispatch::Response+ uses +blank?+ to easily be robust to +nil+ and whitespace strings in one shot:
+
+<ruby>
+def charset
+  charset = String(headers["Content-Type"] || headers["type"]).split(";")[1]
+  charset.blank? ? nil : charset.strip.split("=")[1]
+end
+</ruby>
+
+That's a typical use case for +blank?+.
+
+Here, the method +instantiate_observers+ of Active Record has nothing to do if there are no observers:
+
+<ruby>
+def instantiate_observers
+  return if @observers.blank?
+  # ...
+end
+</ruby>
+
+The method +present?+ is equivalent to +!blank?+:
+
+<ruby>
+assert @response.body.present? # same as !@response.body.blank?
+</ruby>
 
 h3. Extensions to +Module+
 
@@ -23,7 +57,162 @@ h3. Extensions to +Module+
 
 h3. Extensions to +Class+
 
-...
+h4. Class Attribute Accessors
+
+The macros +cattr_reader+, +cattr_writer+, and +cattr_accessor+ are analogous to their +attr_*+ counterparts but for classes. They initialize a class variable to +nil+ unless it already exists, and generate the corresponding class methods to access it:
+
+<ruby>
+class MysqlAdapter < AbstractAdapter
+  # Generates class methods to access @@emulate_booleans.
+  cattr_accessor :emulate_booleans
+  self.emulate_booleans = true
+end
+</ruby>
+
+Instance methods are created as well for convenience. For example given
+
+<ruby>
+module ActionController
+  class Base
+    cattr_accessor :logger
+  end
+end
+</ruby>
+
+we can access +logger+ in actions. The generation of the writer instance method can be prevented setting +:instance_writer+ to +false+ (not any false value, but exactly +false+):
+
+<ruby>
+module ActiveRecord
+  class Base
+    # No pluralize_table_names= instance writer is generated.
+    cattr_accessor :pluralize_table_names, :instance_writer => false
+  end
+end
+</ruby>
+
+h4. Class Inheritable Attributes
+
+Class variables are shared down the inheritance tree. Class instance variables are not shared, but they are not inherited either. The macros +class_inheritable_reader+, +class_inheritable_writer+, and +class_inheritable_accessor+ provide accesors for class-level data which is inherited but not shared with children:
+
+<ruby>
+module ActionController
+  class Base
+    # FIXME: REVISE/SIMPLIFY THIS COMMENT.
+    # The value of allow_forgery_protection is inherited,
+    # but its value in a particular class does not affect
+    # the value in the rest of the controllers hierarchy.
+    class_inheritable_accessor :allow_forgery_protection
+  end
+end
+</ruby>
+
+They accomplish this with class instance variables and cloning on subclassing, there are no class variables involved. Cloning is performed with +dup+ as long as the value is duplicable.
+
+There are some variants specialised in arrays and hashes:
+
+<ruby>
+class_inheritable_array
+class_inheritable_hash
+</ruby>
+
+Those writers take any inherited array or hash into account and extend them rather than overwrite them.
+
+As with vanilla class attribute accessors these macros create convenience instance methods for reading and writing. The generation of the writer instance method can be prevented setting +:instance_writer+ to +false+ (not any false value, but exactly +false+):
+
+<ruby>
+module ActiveRecord
+  class Base
+    class_inheritable_accessor :default_scoping, :instance_writer => false
+  end
+end
+</ruby>
+
+Since values are copied when a subclass is defined, if the base class changes the attribute after that, the subclass does not see the new value. That's the point. 
+
+There's a related macro called +superclass_delegating_accessor+, however, that does not copy the value when the base class is subclassed. Instead, it delegates reading to the superclass as long as the attribute is not set via its own writer. For example, +ActionMailer::Base+ defines +delivery_method+ this way:
+
+<ruby>
+module ActionMailer
+  class Base
+    superclass_delegating_accessor :delivery_method
+    self.delivery_method = :smtp
+  end
+end
+</ruby>
+
+If for whatever reason an application loads the definition of a mailer class and after that sets +ActionMailer::Base.delivery_method+, the mailer class will still see the new value. In addition, the mailer class is able to change the +delivery_method+ without affecting the value in the parent using its own inherited class attribute writer.
+
+h4. Subclasses
+
+The +subclasses+ method returns the names of all subclasses of a given class as an array of strings. That comprises not only direct subclasses, but all descendants down the hierarchy:
+
+<ruby>
+class C; end
+C.subclasses # => []
+
+Integer.subclasses # => ["Bignum", "Fixnum"]
+
+module M
+  class A; end
+  class B1 < A; end
+  class B2 < A; end
+end
+
+module N
+  class C < M::B1; end
+end
+
+M::A.subclasses # => ["N::C", "M::B2", "M::B1"]
+</ruby>
+
+The order in which these class names are returned is unspecified.
+
+See also +Object#subclasses_of+ in "Extensions to All Objects FIX THIS LINK":FIXME.
+
+h4. Class Removal
+
+Roughly speaking, the +remove_class+ method removes the class objects passed as arguments:
+
+<ruby>
+Class.remove_class(Hash, Dir) # => [Hash, Dir]
+Hash # => NameError: uninitialized constant Hash
+Dir  # => NameError: uninitialized constant Dir
+</ruby>
+
+More specifically, +remove_class+ attempts to remove constants with the same name as the passed class objects from their parent modules. So technically this method does not guarantee the class objects themselves are not still valid and alive somewhere after the method call:
+
+<ruby>
+module M
+  class A; end
+  class B < A; end
+end
+
+A2 = M::A
+
+M::A.object_id            # => 13053950
+Class.remove_class(M::A)
+
+M::B.superclass.object_id # => 13053950 (same object as before)
+A2.name                   # => "M::A" (name is hard-coded in object)
+</ruby>
+
+WARNING: Removing fundamental classes like +String+ can result in really funky behaviour.
+
+The method +remove_subclasses+ provides a shortcut for removing all descendants of a given class, where "removing" has the meaning explained above:
+
+<ruby>
+class A; end
+class B1 < A; end
+class B2 < A; end
+class C < A; end
+
+A.subclasses        # => ["C", "B2", "B1"]
+A.remove_subclasses
+A.subclasses        # => []
+C                   # => NameError: uninitialized constant C
+</ruby>
+
+See also +Object#remove_subclasses_of+ in "Extensions to All Objects FIX THIS LINK":FIXME.
 
 h3. Extensions to +NilClass+
 
@@ -67,7 +256,122 @@ h3. Extensions to +Enumerable+
 
 h3. Extensions to +Array+
 
-...
+h4. Accessing
+
+Active Support augments the API of arrays to ease certain ways of accessing them. For example, +to+ returns the subarray of elements up to the one at the passed index:
+
+<ruby>
+%w(a b c d).to(2) # => %w(a b c)
+[].to(7)          # => []
+</ruby>
+
+Similarly, +from+ returns the tail from the element at the passed index on:
+
+<ruby>
+%w(a b c d).from(2)  # => %w(c d)
+%w(a b c d).from(10) # => nil
+[].from(0)           # => nil
+</ruby>
+
+The methods +second+, +third+, +fourth+, and +fifth+ return the corresponding element (+first+ is builtin). Thanks to social wisdom and positive constructiveness all around, +forty_two+ is also available.
+
+You can pick a random element with +rand+:
+
+<ruby>
+shape_type = [Circle, Square, Triangle].rand
+</ruby>
+
+h4. Grouping
+
+h5. +in_groups_of(number, fill_with = nil)+
+
+The method +in_groups_of+ splits an array into consecutive groups of a certain size. It returns an array with the groups:
+
+<ruby>
+[1, 2, 3].in_groups_of(2) # => [[1, 2], [3, nil]]
+</ruby>
+
+or yields them in turn if a block is passed:
+
+<ruby>
+<% sample.in_groups_of(3) do |a, b, c| %>
+  <tr>
+    <td><%=h a %></td>
+    <td><%=h b %></td>
+    <td><%=h c %></td>
+  </tr>
+<% end %>
+</ruby>
+
+The first example shows +in_groups_of+ fills the last group with as many +nil+ elements as needed to have the requested size. You can change this padding value using the second optional argument:
+
+<ruby>
+[1, 2, 3].in_groups_of(2, 0) # => [[1, 2], [3, 0]]
+</ruby>
+
+And you can tell the method not to fill the last group passing +false+:
+
+<ruby>
+[1, 2, 3].in_groups_of(2, false) # => [[1, 2], [3]]
+</ruby>
+
+As a consequence +false+ can't be a used as a padding value.
+
+h5. +in_groups(number, fill_with = nil)+
+
+The method +in_groups+ splits an array into a certain number of groups. The method returns and array with the groups:
+
+<ruby>
+%w(1 2 3 4 5 6 7).in_groups(3)
+# => [["1", "2", "3"], ["4", "5", nil], ["6", "7", nil]]
+</ruby>
+
+or yields them in turn if a block is passed:
+
+<ruby>
+%w(1 2 3 4 5 6 7).in_groups(3) {|group| p group}
+["1", "2", "3"]
+["4", "5", nil]
+["6", "7", nil]
+</ruby>
+
+The examples above show that +in_groups+ fills some groups with a trailing +nil+ element as needed. A group can get at most one of these extra elements, the rightmost one if any. And the groups that have them are always the last ones.
+
+You can change this padding value using the second optional argument:
+
+<ruby>
+%w(1 2 3 4 5 6 7).in_groups(3, "0")
+# => [["1", "2", "3"], ["4", "5", "0"], ["6", "7", "0"]]
+</ruby>
+
+And you can tell the method not to fill the smaller groups passing +false+:
+
+<ruby>
+%w(1 2 3 4 5 6 7).in_groups(3, false)
+# => [["1", "2", "3"], ["4", "5"], ["6", "7"]]
+</ruby>
+
+As a consequence +false+ can't be a used as a padding value.
+
+h5. +split(value = nil)+
+
+The method +split+ divides an array by a separator and returns the resulting chunks.
+
+If a block is passed the separators are those elements of the array for which the block returns true:
+
+<ruby>
+(-5..5).to_a.split { |i| i.multiple_of?(4) }
+# => [[-5], [-3, -2, -1], [1, 2, 3], [5]]
+</ruby>
+
+Otherwise, the value received as argument, which defaults to +nil+, is the separator:
+
+<ruby>
+[0, 1, -5, 1, 1, "foo", "bar"].split(1)
+# => [[0], [-5], [], ["foo", "bar"]]
+</ruby>
+
+NOTE: Observe in the previous example that consecutive separators result in empty arrays.
 
 h3. Extensions to +Hash+
 

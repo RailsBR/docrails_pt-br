@@ -1,8 +1,19 @@
-require 'active_resource/connection'
-require 'cgi'
+require 'active_support'
+require 'active_support/core_ext/class/attribute_accessors'
+require 'active_support/core_ext/class/inheritable_attributes'
+require 'active_support/core_ext/kernel/reporting'
+require 'active_support/core_ext/module/attr_accessor_with_default'
+require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/module/aliasing'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/object/misc'
 require 'set'
+require 'uri'
 
 module ActiveResource
+  autoload :Formats, 'active_resource/formats'
+  autoload :Connection, 'active_resource/connection'
+
   # ActiveResource::Base is the main class for mapping RESTful resources as models in a Rails application.
   #
   # For an outline of what Active Resource is capable of, see link:files/vendor/rails/activeresource/README.html.
@@ -298,7 +309,7 @@ module ActiveResource
 
       # Returns the current format, default is ActiveResource::Formats::XmlFormat.
       def format
-        read_inheritable_attribute(:format) || ActiveResource::Formats[:xml]
+        read_inheritable_attribute(:format) || ActiveResource::Formats::XmlFormat
       end
 
       # Sets the number of seconds after which requests to the REST API should time out.
@@ -337,9 +348,9 @@ module ActiveResource
 
       # Do not include any modules in the default element name. This makes it easier to seclude ARes objects
       # in a separate namespace without having to set element_name repeatedly.
-      attr_accessor_with_default(:element_name)    { to_s.split("::").last.underscore } #:nodoc:
+      attr_accessor_with_default(:element_name)    { ActiveSupport::Inflector.underscore(to_s.split("::").last) } #:nodoc:
 
-      attr_accessor_with_default(:collection_name) { element_name.pluralize } #:nodoc:
+      attr_accessor_with_default(:collection_name) { ActiveSupport::Inflector.pluralize(element_name) } #:nodoc:
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
       
       # Gets the \prefix for a resource's nested URL (e.g., <tt>prefix/collectionname/1.xml</tt>)
@@ -375,7 +386,7 @@ module ActiveResource
         end_code
         silence_warnings { instance_eval code, __FILE__, __LINE__ }
       rescue
-        logger.error "Couldn't set prefix: #{$!}\n  #{code}"
+        logger.error "Couldn't set prefix: #{$!}\n  #{code}" if logger
         raise
       end
 
@@ -890,15 +901,12 @@ module ActiveResource
       ActiveSupport::JSON.encode(attributes, options)
     end
 
-    # For compatibility with ActiveSupport::JSON.encode
-    alias rails_to_json to_json
-
     # Returns the serialized string representation of the resource in the configured
     # serialization format specified in ActiveResource::Base.format. The options
     # applicable depend on the configured encoding format.
     def encode(options={})
       case self.class.format
-        when ActiveResource::Formats[:xml]
+        when ActiveResource::Formats::XmlFormat
           self.class.format.encode(attributes, {:root => self.class.element_name}.merge(options))
         else
           self.class.format.encode(attributes, options)
@@ -1023,7 +1031,7 @@ module ActiveResource
     private
       # Tries to find a resource for a given collection name; if it fails, then the resource is created
       def find_or_create_resource_for_collection(name)
-        find_or_create_resource_for(name.to_s.singularize)
+        find_or_create_resource_for(ActiveSupport::Inflector.singularize(name.to_s))
       end
 
       # Tries to find a resource in a non empty list of nested modules
@@ -1064,6 +1072,11 @@ module ActiveResource
         self.class.__send__(:split_options, options)
       end
 
+      # For compatibility with ActiveSupport::JSON.encode
+      def rails_to_json(options, *args)
+        to_json(options)
+      end
+
       def method_missing(method_symbol, *arguments) #:nodoc:
         method_name = method_symbol.to_s
 
@@ -1078,3 +1091,6 @@ module ActiveResource
       end
   end
 end
+
+require 'active_resource/validations'
+require 'active_resource/custom_methods'

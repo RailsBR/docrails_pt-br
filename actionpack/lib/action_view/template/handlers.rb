@@ -33,7 +33,7 @@ module ActionView #:nodoc:
     end
 
     def template_handler_extensions
-      @@template_handlers.keys.map(&:to_s).sort
+      @@template_handlers.keys.map {|key| key.to_s }.sort
     end
 
     def registered_template_handler(extension)
@@ -46,7 +46,7 @@ module ActionView #:nodoc:
     end
 
     def handler_class_for_extension(extension)
-      registered_template_handler(extension) || @@default_template_handlers
+      (extension && registered_template_handler(extension.to_sym)) || @@default_template_handlers
     end
   end
 end

@@ -7,16 +7,20 @@ module ActiveSupport
 
     CONTENT_KEY = '__content__'.freeze
 
-    # Parse an XML Document string into a simple hash
+    # Parse an XML Document string or IO into a simple hash
     #
     # Same as XmlSimple::xml_in but doesn't shoot itself in the foot,
     # and uses the defaults from ActiveSupport
     #
-    # string::
-    #   XML Document string to parse
-    def parse(string)
+    # data::
+    #   XML Document string or IO to parse
+    def parse(data)
+      if data.respond_to?(:read)
+        data = data.read
+      end
+
       require 'rexml/document' unless defined?(REXML::Document)
-      doc = REXML::Document.new(string)
+      doc = REXML::Document.new(data)
       merge_element!({}, doc.root)
     end
 
@@ -50,7 +54,7 @@ module ActiveSupport
       # Merge all the texts of an element into the hash
       #
       # hash::
-      #   Hash to add the converted emement to.
+      #   Hash to add the converted element to.
       # element::
       #   XML element whose texts are to me merged into the hash
       def merge_texts!(hash, element)

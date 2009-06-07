@@ -5,14 +5,18 @@ module ActiveSupport
   module XmlMini_Nokogiri #:nodoc:
     extend self
 
-    # Parse an XML Document string into a simple hash using libxml / nokogiri.
-    # string::
-    #   XML Document string to parse
-    def parse(string)
-      if string.blank?
+    # Parse an XML Document string or IO into a simple hash using libxml / nokogiri.
+    # data::
+    #   XML Document string or IO to parse
+    def parse(data)
+      if data.respond_to?(:read)
+        data = data.read
+      end
+
+      if data.blank?
         {}
       else
-        doc = Nokogiri::XML(string)
+        doc = Nokogiri::XML(data)
         raise doc.errors.first if doc.errors.length > 0
         doc.to_hash
       end
@@ -53,7 +57,7 @@ module ActiveSupport
               memo[name] = child_hash
             end
 
-            # Recusively walk children
+            # Recursively walk children
             child.children.each { |c|
               callback.call(child_hash, child, c, callback)
             }

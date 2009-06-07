@@ -211,7 +211,7 @@ $ rake db:migrate
 $ rake db:test:load
 </shell>
 
-Above +rake db:migrate+ runs any pending migrations on the _developemnt_ environment and updates +db/schema.rb+. +rake db:test:load+ recreates the test database from the current db/schema.rb. On subsequent attempts it is a good to first run +db:test:prepare+ as it first checks for pending migrations and warns you appropriately.
+Above +rake db:migrate+ runs any pending migrations on the _development_ environment and updates +db/schema.rb+. +rake db:test:load+ recreates the test database from the current db/schema.rb. On subsequent attempts it is a good to first run +db:test:prepare+ as it first checks for pending migrations and warns you appropriately.
 
 NOTE: +db:test:prepare+ will fail with an error if db/schema.rb doesn't exists.
 
@@ -372,7 +372,7 @@ NameError: undefined local variable or method `some_undefined_variable' for #<Po
 
 Notice the 'E' in the output. It denotes a test with error.
 
-NOTE: The execution of each test method stops as soon as any error or a assertion failure is encountered, and the test suite continues with the next method. All test methods are executed in alphabetical order.
+NOTE: The execution of each test method stops as soon as any error or an assertion failure is encountered, and the test suite continues with the next method. All test methods are executed in alphabetical order.
 
 h4. What to Include in Your Unit Tests
 

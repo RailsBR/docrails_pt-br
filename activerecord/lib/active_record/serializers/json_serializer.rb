@@ -2,9 +2,10 @@ require 'active_support/json'
 
 module ActiveRecord #:nodoc:
   module Serialization
-    def self.included(base)
-      base.cattr_accessor :include_root_in_json, :instance_writer => false
-      base.extend ClassMethods
+    extend ActiveSupport::Concern
+
+    included do
+      cattr_accessor :include_root_in_json, :instance_writer => false
     end
 
     # Returns a JSON string representing the model. Some configuration is
@@ -82,13 +83,16 @@ module ActiveRecord #:nodoc:
       end
     end
 
-    # For compatibility with ActiveSupport::JSON.encode
-    alias rails_to_json to_json
-
     def from_json(json)
       self.attributes = ActiveSupport::JSON.decode(json)
       self
     end
+
+    private
+      # For compatibility with ActiveSupport::JSON.encode
+      def rails_to_json(options, *args)
+        to_json(options)
+      end
 
     class JsonSerializer < ActiveRecord::Serialization::Serializer #:nodoc:
       def serialize

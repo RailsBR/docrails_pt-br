@@ -22,7 +22,6 @@ TIP: All of the following models uses +id+ as the primary key, unless specified 
 <ruby>
 class Client < ActiveRecord::Base
   has_one :address
-  has_one :mailing_address
   has_many :orders
   has_and_belongs_to_many :roles
 end
@@ -31,11 +30,6 @@ end
 <ruby>
 class Address < ActiveRecord::Base
   belongs_to :client
-end
-</ruby>
-
-<ruby>
-class MailingAddress < Address
 end
 </ruby>
 
@@ -244,7 +238,7 @@ WARNING: Building your own conditions as pure strings can leave you vulnerable t
 
 h4. Array Conditions
 
-Now what if that number could vary, say as a argument from somewhere, or perhaps from the user's level status somewhere? The find then becomes something like:
+Now what if that number could vary, say as an argument from somewhere, or perhaps from the user's level status somewhere? The find then becomes something like:
 
 <ruby>
 Client.first(:conditions => ["orders_count = ?", params[:orders]])
@@ -538,7 +532,7 @@ This will return single order objects for each day, but only for the last month.
 
 h4. Readonly Objects
 
-To explicitly disallow modification/destroyal of the matching records returned by +Model.find+, you could specify the +:readonly+ option as +true+ to the find call.
+To explicitly disallow modification/destruction of the matching records returned by +Model.find+, you could specify the +:readonly+ option as +true+ to the find call.
 
 Any attempt to alter or destroy the readonly records will not succeed, raising an +ActiveRecord::ReadOnlyRecord+ exception. To set this option, specify it like this:
 

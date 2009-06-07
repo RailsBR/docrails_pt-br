@@ -21,22 +21,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-begin
-  require 'active_support'
-rescue LoadError
-  activesupport_path = "#{File.dirname(__FILE__)}/../../activesupport/lib"
-  if File.directory?(activesupport_path)
-    $:.unshift activesupport_path
-    require 'active_support'
-  end
-end
-require 'active_support/core/all'
+activesupport_path = "#{File.dirname(__FILE__)}/../../activesupport/lib"
+$:.unshift activesupport_path if File.directory?(activesupport_path)
+require 'active_support'
 
 require File.join(File.dirname(__FILE__), "action_pack")
 
 module ActionController
   # TODO: Review explicit to see if they will automatically be handled by
-  # the initilizer if they are really needed.
+  # the initializer if they are really needed.
   def self.load_all!
     [Base, Request, Response, UrlRewriter, UrlWriter]
     [ActionDispatch::Http::Headers]
@@ -60,7 +53,7 @@ module ActionController
   autoload :Redirector, 'action_controller/base/redirect'
   autoload :Renderer, 'action_controller/base/render'
   autoload :RequestForgeryProtection, 'action_controller/base/request_forgery_protection'
-  autoload :Rescue, 'action_controller/dispatch/rescue'
+  autoload :Rescue, 'action_controller/base/rescue'
   autoload :Resources, 'action_controller/routing/resources'
   autoload :Responder, 'action_controller/base/responder'
   autoload :Routing, 'action_controller/routing'
@@ -73,6 +66,7 @@ module ActionController
   autoload :UrlRewriter, 'action_controller/routing/generation/url_rewriter'
   autoload :UrlWriter, 'action_controller/routing/generation/url_rewriter'
   autoload :Verification, 'action_controller/base/verification'
+  autoload :FilterParameterLogging, 'action_controller/base/filter_parameter_logging'
 
   module Assertions
     autoload :DomAssertions, 'action_controller/testing/assertions/dom'

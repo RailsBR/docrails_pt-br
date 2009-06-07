@@ -6,10 +6,10 @@ class FunkyPathMailer < ActionMailer::Base
 
   def multipart_with_template_path_with_dots(recipient)
     recipients recipient
-    subject    "Have a lovely picture"
+    subject    "This path has dots"
     from       "Chad Fowler <chad@chadfowler.com>"
-    attachment :content_type => "image/jpeg",
-      :body => "not really a jpeg, we're only testing, after all"
+    attachment :content_type => "text/plain",
+      :body => "dots dots dots..."
   end
 end
 
@@ -939,7 +939,8 @@ EOF
   def test_multipart_with_template_path_with_dots
     mail = FunkyPathMailer.create_multipart_with_template_path_with_dots(@recipient)
     assert_equal 2, mail.parts.length
-    assert mail.parts.any? {|part| part.content_type == "text/plain" && part.charset == "utf-8"}
+    assert "text/plain", mail.parts[1].content_type
+    assert "utf-8", mail.parts[1].charset
   end
 
   def test_custom_content_type_attributes
@@ -994,13 +995,13 @@ end
 
 class InheritableTemplateRootTest < Test::Unit::TestCase
   def test_attr
-    expected = "#{File.dirname(__FILE__)}/fixtures/path.with.dots"
+    expected = File.expand_path("#{File.dirname(__FILE__)}/fixtures/path.with.dots")
     assert_equal expected, FunkyPathMailer.template_root.to_s
 
     sub = Class.new(FunkyPathMailer)
     sub.template_root = 'test/path'
 
-    assert_equal 'test/path', sub.template_root.to_s
+    assert_equal File.expand_path('test/path'), sub.template_root.to_s
     assert_equal expected, FunkyPathMailer.template_root.to_s
   end
 end
