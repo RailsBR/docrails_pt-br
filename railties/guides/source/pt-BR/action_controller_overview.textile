@@ -379,7 +379,7 @@ O método simplesmente armazena uma mensagem de erro no flash e redireciona para
 Neste exemplo, o filtro é adicionado ao ApplicationController e consequentemente a todos os controllers da aplicação. Isto fará com que tudo na aplicação exija que o usuário esteja logado para utilizá-lo. Por razões óbvias (o usuário nem conseguiria logar!), nem todos os controllers ou actions devem exigir isto. Você pode evitar que este filtro seja executado antes de algumas actions com +skip_before_filter+ :
 
 <ruby>
-class LoginsController < Application
+class LoginsController < ApplicationController
 
   skip_before_filter :require_login, :only => [:new, :create]
 
@@ -397,7 +397,7 @@ Filtros antes e depois (Around Filters) ficam responsáveis por executar uma act
 <ruby>
 # Exemplo pego da documentação de filtros da API do Rails:
 # http://api.rubyonrails.org/classes/ActionController/Filters/ClassMethods.html
-class ApplicationController < Application
+class ApplicationController < ActionController::Base
   around_filter :catch_exceptions
 
 private
@@ -455,7 +455,7 @@ A documentação da API do Rails tem "mais informações sobre filtros":http://a
 
 h3. Verificações
 
-Verificações servem para garantir que um determinado critério seja verificado para permitir que um controller ou uma action sejam executados. Elas podem especificar que uma determinada chave (ou várias chaves na forma de um array) deva estar presente nos hashes +params+, +session+ ou +flash+, ou que um determinado método HTTP seja utilizado, ou que a requisição tenha sido feito utilizando XMLHTTPRequest (Ajax). A action padrão realizada quando os critérios não são atendidos é renderizar uma resposta 400 Bad Request, mas você pode personalizar isto especificando um redirecionamento de URL ou renderizando algo específico, e você também pode adicionar mensagens flash e cabeçalhos HTTP a resposta. Na "documentação da API":http://api.rubyonrails.org/classes/ActionController/Verification/ClassMethods.html este recurso está descrito como "essencialmente um tipo especial de before_filter".
+Verificações servem para garantir que um determinado critério seja verificado para permitir que um controller ou uma action sejam executados. Elas podem especificar que uma determinada chave (ou várias chaves na forma de um array) deva estar presente nos hashes +params+, +session+ ou +flash+, ou que um determinado método HTTP seja utilizado, ou que a requisição tenha sido feito utilizando XMLHttpRequest (Ajax). A action padrão realizada quando os critérios não são atendidos é renderizar uma resposta 400 Bad Request, mas você pode personalizar isto especificando um redirecionamento de URL ou renderizando algo específico, e você também pode adicionar mensagens flash e cabeçalhos HTTP a resposta. Na "documentação da API":http://api.rubyonrails.org/classes/ActionController/Verification/ClassMethods.html este recurso está descrito como "essencialmente um tipo especial de before_filter".
 
 Aqui temos um exemplo de utilização de verificação para ter certeza de que o visitante passou um usuário e senha para efetuar login:
 
