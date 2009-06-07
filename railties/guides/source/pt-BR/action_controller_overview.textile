@@ -222,7 +222,7 @@ end
 Para remover algo da sessão, atribua o valor +nil+ para a chave:
 
 <ruby>
-class LoginsController < ApplicationController
+	class LoginsController < ApplicationController
 
   # "Apaga" um login, ou seja, "desloga o usuário"
   def destroy

@@ -980,6 +980,14 @@ class Customer &lt; ActiveRecord::Base
 end
 </code></div>
 <p>Se você usar <tt>:conditions</tt> no estilo hash, então a criação do registro através desta associação terá automaticamente o escopo usando o hash. Neste caso, usando  <tt>@customer.confirmed_orders.create</tt> ou <tt>@customer.confirmed_orders.build</tt> vai criar pedidos que tenham a coluna confirmed igual a <tt>true</tt>.</p>
+<p>Se você precisar avaliar condições dinamicamente em runtime, você pode usar inteporlação de strings em aspas simples:</p>
+<div class="code_container"><code class="ruby">
+class Customer &lt; ActiveRecord::Base
+  has_many :latest_orders, :class_name =&gt; &quot;Order&quot;,
+    :conditions =&gt; 'orders.created_at &gt; #{10.hours.ago.to_s(:db).inspect}'
+end
+</code></div>
+<p>Certifique-se de estar usando aspas simples.</p>
 <h6 id="counter-sql">4.3.2.5 <tt>:counter_sql</tt></h6>
 <p>Normalmente o Rails gera automaticamente o <span class="caps">SQL</span> apropriado para contar os membros de uma associação. Com a opção <tt>:counter_sql</tt>, você pode especificar o comando <span class="caps">SQL</span> para fazer o &#8220;count&#8221; da sua forma.</p>
 <div class='note'><p>Se você especificar <tt>:finder_sql</tt> mas não definir <tt>:counter_sql</tt>, então o <span class="caps">SQL</span> para contador será gerado substituindo <tt>SELECT COUNT(*) FROM</tt> para a cláusula <tt>SELECT ... FROM</tt> da sua declaração do <tt>:finder_sql</tt>.</p></div>

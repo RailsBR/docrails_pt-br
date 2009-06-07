@@ -256,7 +256,7 @@ end
 </code></div>
 <p>Para remover algo da sessão, atribua o valor <tt>nil</tt> para a chave:</p>
 <div class="code_container"><code class="ruby">
-class LoginsController &lt; ApplicationController
+	class LoginsController &lt; ApplicationController
 
   # &quot;Apaga&quot; um login, ou seja, &quot;desloga o usuário&quot;
   def destroy
@@ -391,7 +391,7 @@ end
 <p>O método simplesmente armazena uma mensagem de erro no flash e redireciona para o formulário de login se o usuário não estiver logado. Se um filtro &#8216;before&#8217; (um filtro que é executado antes da ação) renderizar ou redirecionar, a action não será executada. Se houverem filtro adicionais a serem executados após a renderização ou redirecionamento, eles também serão cancelados.</p>
 <p>Neste exemplo, o filtro é adicionado ao ApplicationController e consequentemente a todos os controllers da aplicação. Isto fará com que tudo na aplicação exija que o usuário esteja logado para utilizá-lo. Por razões óbvias (o usuário nem conseguiria logar!), nem todos os controllers ou actions devem exigir isto. Você pode evitar que este filtro seja executado antes de algumas actions com <tt>skip_before_filter</tt> :</p>
 <div class="code_container"><code class="ruby">
-class LoginsController &lt; Application
+class LoginsController &lt; ApplicationController
 
   skip_before_filter :require_login, :only =&gt; [:new, :create]
 
@@ -404,7 +404,7 @@ end
 <div class="code_container"><code class="ruby">
 # Exemplo pego da documentação de filtros da API do Rails:
 # http://api.rubyonrails.org/classes/ActionController/Filters/ClassMethods.html
-class ApplicationController &lt; Application
+class ApplicationController &lt; ActionController::Base
   around_filter :catch_exceptions
 
 private
@@ -451,7 +451,7 @@ end
 <p>Lembre-se, este não é o exemplo ideal para este filtro, porque ele não é executado no escopo do controller mas recebe o controller como um argumento. A classe filtro tem um método de classe chamado <tt>filter</tt> que é executado antes ou depois da action, dependendo dele ser um filtro anterior ou posterior. Classes utilizadas como around filter também podem utilizar este mesmo método <tt>filter</tt>, que será executado da mesma forma. O método deve realizar um <tt>yield</tt> para executar a ação. Alternativamente, ela pode ter um método <tt>before</tt> e um <tt>after</tt> para serem executados antes e depois da action.</p>
 <p>A documentação da <span class="caps">API</span> do Rails tem <a href="http://api.rubyonrails.org/classes/ActionController/Filters/ClassMethods.html">mais informações sobre filtros</a> .</p>
 <h3 id="verificaes">7 Verificações</h3>
-<p>Verificações servem para garantir que um determinado critério seja verificado para permitir que um controller ou uma action sejam executados. Elas podem especificar que uma determinada chave (ou várias chaves na forma de um array) deva estar presente nos hashes <tt>params</tt>, <tt>session</tt> ou <tt>flash</tt>, ou que um determinado método <span class="caps">HTTP</span> seja utilizado, ou que a requisição tenha sido feito utilizando XMLHTTPRequest (Ajax). A action padrão realizada quando os critérios não são atendidos é renderizar uma resposta 400 Bad Request, mas você pode personalizar isto especificando um redirecionamento de <span class="caps">URL</span> ou renderizando algo específico, e você também pode adicionar mensagens flash e cabeçalhos <span class="caps">HTTP</span> a resposta. Na <a href="http://api.rubyonrails.org/classes/ActionController/Verification/ClassMethods.html">documentação da <span class="caps">API</span></a> este recurso está descrito como &#8220;essencialmente um tipo especial de before_filter&#8221;.</p>
+<p>Verificações servem para garantir que um determinado critério seja verificado para permitir que um controller ou uma action sejam executados. Elas podem especificar que uma determinada chave (ou várias chaves na forma de um array) deva estar presente nos hashes <tt>params</tt>, <tt>session</tt> ou <tt>flash</tt>, ou que um determinado método <span class="caps">HTTP</span> seja utilizado, ou que a requisição tenha sido feito utilizando XMLHttpRequest (Ajax). A action padrão realizada quando os critérios não são atendidos é renderizar uma resposta 400 Bad Request, mas você pode personalizar isto especificando um redirecionamento de <span class="caps">URL</span> ou renderizando algo específico, e você também pode adicionar mensagens flash e cabeçalhos <span class="caps">HTTP</span> a resposta. Na <a href="http://api.rubyonrails.org/classes/ActionController/Verification/ClassMethods.html">documentação da <span class="caps">API</span></a> este recurso está descrito como &#8220;essencialmente um tipo especial de before_filter&#8221;.</p>
 <p>Aqui temos um exemplo de utilização de verificação para ter certeza de que o visitante passou um usuário e senha para efetuar login:</p>
 <div class="code_container"><code class="ruby">
 class LoginsController &lt; ApplicationController
