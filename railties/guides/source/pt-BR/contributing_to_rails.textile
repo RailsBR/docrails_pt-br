@@ -59,7 +59,13 @@ cd rails
 
 h4. Configure e Execute os Testes
 
-Todos os testes do Rails devem passar com qualquer código que você enviar, senão você não terá chance do código ser aceito. Isto significa que você precisa ser capaz de executar os testes. Para os testes que usam o banco de dados, isto quer dizer criar os bancos necessários. Se você está usando MySQL:
+Todos os testes do Rails devem passar com qualquer código que você enviar, senão você não terá chance do código ser aceito. Isto significa que você precisa ser capaz de executar os testes. O Rails utiliza a gem +mocha+ para alguns testes. Instale-a com:
+
+<shell>
+gem install mocha
+</shell>
+
+Para os testes que usam o banco de dados, isto quer dizer criar os bancos necessários. Se você está usando MySQL:
 
 <shell>
 mysql> create database activerecord_unittest;
@@ -85,7 +91,7 @@ Você pode mudar +sqlite3+ por +jdbcmysql+, +jdbcsqlite3+, +jdbcpostgresql+, +my
 
 NOTE: Se você está trabalhando com código do Active Record, deve se assegurar que os testes passem pelo menos para MySQL, PostgreSQL, SQLite 2, e SQLite 3. Diferenças sutis entre os vários adaptadores de bancos de dados Active Record tem estado por trás da rejeição de muitos patches que pareciam OK quando testados somente com o MySQL.
 
-h3. Ajudando a Resolver Problemas Existentesoplkk,l
+h3. Ajudando a Resolver Problemas Existentes
 
 Como próximo passo além de reportar problemas, você pode ajudar a equipe core a resolver problemas existentes. Se você checar a lista de "tickets abertos":http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets?q=state%3Aopen no Lighthouse, encontrará centenas de problemas já exigindo atenção. O que você pode fazer por estes? Na verdade, bastante:
 
